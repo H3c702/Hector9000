@@ -1,7 +1,7 @@
 MyScreenManager:
     id: screen_manager
     fullscreen: True
-    MyPanelWidget:
+    MainPanel:
     Configure:
     Cleaner:
 
@@ -135,7 +135,7 @@ MyScreenManager:
                     root.manager.current = 'panel'
 
 
-<MyPanelWidget>:
+<MainPanel>:
     name: 'panel'
     BoxLayout:
         orientation: 'vertical'
