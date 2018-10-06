@@ -20,7 +20,7 @@ from HectorHardware import HectorHardware
 
 
 
-class MyPanelWidget(Screen):
+class MainPanel(Screen):
     buttonText = ListProperty([StringProperty(),
                                StringProperty(),
                                StringProperty(),
@@ -45,7 +45,7 @@ class MyPanelWidget(Screen):
     maxScreenPage = None
 
     def __init__(self, **kwargs):
-        super(MyPanelWidget, self).__init__(**kwargs)
+        super(MainPanel, self).__init__(**kwargs)
 
         self.db = Database("h9k")
 
