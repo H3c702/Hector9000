@@ -2,7 +2,7 @@ import time
 import json
 from kivy.core.text import Label
 from drinks import drink_list, ingredients
-from kivy.properties import StringProperty, ListProperty, NumericProperty
+from kivy.properties import StringProperty, ListProperty
 from kivy.uix.progressbar import ProgressBar
 from functools import partial
 from kivy.uix.label import Label
@@ -16,8 +16,6 @@ from database import Database
 from HectorConfig import config
 
 from HectorHardware import HectorHardware
-
-
 
 
 class MainPanel(Screen):
@@ -115,26 +113,27 @@ class MainPanel(Screen):
         popup = Popup(title='Life, the Universe, and Everything. There is an answer.', content=root,
                       auto_dismiss=False)
 
-        def makeDrink(ii):
-            aktuellerDrink = self.drinkOnScreen[drink]
+        def makeDrink(parentwindow):
+            drinks = self.drinkOnScreen[drink]
 
             hector = HectorHardware(config)
             hector.arm_out()
 
-            for x in aktuellerDrink["recipe"]:
-                hector.valve_dose(pumpList[x[0]], x[1])
+            for ingridient in drinks["recipe"]:
+                hector.valve_dose(pumpList[ingridient[0]], ingridient[1])
                 time.sleep(1)
-                print("IndexPumpe: ", pumpList[x[0]])
-                print("Incredence: ", x[0])
-                print("Output in ml: ", x[1])
+                print("IndexPumpe: ", pumpList[ingridient[0]])
+                print("Incredence: ", ingridient[0])
+                print("Output in ml: ", ingridient[1])
+                self.db.countUpIngredient(ingridient[0],ingridient[1])
 
-            self.db.countUpDrink(aktuellerDrink["name"])
+            self.db.countUpDrink(drinks["name"])
             hector.arm_in()
             hector.finger(1)
             hector.ping(3)
             hector.finger(0)
-            print(aktuellerDrink["name"])
-            ii.dismiss()
+            print(drinks["name"])
+            parentwindow.dismiss()
 
         popup.bind(on_open=makeDrink)
 
