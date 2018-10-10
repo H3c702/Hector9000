@@ -35,7 +35,7 @@ class HectorHardware:
             hx1 = cfg["hx711"]["CLK"]
             hx2 = cfg["hx711"]["DAT"]
             hxref = cfg["hx711"]["ref"]
-            self.hx = HX711(hx1, hx2);
+            self.hx = HX711(hx1, hx2)
             self.hx.set_reading_format("LSB", "MSB")
             self.hx.set_reference_unit(hxref)
             self.hx.reset()
@@ -111,7 +111,6 @@ class HectorHardware:
         print("arm is in in position")
 
     def arm_pos(self):
-        pos = 100
         if not devenvirement:
             pos = GPIO.input(self.arm)
         print("arm_pos: %d" % pos)
@@ -121,13 +120,16 @@ class HectorHardware:
                 print("arm_pos = out")
             else:
                 print("arm_pos = in")
+        else:
+            pos = 100
         return pos
 
     def scale_readout(self):
-        weight = 0
         if not devenvirement:
             weight = self.hx.get_weight(5)
             print("weight = %.1f" % weight)
+        else:
+            weight = 0
         return weight
 
     def scale_tare(self):
