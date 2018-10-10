@@ -98,13 +98,13 @@ class HX711:
 
     def get_np_arr8_string(self):
         np_arr8 = self.read_np_arr8()
-        np_arr8_string = "[";
+        np_arr8_string = "["
         comma = ", "
         for i in range(4):
             if i is 3:
                 comma = ""
             np_arr8_string += str(np_arr8[i]) + comma
-        np_arr8_string += "]";
+        np_arr8_string += "]"
         
         return np_arr8_string
 
@@ -146,7 +146,7 @@ class HX711:
         self.set_offset(value)
 
         self.set_reference_unit(reference_unit)
-        return value;
+        return value
 
     def set_reading_format(self, byte_format="LSB", bit_format="MSB"):
 
