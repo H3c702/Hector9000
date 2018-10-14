@@ -10,7 +10,7 @@ Min requirements
 
 Install on RaspberryPi
 ----
-First of all you have to install Python3 and Kivi on your RaspberryPi. 
+First of all you have to install Python3 and Kivy on your RaspberryPi. 
 For this there  is a HowTo on the Kivi Homepage : 		
 
 	https://kivy.org/doc/stable/installation/installation-rpi.html
@@ -55,7 +55,7 @@ Set value of pumps
 
 So because you have 12 pumps predefined (servo_config.json and HectorHardware) you have to manage the ingredients of the pumps.
 Therefore you have to edit the "servo_config.json" fiel and set the "value" to the ingredients you put in. 
-Only drinks that habe all the ingredients it needs where set in the "servo_config.json" will be shown in the Menu.
+Only drinks that contain all needed ingredients, which are set in the "servo_config.json", will be shown in the Menu.
 
 Example:
 
@@ -66,7 +66,7 @@ Example:
 	},
 
 
-Development on not Pi-Mashine :
+Development on not Pi-Machine :
 --
 
 	If you are on a not RaspberryPi you can set the Var in Hectorhardware.py 
