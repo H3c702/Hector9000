@@ -14,7 +14,7 @@ from __future__ import division
 
 
 
-DevEnvironment = True
+DevEnvironment = False
 
 
 
@@ -68,11 +68,11 @@ class HectorHardware:
 
         # setup scale (HX711)
 
-        hx1 = cfg["hx711"]["CLK"]
+            hx1 = cfg["hx711"]["CLK"]
 
-        hx2 = cfg["hx711"]["DAT"]
+            hx2 = cfg["hx711"]["DAT"]
 
-        hxref = cfg["hx711"]["ref"]
+            hxref = cfg["hx711"]["ref"]
 
         if not DevEnvironment:
 
@@ -90,19 +90,21 @@ class HectorHardware:
 
         # setup servos (PCA9685)
 
-        self.valveChannels = cfg["pca9685"]["valvechannels"]
+            self.valveChannels = cfg["pca9685"]["valvechannels"]
 
-        self.numValves = len(self.valveChannels)
+            self.numValves = len(self.valveChannels)
 
-        self.valvePositions = cfg["pca9685"]["valvepositions"]
+            self.valvePositions = cfg["pca9685"]["valvepositions"]
 
-        self.fingerChannel = cfg["pca9685"]["fingerchannel"]
+            self.fingerChannel = cfg["pca9685"]["fingerchannel"]
 
-        self.fingerPositions = cfg["pca9685"]["fingerpositions"]
+            self.fingerPositions = cfg["pca9685"]["fingerpositions"]
 
-        self.lightChannel = cfg["pca9685"]["lightchannel"]
+            self.lightPin = cfg["pca9685"]["lightpin"]
 
-        self.lightPositions = cfg["pca9685"]["lightpositions"]
+            self.lightChannel = cfg["pca9685"]["lightpwmchannel"]
+
+            self.lightPositions = cfg["pca9685"]["lightpositions"]
 
         if not DevEnvironment:
 
@@ -116,17 +118,17 @@ class HectorHardware:
 
         # setup arm stepper (A4988)
 
-        self.armEnable = cfg["a4988"]["ENABLE"]
+            self.armEnable = cfg["a4988"]["ENABLE"]
 
-        self.armReset = cfg["a4988"]["RESET"]
+            self.armReset = cfg["a4988"]["RESET"]
 
-        self.armSleep = cfg["a4988"]["SLEEP"]
+            self.armSleep = cfg["a4988"]["SLEEP"]
 
-        self.armStep = cfg["a4988"]["STEP"]
+            self.armStep = cfg["a4988"]["STEP"]
 
-        self.armDir = cfg["a4988"]["DIR"]
+            self.armDir = cfg["a4988"]["DIR"]
 
-        self.armSteps = cfg["a4988"]["numSteps"]
+            self.armSteps = cfg["a4988"]["numSteps"]
 
         print("arm step %d, dir %d" % (self.armStep, self.armDir))
 
@@ -164,7 +166,19 @@ class HectorHardware:
 
 
 
-        print("setup done")
+    def light_on(self):
+
+        if not DevEnvironment:
+
+            GPIO.output(self.lightPin, True)
+
+
+
+    def light_off(self):
+
+        if not DevEnvironment:
+
+            GPIO.output(self.lightPin, False)
 
 
 
@@ -210,7 +224,7 @@ class HectorHardware:
 
             GPIO.output(self.armEnable, False)
 
-        print("move arm in")
+            print("move arm in")
 
         if not DevEnvironment:
 
@@ -240,19 +254,19 @@ class HectorHardware:
 
             return 100
 
-        pos = GPIO.input(self.arm)
+            pos = GPIO.input(self.arm)
 
         print("arm_pos: %d" % pos)
 
-        pos = (pos != 0)
+            pos = (pos != 0)
 
-        if pos:
+            if pos:
 
-            print("arm_pos = out")
+                print("arm_pos = out")
 
-        else:
+            else:
 
-            print("arm_pos = in")
+                print("arm_pos = in")
 
         return pos
 
@@ -379,6 +393,8 @@ class HectorHardware:
         else:
 
             print("dose channel %d, amount %d" % (index, amount))
+
+            time.sleep(3)
 
         return sr
 
