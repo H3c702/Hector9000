@@ -6,7 +6,7 @@
 # imports
 from __future__ import division
 
-DevEnvironment = False
+DevEnvironment = True
 
 import time
 import sys
