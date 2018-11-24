@@ -45,10 +45,7 @@ class MainPanel(Screen):
     def __init__(self, **kwargs):
         super(MainPanel, self).__init__(**kwargs)
 
-        self.db = Database("h9k")
-
-        self.db.createIfNotExists()
-
+        self.prepareDB()
         self.screenPage = 1
 
         items = len(drink_list) % 8
@@ -61,6 +58,11 @@ class MainPanel(Screen):
         self.drinkOnScreen = drink_list[:8]
 
         self.fillButtons(self.drinkOnScreen)
+
+    def prepareDB(self):
+        self.db = Database("h9k")
+
+        self.db.createIfNotExists()
 
     def isalcoholic(self, drink):
         for ing, _ in drink["recipe"]:
@@ -82,7 +84,7 @@ class MainPanel(Screen):
 
     def choiceDrink(self, *args):
         self.readPumpConfiguration()
-        if len(self.drinkOnScreen) -1 < args[0]:
+        if len(self.drinkOnScreen) - 1 < args[0]:
             print("no drinks found.")
             return
 
@@ -108,7 +110,7 @@ class MainPanel(Screen):
 
     def doGiveDrink(self, drink, intervaltime):
         root = BoxLayout(orientation='vertical')
-        content = Label(text='Take a break \nYour \n\n' + self.drinkOnScreen[drink]["name"]+'\n\nwill be mixed.')
+        content = Label(text='Take a break \nYour \n\n' + self.drinkOnScreen[drink]["name"] + '\n\nwill be mixed.')
         root.add_widget(content)
         popup = Popup(title='Life, the Universe, and Everything. There is an answer.', content=root,
                       auto_dismiss=False)
@@ -125,7 +127,7 @@ class MainPanel(Screen):
                 print("IndexPumpe: ", pumpList[ingridient[0]])
                 print("Incredence: ", ingridient[0])
                 print("Output in ml: ", ingridient[1])
-                self.db.countUpIngredient(ingridient[0],ingridient[1])
+                self.db.countUpIngredient(ingridient[0], ingridient[1])
 
             self.db.countUpDrink(drinks["name"])
             hector.arm_in()
