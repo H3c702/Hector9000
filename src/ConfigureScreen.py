@@ -95,12 +95,13 @@ class Cleaner(Screen):
         hector.arm_out()
         for x in self.buttonColor:
             if x == self.colorOK:
+                #This part will move to service!
                 hector.pump_start()
                 hector.valve_open(i)
                 time.sleep(10)
                 times = 0
                 while times < 5:
-                    hector.valve_open(i,0)
+                    hector.valve_open(i, 0)
                     time.sleep(1)
                     hector.valve_open(i)
                     time.sleep(10)
@@ -109,6 +110,7 @@ class Cleaner(Screen):
                 hector.valve_open(i, 0)
                 time.sleep(10)
                 hector.pump_stop()
+                time.sleep(1)
             i += 1
         self.popup.dismiss()
         # self.dry()
