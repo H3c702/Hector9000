@@ -3,7 +3,7 @@
 
 import os, sys, urllib.request, json, time, math
 import PySide2.QtQml
-#from OpenGL import GL
+# from OpenGL import GL
 from PySide2.QtQuick import QQuickView
 from PySide2.QtCore import Qt, QCoreApplication, QUrl, QThread
 from PySide2.QtCore import QObject, Signal
@@ -21,6 +21,7 @@ from drinks import available_drinks, ingredients, actions, alcoholic
 
 isocolors = ["black", "brown", "red", "orange", "yellow", "green", "blue", "purple", "grey", "white"]
 
+
 def readChannelConfiguration():
     x = json.load(open('conf/channel_config.json'))
     global channelList
@@ -30,14 +31,14 @@ def readChannelConfiguration():
         ingr = chan['value']
         if ingr:
             channelList[ingr] = chan['channel']
-    #print("channel list:")
+    # print("channel list:")
     print(channelList)
 
-class DispenserWorker(QThread):
 
-    #This is the signal that will be emitted during the processing.
-    #By including int as an argument, it lets the signal know to expect
-    #an integer argument when emitting.
+class DispenserWorker(QThread):
+    # This is the signal that will be emitted during the processing.
+    # By including int as an argument, it lets the signal know to expect
+    # an integer argument when emitting.
     updateGUI = Signal()
 
     def setBar(self, name, value):
@@ -48,8 +49,8 @@ class DispenserWorker(QThread):
     def setGauge(self, name, value):
         global content, total
         print("setGauge: %s, %d" % (name, value))
-        screenMgr.gaugeValue = 100 * (content+value) / total
-        scaleTxt = "%03d g" % (content+value)
+        screenMgr.gaugeValue = 100 * (content + value) / total
+        scaleTxt = "%03d g" % (content + value)
         print("scaleTxt: " + scaleTxt)
         screenMgr.contentValue = scaleTxt
         self.updateGUI.emit()
@@ -129,7 +130,7 @@ class DispenserWorker(QThread):
                     self.updateGUI.emit()
 
                 hector.valve_dose(chan, amount, cback=self.setGauge)
-                
+
                 content += amount
                 screenMgr.gaugeValue = 100 * content / total
                 dispensingModel.items[chan]["indicatorColor"] = "green"
@@ -171,6 +172,7 @@ class DispenserWorker(QThread):
         screenMgr.dispensingVisible = False
         self.updateGUI.emit()
 
+
 def drinkRequested(id):
     screenMgr.buttonMenuVisible = False
     screenMgr.dispensingVisible = True
@@ -184,8 +186,8 @@ if __name__ == "__main__":
     global hector
     hector = HectorHardware(config)
     readChannelConfiguration()
-    
-    #os.environ["QT_QUICK_CONTROLS_STYLE"] = "Material"
+
+    # os.environ["QT_QUICK_CONTROLS_STYLE"] = "Material"
     app = QGuiApplication(sys.argv)
     global view
     view = QQuickView()
@@ -197,16 +199,16 @@ if __name__ == "__main__":
 
     menuModel = MenuModel()
     for idx, drink in enumerate(available_drinks):
-        menuModel.items.append( {
-            'menuId': '%d' % idx, 
-            'name': drink["name"] + ("\n\n‰" if alcoholic(drink) else ""), 
-            'colorCode': drink["color"] } )
+        menuModel.items.append({
+            'menuId': '%d' % idx,
+            'name': drink["name"] + ("\n\n‰" if alcoholic(drink) else ""),
+            'colorCode': drink["color"]})
     view.rootContext().setContextProperty("menuModel", menuModel)
-    
+
     menuMgr = MenuManager()
     menuMgr.setAction(drinkRequested)
     view.rootContext().setContextProperty("menuManager", menuMgr)
-    
+
     dispensingModel = DispensingModel(12)
     for idx, ingr in enumerate(channelList):
         dispensingModel.items[idx] = {
@@ -216,10 +218,10 @@ if __name__ == "__main__":
             'indicatorColor': "lightgrey"
         }
     view.rootContext().setContextProperty("dispensingModel", dispensingModel)
-    
+
     qml_file = os.path.join(os.path.dirname(__file__), "UI/main.qml")
     view.setSource(QUrl.fromLocalFile(os.path.abspath(qml_file)))
-    
+
     screenMgr.title = "Main Menu"
     screenMgr.status = "ready."
     screenMgr.gaugeValue = 0
@@ -227,8 +229,8 @@ if __name__ == "__main__":
     screenMgr.dispensingVisible = False
     screenMgr.alertVisible = False
 
-    #print(view.findChild(QObject, "label4"))
-    
+    # print(view.findChild(QObject, "label4"))
+
     if view.status() == QQuickView.Error:
         sys.exit(-1)
     view.show()
@@ -238,4 +240,3 @@ if __name__ == "__main__":
     hector.cleanAndExit()
 
     sys.exit(ret)
-

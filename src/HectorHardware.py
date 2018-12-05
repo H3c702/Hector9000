@@ -209,7 +209,7 @@ class HectorHardware:
         sr = 0
         if not DevEnvironment:
             if (index < 0 and index >= len(self.valveChannels) - 1):
-                return
+                return -1
             t0 = time.time()
             self.scale_tare()
             self.pump_start()

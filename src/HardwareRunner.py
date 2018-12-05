@@ -15,6 +15,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(TopicPrefix + "#")
 
 
+#MSG SPLIT IN PUMP AND ML !!!!!!
 def valve_dose(msg):
     ml = str(msg.payload.decode("utf-8"))
     if ml.isdigit():
