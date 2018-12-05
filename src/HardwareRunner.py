@@ -1,6 +1,4 @@
-import sys
 import time
-import json
 from HectorConfig import config
 from HectorHardware import HectorHardware
 
@@ -24,6 +22,14 @@ def valve_dose(msg):
     else:
         print("Not a numeric message. Cant dose liquid.")
     pass
+
+
+def dry(msg):
+    i = str(msg.payload.decode("utf-8"))
+    print("IndexPump: ", i)
+    Hector.valve_open(i)
+    time.sleep(1800)
+    Hector.valve_open(i, 0)
 
 
 def clean(msg):
@@ -61,9 +67,9 @@ def arm_out(msg):
 
 
 def rind(msg):
-    timestoring = str(msg.payload.decode("utf-8"))
-    if timestoring.isdigit():
-        Hector.ping(timestoring)
+    timesToRing = str(msg.payload.decode("utf-8"))
+    if timesToRing.isdigit():
+        Hector.ping(timesToRing)
     else:
         print("Not a numeric message. Cant ring the bell.")
 
@@ -75,10 +81,12 @@ def on_message(client, userdata, msg):
         arm_in(msg)
     if msg.topic == TopicPrefix + "arm/out":
         arm_out(msg)
-    if msg.topic == TopicPrefix + "valvedose":
+    if msg.topic == TopicPrefix + "doseDrink":
         valve_dose(msg)
     if msg.topic == TopicPrefix + "cleanMe":
         clean(msg)
+    if msg.topic == TopicPrefix + "dryMe":
+        dry(msg)
     else:
         print(msg.topic + " " + str(msg.payload))
 

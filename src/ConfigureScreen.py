@@ -123,6 +123,7 @@ class Cleaner(Screen):
         i = 0
         for x in self.buttonColor:
             if x == self.colorOK:
+                #This part will move to service !
                 print("IndexPump: ", i)
                 hector.valve_open(i)
                 time.sleep(self.drytime)
