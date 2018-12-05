@@ -37,7 +37,7 @@ config = {
         "SLEEP": 23,
         "STEP": 37,
         "DIR": 33,
-        "numSteps": 260
+        "numSteps": 261			# number of steps between IN and OUT positions
     },
     "arm": {
         "SENSE": 16

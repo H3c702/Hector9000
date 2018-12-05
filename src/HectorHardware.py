@@ -8,7 +8,7 @@ from __future__ import division
 
 DevEnvironment = True
 
-import time
+from time import sleep
 import sys
 from HectorConfig import config
 
@@ -22,6 +22,9 @@ if not DevEnvironment:
 
 
 logging.basicConfig(level=logging.DEBUG)
+
+def debugOut(name, value):
+    print("=> %s: %d" % (name, value))
 
 
 class HectorHardware:
@@ -63,7 +66,8 @@ class HectorHardware:
         self.armSleep = cfg["a4988"]["SLEEP"]
         self.armStep = cfg["a4988"]["STEP"]
         self.armDir = cfg["a4988"]["DIR"]
-        self.armSteps = cfg["a4988"]["numSteps"]
+        self.armNumSteps = cfg["a4988"]["numSteps"]
+        self.simulatedArmPos = self.armNumSteps / 2			# 50%
         print("arm step %d, dir %d" % (self.armStep, self.armDir))
         self.arm = cfg["arm"]["SENSE"]
         if not DevEnvironment:
@@ -92,49 +96,68 @@ class HectorHardware:
         if not DevEnvironment:
             GPIO.output(self.lightPin, False)
 
-    def arm_out(self):
+    def arm_out(self, cback = debugOut):
+        armMaxSteps = int(self.armNumSteps * 1.1)
         if not DevEnvironment:
             GPIO.output(self.armEnable, False)
         print("move arm out")
         if not DevEnvironment:
             GPIO.output(self.armDir, True)
-        while not self.arm_pos():
-            if not DevEnvironment:
+            for i in range(armMaxSteps):
+                if self.arm_isInOutPos():
+                    GPIO.output(self.armEnable, True)
+                    print("arm is in OUT position")
+                    if cback: cback("arm_out", 100)
+                    return
                 GPIO.output(self.armStep, False)
-                time.sleep(.001)
+                sleep(.001)
                 GPIO.output(self.armStep, True)
-                time.sleep(.001)
-        if not DevEnvironment:
+                sleep(.001)
+                if cback: cback("arm_out", i*100/self.armNumSteps)
             GPIO.output(self.armEnable, True)
-        print("arm is in OUT position")
+        else:
+            for i in range(armMaxSteps):
+                self.simulatedArmPos += 1
+                if self.arm_isInOutPos():
+                    print("arm is in OUT position")
+                    if cback: cback("arm_out", 100)
+                    return
+                sleep(.002)
+                if cback: cback("arm_out", i*100/self.armNumSteps)
+        print("arm is in OUT position (with timeout)")
 
-
-    def arm_in(self):
-        self.arm_out()
+    def arm_in(self, cback = debugOut):
+        self.arm_out(cback)
         if not DevEnvironment:
             GPIO.output(self.armEnable, False)
         print("move arm in")
         if not DevEnvironment:
             GPIO.output(self.armDir, False)
-            for i in range(self.armSteps):
+            for i in range(self.armNumSteps, 0, -1):
                 GPIO.output(self.armStep, False)
-                time.sleep(.001)
+                sleep(.001)
                 GPIO.output(self.armStep, True)
-                time.sleep(.001)
+                sleep(.001)
+                if cback and (i % 10 == 0): cback("arm_in", i*100/self.armNumSteps)
             GPIO.output(self.armEnable, True)
+        else:
+            for i in range(self.armNumSteps, 0, -1):
+                self.simulatedArmPos -= 1
+                sleep(.002)
+                if cback and (i % 10 == 0): cback("arm_in", i*100/self.armNumSteps)
         print("arm is in IN position")
 
-    def arm_pos(self):
+    def arm_isInOutPos(self):
         if DevEnvironment:
-            print("no arm pos available")
-            return 100
-        pos = GPIO.input(self.arm)
-        print("arm_pos: %d" % pos)
+            pos = (self.simulatedArmPos >= self.armNumSteps)
+        else:
+            pos = GPIO.input(self.arm)
+        print("arm_isInOutPos: %d" % pos)
         pos = (pos != 0)
         if pos:
-            print("arm_pos = out")
+            print("arm_isInOutPos = True")
         else:
-            print("arm_pos = in")
+            print("arm_isInOutPos = False")
         return pos
 
     def scale_readout(self):
@@ -180,8 +203,9 @@ class HectorHardware:
         if not DevEnvironment:
             self.valve_open(index, open=0)
 
-    def valve_dose(self, index, amount, timeout=30):
+    def valve_dose(self, index, amount, timeout=30, cback = debugOut):
         print("dose channel %d, amount %d" % (index, amount))
+        if cback: cback("valve_dose", 0)
         sr = 0
         if not DevEnvironment:
             if (index < 0 and index >= len(self.valveChannels) - 1):
@@ -193,34 +217,42 @@ class HectorHardware:
             sr = self.scale_readout()
             while sr < amount:
                 sr = self.scale_readout()
+                if cback: cback("valve_dose", sr)
                 if (time.time() - t0) > timeout:
                     self.pump_stop()
                     self.valve_close(index)
+                    if cback: cback("valve_dose", amount)
                     return -1
-                time.sleep(0.1)
+                sleep(0.1)
             self.pump_stop()
             self.valve_close(index)
         else:
-            time.sleep(3)
+            for i in range(amount):
+                sleep(.1)
+                if cback: cback("valve_dose", i)
+            if cback: cback("valve_dose", amount)
+            sr = amount
         return sr
 
     def finger(self, pos=0):
         if not DevEnvironment:
             self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[pos])
 
-    def ping(self, num, retract=True):
-        print("ping :-)")
+    def ping(self, num, retract=True, cback = None):
         if not DevEnvironment:
+            print("ping :-)")
             self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[1])
             for i in range(num):
                 self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[1])
-                time.sleep(.15)
+                sleep(.15)
                 self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[2])
-                time.sleep(.15)
+                sleep(.15)
             if retract:
                 self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[1])
             else:
                 self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[0])
+        else:
+            print("PING! " * num)
 
     def cleanAndExit(self):
         print("Cleaning...")
