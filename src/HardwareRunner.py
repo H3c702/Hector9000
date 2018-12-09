@@ -15,11 +15,10 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(TopicPrefix + "#")
 
 
-#MSG SPLIT IN PUMP AND ML !!!!!!
 def valve_dose(msg):
-    ml = str(msg.payload.decode("utf-8"))
-    if ml.isdigit():
-        Hector.valve_dose(ml)
+    dosear = str(msg.payload.decode("utf-8")).split(',')
+    if dosear[0].isdigit() and dosear[1].isdigit():
+        Hector.valve_dose(int(dosear[0]), int(dosear[1]), cback=on_callback)
     else:
         print("Not a numeric message. Cant dose liquid.")
     pass
@@ -31,6 +30,7 @@ def dry(msg):
     Hector.valve_open(i)
     time.sleep(1800)
     Hector.valve_open(i, 0)
+    on_callback("dry", 1)
 
 
 def clean(msg):
@@ -56,15 +56,16 @@ def clean(msg):
     time.sleep(10)
     Hector.pump_stop()
     time.sleep(1)
+    on_callback("clean", 1)
     pass
 
 
 def arm_in(msg):
-    Hector.arm_in()
+    Hector.arm_in(on_callback)
 
 
 def arm_out(msg):
-    Hector.arm_out()
+    Hector.arm_out(on_callback)
 
 
 def rind(msg):
@@ -75,7 +76,15 @@ def rind(msg):
         print("Not a numeric message. Cant ring the bell.")
 
 
+def on_callback(name, value):
+    global actualtopic
+    print(name + ": " + value)
+    client.publish(actualtopic + "/return", value)
+
+
 def on_message(client, userdata, msg):
+    global actualtopic
+    actualtopic = msg.topic
     if msg.topic == TopicPrefix + "ring":
         rind(msg)
     if msg.topic == TopicPrefix + "arm/in":

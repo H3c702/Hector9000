@@ -8,7 +8,7 @@ from __future__ import division
 
 DevEnvironment = True
 
-from time import sleep
+from time import sleep, time
 import sys
 from HectorConfig import config
 
@@ -20,8 +20,8 @@ if not DevEnvironment:
     import RPi.GPIO as GPIO
     from hx711 import HX711
 
-
 logging.basicConfig(level=logging.DEBUG)
+
 
 def debugOut(name, value):
     print("=> %s: %d" % (name, value))
@@ -35,7 +35,7 @@ class HectorHardware:
         if not DevEnvironment:
             GPIO.setmode(GPIO.BOARD)
 
-        # setup scale (HX711)
+            # setup scale (HX711)
             hx1 = cfg["hx711"]["CLK"]
             hx2 = cfg["hx711"]["DAT"]
             hxref = cfg["hx711"]["ref"]
@@ -67,7 +67,7 @@ class HectorHardware:
         self.armStep = cfg["a4988"]["STEP"]
         self.armDir = cfg["a4988"]["DIR"]
         self.armNumSteps = cfg["a4988"]["numSteps"]
-        self.simulatedArmPos = self.armNumSteps / 2			# 50%
+        self.simulatedArmPos = self.armNumSteps / 2  # 50%
         print("arm step %d, dir %d" % (self.armStep, self.armDir))
         self.arm = cfg["arm"]["SENSE"]
         if not DevEnvironment:
@@ -96,7 +96,7 @@ class HectorHardware:
         if not DevEnvironment:
             GPIO.output(self.lightPin, False)
 
-    def arm_out(self, cback = debugOut):
+    def arm_out(self, cback=debugOut):
         armMaxSteps = int(self.armNumSteps * 1.1)
         if not DevEnvironment:
             GPIO.output(self.armEnable, False)
@@ -113,7 +113,7 @@ class HectorHardware:
                 sleep(.001)
                 GPIO.output(self.armStep, True)
                 sleep(.001)
-                if cback: cback("arm_out", i*100/self.armNumSteps)
+                if cback: cback("arm_out", i * 100 / self.armNumSteps)
             GPIO.output(self.armEnable, True)
         else:
             for i in range(armMaxSteps):
@@ -123,10 +123,10 @@ class HectorHardware:
                     if cback: cback("arm_out", 100)
                     return
                 sleep(.002)
-                if cback: cback("arm_out", i*100/self.armNumSteps)
+                if cback: cback("arm_out", i * 100 / self.armNumSteps)
         print("arm is in OUT position (with timeout)")
 
-    def arm_in(self, cback = debugOut):
+    def arm_in(self, cback=debugOut):
         self.arm_out(cback)
         if not DevEnvironment:
             GPIO.output(self.armEnable, False)
@@ -138,13 +138,13 @@ class HectorHardware:
                 sleep(.001)
                 GPIO.output(self.armStep, True)
                 sleep(.001)
-                if cback and (i % 10 == 0): cback("arm_in", i*100/self.armNumSteps)
+                if cback and (i % 10 == 0): cback("arm_in", i * 100 / self.armNumSteps)
             GPIO.output(self.armEnable, True)
         else:
             for i in range(self.armNumSteps, 0, -1):
                 self.simulatedArmPos -= 1
                 sleep(.002)
-                if cback and (i % 10 == 0): cback("arm_in", i*100/self.armNumSteps)
+                if cback and (i % 10 == 0): cback("arm_in", i * 100 / self.armNumSteps)
         print("arm is in IN position")
 
     def arm_isInOutPos(self):
@@ -203,7 +203,7 @@ class HectorHardware:
         if not DevEnvironment:
             self.valve_open(index, open=0)
 
-    def valve_dose(self, index, amount, timeout=30, cback = debugOut):
+    def valve_dose(self, index, amount, timeout=30, cback=debugOut):
         print("dose channel %d, amount %d" % (index, amount))
         if cback: cback("valve_dose", 0)
         sr = 0
@@ -238,7 +238,7 @@ class HectorHardware:
         if not DevEnvironment:
             self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[pos])
 
-    def ping(self, num, retract=True, cback = None):
+    def ping(self, num, retract=True, cback=None):
         if not DevEnvironment:
             print("ping :-)")
             self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[1])
@@ -277,22 +277,22 @@ class HectorHardware:
 # end class HectorHardware
 
 if __name__ == "__main__":
-    #if not DevEnvironment:
-        hector = HectorHardware(config)
-        hector.finger(0)
-        hector.arm_in()
-        for i in range(hector.numValves):
-            print("close valve %d = channel %d" % (i, hector.valveChannels[i]))
-            hector.valve_close(hector.valveChannels[i])
-        input("Bitte Glas auf die Markierung stellen")
-        # hector.ping(1)
-        hector.arm_out()
-        hector.valve_dose(1, 100)
-        hector.valve_dose(3, 20)
-        hector.finger(1)
-        hector.valve_dose(11, 100)
-        hector.arm_in()
-        hector.ping(3)
-        hector.finger(0)
-        hector.cleanAndExit()
-        print("done.")
+    # if not DevEnvironment:
+    hector = HectorHardware(config)
+    hector.finger(0)
+    hector.arm_in()
+    for i in range(hector.numValves):
+        print("close valve %d = channel %d" % (i, hector.valveChannels[i]))
+        hector.valve_close(hector.valveChannels[i])
+    input("Bitte Glas auf die Markierung stellen")
+    # hector.ping(1)
+    hector.arm_out()
+    hector.valve_dose(1, 100)
+    hector.valve_dose(3, 20)
+    hector.finger(1)
+    hector.valve_dose(11, 100)
+    hector.arm_in()
+    hector.ping(3)
+    hector.finger(0)
+    hector.cleanAndExit()
+    print("done.")
