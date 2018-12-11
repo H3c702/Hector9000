@@ -3,23 +3,32 @@
 ##
 #   HectorHardware.py       API class for Hector9000 hardware
 #
-# imports
-from __future__ import division
 
-DevEnvironment = True
+
+## imports
+from __future__ import division
 
 from time import sleep, time
 import sys
+
+from HectorAPI import HectorAPI
 from HectorConfig import config
 
-# Uncomment to enable debug output.
+
+## settings
+DevEnvironment = True
+# Uncomment to enable debug output:
 import logging
 
+
+## conditional imports
 if not DevEnvironment:
     import Adafruit_PCA9685
     import RPi.GPIO as GPIO
     from hx711 import HX711
 
+
+## initialization
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -27,9 +36,13 @@ def debugOut(name, value):
     print("=> %s: %d" % (name, value))
 
 
-class HectorHardware:
+## classes
+
+class HectorHardware(HectorAPI):
 
     def __init__(self, cfg):
+    
+        print("HectorHardware: development mode is " + "active" if DevEnvironment else "inactive")
 
         self.config = cfg
         if not DevEnvironment:
@@ -85,6 +98,9 @@ class HectorHardware:
         self.pump = cfg["pump"]["MOTOR"]
         if not DevEnvironment:
             GPIO.setup(self.pump, GPIO.IN)  # pump off; will be turned on with GPIO.OUT (?!?)
+
+    def getConfig(self):
+        return self.config
 
     def light_on(self):
         print("turn on light")
@@ -276,6 +292,8 @@ class HectorHardware:
 
 # end class HectorHardware
 
+
+## main (for testing only)
 if __name__ == "__main__":
     # if not DevEnvironment:
     hector = HectorHardware(config)

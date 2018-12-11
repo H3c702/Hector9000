@@ -14,7 +14,8 @@ from Menu import MenuModel, MenuManager
 from Screen import ScreenManager
 from Dispensing import DispensingModel
 
-from HectorHardware import HectorHardware
+#from HectorHardware import HectorHardware as Hector
+from HectorRemote import HectorRemote as Hector
 from HectorConfig import config
 
 from drinks import available_drinks, ingredients, actions, alcoholic
@@ -184,7 +185,7 @@ def drinkRequested(id):
 if __name__ == "__main__":
 
     global hector
-    hector = HectorHardware(config)
+    hector = Hector(config)
     readChannelConfiguration()
 
     # os.environ["QT_QUICK_CONTROLS_STYLE"] = "Material"
