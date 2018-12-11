@@ -40,6 +40,7 @@ def on_callback(name, value):
     global currentTopic
     print("=> %s: %d" % (name, value))
     client.publish(currentTopic + "/progress", value)
+    client.loop()
 
 def on_log(client, userdata, level, buf):
 	print("LOG " + str(level) + ": " + str(userdata) + " -- " + str(buf))
@@ -298,6 +299,7 @@ client.on_log = on_log
 
 client.connect(MQTTServer, 1883, 60)
 
-client.loop_forever()
+while True:
+	client.loop()
 
 #EOF

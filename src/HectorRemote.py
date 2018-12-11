@@ -29,6 +29,7 @@ class HectorRemote(HectorAPI):
     initDone = False
     currentCall = None
     returnValue = None
+    currentCallback = None
     
     # global vars
     
@@ -45,6 +46,9 @@ class HectorRemote(HectorAPI):
         self.client.on_subscribe = self.on_subscribe
         self.client.connect(self.MQTTServer, 1883, 60)
         self.client.loop_start()    # fork background thread
+        self.progressPattern = re.compile(self.TopicPrefix + r"(\w+)/progress")
+        self.returnPattern = re.compile(self.TopicPrefix + r"(\w+)/return")
+
         sleep(0.5)
         while not self.initDone:
             sleep(1)
@@ -79,16 +83,29 @@ class HectorRemote(HectorAPI):
         topic = msg.topic
         payload = msg.payload
         print("got message => %s: %s" % (topic, payload))
-        if topic.startswith(self.TopicPrefix) and topic.endswith("/return"):
+        if topic.startswith(self.TopicPrefix) and topic.endswith("/progress"):
+            print("is progress topic: " + topic)
+            m = self.progressPattern.fullmatch(topic)
+            if m:
+                subTopic = m.group(1)
+                print("match! " + subTopic)
+                if subTopic == self.currentCall:
+                    if self.currentCallback:
+                        value = str(msg.payload.decode("utf-8"))
+                        if value.isdigit:
+                            self.currentCallback(subTopic, int(value))
+            else:
+                print("no match-")
+        elif topic.startswith(self.TopicPrefix) and topic.endswith("/return"):
             print("is return topic: " + topic)
-            regexPattern = re.compile(self.TopicPrefix + r"(\w+)/return")
-            m = regexPattern.fullmatch(topic)
+            m = self.returnPattern.fullmatch(topic)
             if m:
                 subTopic = m.group(1)
                 print("match! " + subTopic)
                 if subTopic == self.currentCall:
                     self.returnValue = str(payload)
                     self.currentCall = None
+                    self.currentCallback = None
                 elif subTopic== "get_config":
                     cfg = eval(payload) # !!
                     self.config = cfg
@@ -106,10 +123,11 @@ class HectorRemote(HectorAPI):
     
     # helpers
     
-    def setCurrentCall(self, topic):
+    def setCurrentCall(self, topic, callback=None):
         if self.currentCall != None:
             raise Exception("current call conflict: " + topic + " - still waiting for " + self.currentCall)
         self.currentCall = topic
+        self.currentCallback = callback
 
     def waitForReturn(self):
         print("waitForReturn ", end="")
@@ -142,12 +160,12 @@ class HectorRemote(HectorAPI):
         self.waitForReturn()
 
     def arm_out(self, cback=debugOut):
-        self.setCurrentCall("arm_out")
+        self.setCurrentCall("arm_out", cback)
         self.client.publish(self.TopicPrefix + self.currentCall, "")
         self.waitForReturn()
 
     def arm_in(self, cback=debugOut):
-        self.setCurrentCall("arm_in")
+        self.setCurrentCall("arm_in", cback)
         self.client.publish(self.TopicPrefix + self.currentCall, "")
         self.waitForReturn()
 
@@ -189,7 +207,7 @@ class HectorRemote(HectorAPI):
         self.waitForReturn()
 
     def valve_dose(self, index, amount, timeout=30, cback=debugOut):
-        self.setCurrentCall("valve_dose")
+        self.setCurrentCall("valve_dose", cback)
         self.client.publish(self.TopicPrefix + self.currentCall, "%d,%d,%d" % (index, amount, timeout))
         ret = self.waitForReturnValue()
         return ret
@@ -200,7 +218,7 @@ class HectorRemote(HectorAPI):
         self.waitForReturn()
 
     def ping(self, num, retract=True, cback=None):
-        self.setCurrentCall("ping")
+        self.setCurrentCall("ping", cback)
         self.client.publish(self.TopicPrefix + self.currentCall, "%d,%d" % (num, 1 if retract else 0))
         self.waitForReturn()
 
