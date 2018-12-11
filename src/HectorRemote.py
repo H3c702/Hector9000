@@ -24,7 +24,7 @@ class HectorRemote(HectorAPI):
 
     # settings
     
-    MQTTServer = "dave"
+    MQTTServer = "localhost"
     TopicPrefix = "Hector9000/Main/"
     initDone = False
     currentCall = None

@@ -17,7 +17,7 @@ from HectorHardware import HectorHardware
 
 # settings
 
-MQTTServer = "dave"
+MQTTServer = "localhost"
 TopicPrefix = "Hector9000/Main/"
 
 
