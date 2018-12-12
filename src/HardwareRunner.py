@@ -14,12 +14,10 @@ import paho.mqtt.client as mqtt
 from HectorConfig import config
 from HectorHardware import HectorHardware
 
-
 # settings
 
 MQTTServer = "localhost"
 TopicPrefix = "Hector9000/Main/"
-
 
 # global vars
 
@@ -42,9 +40,9 @@ def on_callback(name, value):
     client.publish(currentTopic + "/progress", value)
     client.loop()
 
-def on_log(client, userdata, level, buf):
-	print("LOG " + str(level) + ": " + str(userdata) + " -- " + str(buf))
 
+def on_log(client, userdata, level, buf):
+    print("LOG " + str(level) + ": " + str(userdata) + " -- " + str(buf))
 
 
 # low-level functions
@@ -54,50 +52,60 @@ def do_get_config(msg):
     ret = hector.config
     client.publish(currentTopic + "/return", str(ret))
 
+
 def do_light_on(msg):
     print("turn on light")
     hector.light_on()
     client.publish(currentTopic + "/return", "ok")
+
 
 def do_light_off(msg):
     print("turn off light")
     hector.light_off()
     client.publish(currentTopic + "/return", "ok")
 
+
 def do_arm_out(msg):
     print("drive arm out")
     hector.arm_out(on_callback)
     client.publish(currentTopic + "/return", "ok")
+
 
 def do_arm_in(msg):
     print("drive arm in")
     hector.arm_in(on_callback)
     client.publish(currentTopic + "/return", "ok")
 
+
 def do_arm_isInOutPos(msg):
     print("X check if arm is in OUT position")
     pass
     client.publish(currentTopic + "/return", str(ret))
-    
+
+
 def do_scale_readout(msg):
     print("X query scale readout")
     pass
     client.publish(currentTopic + "/return", str(ret))
+
 
 def do_scale_tare(msg):
     print("set scale tare")
     hector.scale_tare()
     client.publish(currentTopic + "/return", "ok")
 
+
 def do_pump_start(msg):
     print("start pump")
     hector.pump_start()
     client.publish(currentTopic + "/return", "ok")
 
+
 def do_pump_stop(msg):
     print("stop pump")
     hector.pump_stop()
     client.publish(currentTopic + "/return", "ok")
+
 
 def do_valve_open(msg):
     print("open valve")
@@ -106,12 +114,13 @@ def do_valve_open(msg):
         return
     index = int(args[0])
     open = 1
-    if len(args)==2:
+    if len(args) == 2:
         if not doseArgs[1].isdigit():
             return
         open = int(args[1])
     hector.valve_open(index, open)
     client.publish(currentTopic + "/return", "ok")
+
 
 def do_valve_close(msg):
     print("close valve")
@@ -121,7 +130,8 @@ def do_valve_close(msg):
     index = int(arg)
     hector.valve_close(index)
     client.publish(currentTopic + "/return", "ok")
-    
+
+
 def do_valve_dose(msg):
     print("dose valve")
     args = str(msg.payload.decode("utf-8")).split(',')
@@ -141,6 +151,7 @@ def do_valve_dose(msg):
     ret = hector.valve_dose(index, amount, timeout, on_callback)
     client.publish(currentTopic + "/return", str(ret))
 
+
 def do_finger(msg):
     print("set finger position")
     arg = str(msg.payload.decode("utf-8"))
@@ -148,6 +159,7 @@ def do_finger(msg):
         pos = int(arg)
     hector.finger(pos)
     client.publish(currentTopic + "/return", "ok")
+
 
 def do_ping(msg):
     args = str(msg.payload.decode("utf-8")).split(',')
@@ -197,7 +209,7 @@ def dry(msg):
     hector.valve_open(pump)
     time.sleep(20)
     hector.valve_open(pump, 0)
-    #on_callback("dry", 1)
+    # on_callback("dry", 1)
     client.publish(currentTopic + "/return", "ok")
 
 
@@ -207,7 +219,7 @@ def clean(msg):
         pump = int(a)
     else:
         on_callback("clean", "Not a numeric message. Cant clean pump")
-        pass
+        return
 
     hector.pump_start()
     hector.valve_open(pump)
@@ -224,8 +236,9 @@ def clean(msg):
     time.sleep(10)
     hector.pump_stop()
     time.sleep(1)
-    #on_callback("clean", 1)
+    # on_callback("clean", 1)
     client.publish(currentTopic + "/return", "ok")
+
 
 def on_message(client, userdata, msg):
     try:
@@ -233,9 +246,9 @@ def on_message(client, userdata, msg):
         currentTopic = msg.topic
 
         if msg.topic.endswith("/progress"):
-            return    # ignore our own progress messages
+            return  # ignore our own progress messages
         elif msg.topic.endswith("/return"):
-            return    # ignore our own return messages
+            return  # ignore our own return messages
 
         # low-level
         elif msg.topic == TopicPrefix + "get_config":
@@ -249,7 +262,7 @@ def on_message(client, userdata, msg):
         elif msg.topic == TopicPrefix + "arm_in":
             do_arm_in(msg)
         elif msg.topic == TopicPrefix + "arm_isInOutPos":
-            do_armIsInOutPos(msg)
+            do_arm_isInOutPos(msg)
         elif msg.topic == TopicPrefix + "scale_readout":
             do_scale_readout(msg)
         elif msg.topic == TopicPrefix + "scale_tare":
@@ -300,6 +313,6 @@ client.on_log = on_log
 client.connect(MQTTServer, 1883, 60)
 
 while True:
-	client.loop()
+    client.loop()
 
-#EOF
+# EOF
