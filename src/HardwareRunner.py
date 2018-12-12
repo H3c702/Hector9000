@@ -78,14 +78,14 @@ def do_arm_in(msg):
 
 
 def do_arm_isInOutPos(msg):
-    print("X check if arm is in OUT position")
-    ret = None
-    client.publish(currentTopic + "/return", str(ret))
+    print("check if arm is in OUT position")
+    ret = "1" if hector.arm_isInOutPos else "0"
+    client.publish(currentTopic + "/return", ret)
 
 
 def do_scale_readout(msg):
-    print("X query scale readout")
-    ret = None
+    print("query scale readout")
+    ret = hector.scale_readout()
     client.publish(currentTopic + "/return", str(ret))
 
 
