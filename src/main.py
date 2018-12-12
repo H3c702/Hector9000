@@ -14,7 +14,7 @@ from Menu import MenuModel, MenuManager
 from Screen import ScreenManager
 from Dispensing import DispensingModel
 
-#from HectorHardware import HectorHardware as Hector
+# from HectorHardware import HectorHardware as Hector
 from HectorRemote import HectorRemote as Hector
 from HectorConfig import config
 

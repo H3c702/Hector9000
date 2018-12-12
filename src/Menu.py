@@ -30,9 +30,9 @@ class MenuManager(QObject):
         QObject.__init__(self)
         self.m_clickedId = ""
         self.clickedIdChanged.connect(self.on_clickedIdChanged)
-    
+
     def setAction(self, action):
-    		self.actionFunc = action
+        self.actionFunc = action
 
     @Property(str, notify=clickedIdChanged)
     def clickedId(self):
@@ -40,7 +40,7 @@ class MenuManager(QObject):
 
     @clickedId.setter
     def setclickedId(self, val):
-        #if self.m_clickedId == val:
+        # if self.m_clickedId == val:
         #    return
         self.m_clickedId = val
         self.clickedIdChanged.emit()

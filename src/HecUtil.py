@@ -4,6 +4,7 @@
 
 from PySide2.QtCore import Qt, QObject, Signal, Slot, Property
 
+
 class HecProperty(Property):
     def __init__(self, value, name='', type_=None, notify=None):
         if type_ and notify:
@@ -17,6 +18,7 @@ class HecProperty(Property):
     def setter(self, inst=None, value=None):
         self.value = value
         getattr(inst, '_%s_prop_signal_' % self.name).emit(value)
+
 
 class HecPropertyMeta(type(QObject)):
     def __new__(mcs, name, bases, attrs):

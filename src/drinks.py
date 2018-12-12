@@ -20,7 +20,7 @@ drink_list = [
         "recipe": [
             ("ingr", "gin", 50),
             ("ingr", "tonic", 150),
-				]
+        ]
     }, {
         "name": "Screwdriver",
         "color": "orange",
@@ -61,62 +61,62 @@ drink_list = [
 ]
 
 ingredients = {
-		# code				text		is_alcoholic?
-    "gin":			("Gin", True),
-    "rum":			("Rum", True),
-    "vodka":		("Vodka", True),
-    "tequila":	("Tequila", True),
-    "tonic":		("Tonic Water", False),
-    "coke":			("Coke", False),
-    "oj":				("Orange Juice", False),
-    "gren":			("Grenadine", False),
-    "mmix":			("Margarita Mix", True),
-    "mate":			("Mate", False),
+    # code				text		is_alcoholic?
+    "gin": ("Gin", True),
+    "rum": ("Rum", True),
+    "vodka": ("Vodka", True),
+    "tequila": ("Tequila", True),
+    "tonic": ("Tonic Water", False),
+    "coke": ("Coke", False),
+    "oj": ("Orange Juice", False),
+    "gren": ("Grenadine", False),
+    "mmix": ("Margarita Mix", True),
+    "mate": ("Mate", False),
 }
 
 actions = {
-		# code      text     is_automatic?
-		"ingr":		("Add Ingredient", True),
-		"ping":		("Ring Bell", True),
-		"shake":	("Shake", False),
-		"stir":		("Stir", False),
-		"ice":		("Add Ice", False),
-		"umb":		("Add Umbrella", False),
+    # code      text     is_automatic?
+    "ingr": ("Add Ingredient", True),
+    "ping": ("Ring Bell", True),
+    "shake": ("Shake", False),
+    "stir": ("Stir", False),
+    "ice": ("Add Ice", False),
+    "umb": ("Add Umbrella", False),
 }
-
-
 
 available_ingredients = ["oj", "tequila", "gren", "vodka", "mmix", "rum", "coke", "gin", "tonic", "mate"]
 
+
 def doable(drink, available):
-	return False not in [ing in available for ing in [step[1] for step in drink["recipe"] if step[0] == "ingr"]]
+    return False not in [ing in available for ing in [step[1] for step in drink["recipe"] if step[0] == "ingr"]]
+
 
 def alcoholic(drink):
-	return True in [ingredients[step[1]][1] for step in drink["recipe"] if step[0] == "ingr"]
+    return True in [ingredients[step[1]][1] for step in drink["recipe"] if step[0] == "ingr"]
+
 
 print("doable:")
-for drink in drink_list:	print (drink["name"], doable(drink, available_ingredients))
+for drink in drink_list:    print(drink["name"], doable(drink, available_ingredients))
 
-available_drinks = [ drink for drink in drink_list if doable(drink, available_ingredients) ]
+available_drinks = [drink for drink in drink_list if doable(drink, available_ingredients)]
 
 print("available:")
 for d in available_drinks:
-	print (d["name"] + " (" + ("" if alcoholic(d) else "non-") + "alcoholic)")
+    print(d["name"] + " (" + ("" if alcoholic(d) else "non-") + "alcoholic)")
 
 
 # alt
 
 def doable_alt(drink, ingredients):
-	#return reduce(lambda x,y: x and y, [ing in ingredients for ing, _ in drink["recipe"]])
-	for ing, _ in drink["recipe"]:
-		if ing not in ingredients:
-			return False
-	return True
+    # return reduce(lambda x,y: x and y, [ing in ingredients for ing, _ in drink["recipe"]])
+    for ing, _ in drink["recipe"]:
+        if ing not in ingredients:
+            return False
+    return True
+
 
 def alcoholic_alt(drink):
-	#return reduce(lambda x,y: x or y, [ingredients[ing][1] for ing, _ in drink["recipe"]])
-	for ing, _ in drink["recipe"]:
-		if ingredients[ing][1]: return True
-	return False
-
-
+    # return reduce(lambda x,y: x or y, [ingredients[ing][1] for ing, _ in drink["recipe"]])
+    for ing, _ in drink["recipe"]:
+        if ingredients[ing][1]: return True
+    return False

@@ -6,9 +6,11 @@
 
 import abc
 
+
 def debugOut(name, value):
     print("=> %s: %d" % (name, value))
-    
+
+
 class HectorAPI(object, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
@@ -74,6 +76,3 @@ class HectorAPI(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def cleanAndExit(self):
         pass
-
-
-

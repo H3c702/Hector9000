@@ -8,35 +8,32 @@ from time import sleep
 import re
 import paho.mqtt.client as mqtt
 
-
 from HectorAPI import HectorAPI
-#from HectorConfig import config
 
+
+# from HectorConfig import config
 
 
 def debugOut(name, value):
     print("=> %s: %d" % (name, value))
 
 
-
-
 class HectorRemote(HectorAPI):
-
     # settings
-    
+
     MQTTServer = "localhost"
     TopicPrefix = "Hector9000/Main/"
     initDone = False
     currentCall = None
     returnValue = None
     currentCallback = None
-    
+
     # global vars
-    
+
     pass
-    
+
     # constructor
-    
+
     def __init__(self, cfg=None):
         self.initDone = False
         self.client = mqtt.Client()
@@ -45,7 +42,7 @@ class HectorRemote(HectorAPI):
         self.client.on_publish = self.on_publish
         self.client.on_subscribe = self.on_subscribe
         self.client.connect(self.MQTTServer, 1883, 60)
-        self.client.loop_start()    # fork background thread
+        self.client.loop_start()  # fork background thread
         self.progressPattern = re.compile(self.TopicPrefix + r"(\w+)/progress")
         self.returnPattern = re.compile(self.TopicPrefix + r"(\w+)/return")
 
@@ -56,73 +53,72 @@ class HectorRemote(HectorAPI):
         print(" -- HectorRemote init done")
 
     # methods
-    
+
     #  callbacks
-    
+
     def on_connect(self, client, userdata, flags, rc):
-      try:
-        print("HectorRemote connected with result code " + str(rc))
-        self.client.subscribe(self.TopicPrefix + "#")
-        print("subscription sent")
-        # request configuration
-        self.client.publish(self.TopicPrefix + "get_config", "")
-        print("published get_config")
-        print("done with on_connect()")
-      except Exception as e:
-        print("error: " + str(e))
-    
+        try:
+            print("HectorRemote connected with result code " + str(rc))
+            self.client.subscribe(self.TopicPrefix + "#")
+            print("subscription sent")
+            # request configuration
+            self.client.publish(self.TopicPrefix + "get_config", "")
+            print("published get_config")
+            print("done with on_connect()")
+        except Exception as e:
+            print("error: " + str(e))
+
     def on_publish(self, client, userdata, mid):
-        #print("published: %s" % str(userdata))
+        # print("published: %s" % str(userdata))
         pass
-    
+
     def on_subscribe(self, client, userdata, mid, granted_qos):
         print("subscribed: %s" % str(userdata))
 
     def on_message(self, client, userdata, msg):
-      try:
-        topic = msg.topic
-        payload = msg.payload
-        print("got message => %s: %s" % (topic, payload))
-        if topic.startswith(self.TopicPrefix) and topic.endswith("/progress"):
-            print("is progress topic: " + topic)
-            m = self.progressPattern.fullmatch(topic)
-            if m:
-                subTopic = m.group(1)
-                print("match! " + subTopic)
-                if subTopic == self.currentCall:
-                    if self.currentCallback:
-                        value = str(msg.payload.decode("utf-8"))
-                        if value.isdigit:
-                            self.currentCallback(subTopic, int(value))
-            else:
-                print("no match-")
-        elif topic.startswith(self.TopicPrefix) and topic.endswith("/return"):
-            print("is return topic: " + topic)
-            m = self.returnPattern.fullmatch(topic)
-            if m:
-                subTopic = m.group(1)
-                print("match! " + subTopic)
-                if subTopic == self.currentCall:
-                    self.returnValue = str(payload)
-                    self.currentCall = None
-                    self.currentCallback = None
-                elif subTopic== "get_config":
-                    cfg = eval(payload) # !!
-                    self.config = cfg
-                    self.valveChannels = cfg["pca9685"]["valvechannels"]
-                    self.numValves = len(self.valveChannels)
-                    print("Config: " + str(self.config))
-                    print("  valveChannels: " + str(self.valveChannels))
-                    print("  numValves:     " + str(self.numValves))
-                    self.initDone = True
-            else:
-                print("no match-")
-      except Exception as e:
-          print("Error: " + str(e))
-    
-    
+        try:
+            topic = msg.topic
+            payload = msg.payload
+            print("got message => %s: %s" % (topic, payload))
+            if topic.startswith(self.TopicPrefix) and topic.endswith("/progress"):
+                print("is progress topic: " + topic)
+                m = self.progressPattern.fullmatch(topic)
+                if m:
+                    subTopic = m.group(1)
+                    print("match! " + subTopic)
+                    if subTopic == self.currentCall:
+                        if self.currentCallback:
+                            value = str(msg.payload.decode("utf-8"))
+                            if value.isdigit:
+                                self.currentCallback(subTopic, int(value))
+                else:
+                    print("no match-")
+            elif topic.startswith(self.TopicPrefix) and topic.endswith("/return"):
+                print("is return topic: " + topic)
+                m = self.returnPattern.fullmatch(topic)
+                if m:
+                    subTopic = m.group(1)
+                    print("match! " + subTopic)
+                    if subTopic == self.currentCall:
+                        self.returnValue = str(payload)
+                        self.currentCall = None
+                        self.currentCallback = None
+                    elif subTopic == "get_config":
+                        cfg = eval(payload)  # !!
+                        self.config = cfg
+                        self.valveChannels = cfg["pca9685"]["valvechannels"]
+                        self.numValves = len(self.valveChannels)
+                        print("Config: " + str(self.config))
+                        print("  valveChannels: " + str(self.valveChannels))
+                        print("  numValves:     " + str(self.numValves))
+                        self.initDone = True
+                else:
+                    print("no match-")
+        except Exception as e:
+            print("Error: " + str(e))
+
     # helpers
-    
+
     def setCurrentCall(self, topic, callback=None):
         if self.currentCall != None:
             raise Exception("current call conflict: " + topic + " - still waiting for " + self.currentCall)
@@ -137,7 +133,7 @@ class HectorRemote(HectorAPI):
             delay *= 1.01
             print(".", end="")
         pass
-        
+
     def waitForReturnValue(self):
         print("waitForReturnValue ", end="")
         delay = 0.01
@@ -146,9 +142,9 @@ class HectorRemote(HectorAPI):
             delay *= 1.01
             print(".", end="")
         return self.returnValue
-    
+
     #  API calls
-    
+
     def light_on(self):
         self.setCurrentCall("light_on")
         self.client.publish(self.TopicPrefix + self.currentCall, "")
@@ -232,7 +228,7 @@ if __name__ == "__main__":
     hector = HectorRemote()
     hector.finger(0)
     hector.arm_in()
-    
+
     for i in range(hector.numValves):
         print("close valve %d = channel %d" % (i, hector.valveChannels[i]))
         hector.valve_close(hector.valveChannels[i])
@@ -247,6 +243,5 @@ if __name__ == "__main__":
     hector.ping(3)
     hector.finger(0)
     hector.cleanAndExit()
-    
-    print("done.")
 
+    print("done.")
