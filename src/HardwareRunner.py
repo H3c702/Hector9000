@@ -182,7 +182,7 @@ def valve_dose(msg):
         hector.valve_dose(int(doseArgs[0]), int(doseArgs[1]), cback=on_callback)
         client.publish(currentTopic + "/return", "ok")
     else:
-        print("Not a numeric message. Cannot dose liquid.")
+        on_callback("valve_dose", "Not a numeric message. Cant dose liquid.")
     pass
 
 
@@ -206,8 +206,8 @@ def clean(msg):
     if a.isdigit():
         pump = int(a)
     else:
-        print("Not a numeric message. Cannot clean pump")
-        return
+        on_callback("clean", "Not a numeric message. Cant clean pump")
+        pass
 
     hector.pump_start()
     hector.valve_open(pump)
