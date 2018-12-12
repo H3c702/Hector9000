@@ -79,13 +79,13 @@ def do_arm_in(msg):
 
 def do_arm_isInOutPos(msg):
     print("X check if arm is in OUT position")
-    pass
+    ret = None
     client.publish(currentTopic + "/return", str(ret))
 
 
 def do_scale_readout(msg):
     print("X query scale readout")
-    pass
+    ret = None
     client.publish(currentTopic + "/return", str(ret))
 
 
@@ -115,7 +115,7 @@ def do_valve_open(msg):
     index = int(args[0])
     open = 1
     if len(args) == 2:
-        if not doseArgs[1].isdigit():
+        if not args[1].isdigit():
             return
         open = int(args[1])
     hector.valve_open(index, open)
