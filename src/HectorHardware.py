@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
-# -*- coding: utf8 -*-
+# coding: utf8
 ##
-#   HectorHardware.py       API class for Hector9000 hardware
+#	HectorHardware.py		API class for Hector9000 hardware
 #
 # imports
 from __future__ import division
 
-DevEnvironment = False
+devEnvironment = False
 
 import time
 import sys
+import Adafruit_PCA9685
 from HectorConfig import config
 
 # Uncomment to enable debug output.
 import logging
 
-if not DevEnvironment:
-    import Adafruit_PCA9685
+if not devEnvironment:
     import RPi.GPIO as GPIO
     from hx711 import HX711
 
@@ -29,44 +29,41 @@ class HectorHardware:
     def __init__(self, cfg):
 
         self.config = cfg
-        if not DevEnvironment:
+        if not devEnvironment:
             GPIO.setmode(GPIO.BOARD)
 
-        # setup scale (HX711)
             hx1 = cfg["hx711"]["CLK"]
             hx2 = cfg["hx711"]["DAT"]
             hxref = cfg["hx711"]["ref"]
-        if not DevEnvironment:
             self.hx = HX711(hx1, hx2)
             self.hx.set_reading_format("LSB", "MSB")
             self.hx.set_reference_unit(hxref)
             self.hx.reset()
             self.hx.tare()
 
-        # setup servos (PCA9685)
-        self.valveChannels = cfg["pca9685"]["valvechannels"]
-        self.numValves = len(self.valveChannels)
-        self.valvePositions = cfg["pca9685"]["valvepositions"]
-        self.fingerChannel = cfg["pca9685"]["fingerchannel"]
-        self.fingerPositions = cfg["pca9685"]["fingerpositions"]
-        self.lightPin = cfg["pca9685"]["lightpin"]
-        self.lightChannel = cfg["pca9685"]["lightpwmchannel"]
-        self.lightPositions = cfg["pca9685"]["lightpositions"]
-        if not DevEnvironment:
             pcafreq = cfg["pca9685"]["freq"]
             self.pca = Adafruit_PCA9685.PCA9685()
             self.pca.set_pwm_freq(pcafreq)
+            self.valveChannels = cfg["pca9685"]["valvechannels"]
+            self.numValves = len(self.valveChannels)
+            self.valvePositions = cfg["pca9685"]["valvepositions"]
+            self.fingerChannel = cfg["pca9685"]["fingerchannel"]
+            self.fingerPositions = cfg["pca9685"]["fingerpositions"]
+            self.lightPin = cfg["pca9685"]["lightpin"]
+            self.lightChannel = cfg["pca9685"]["lightpwmchannel"]
+            self.lightPositions = cfg["pca9685"]["lightpositions"]
 
-        # setup arm stepper (A4988)
-        self.armEnable = cfg["a4988"]["ENABLE"]
-        self.armReset = cfg["a4988"]["RESET"]
-        self.armSleep = cfg["a4988"]["SLEEP"]
-        self.armStep = cfg["a4988"]["STEP"]
-        self.armDir = cfg["a4988"]["DIR"]
-        self.armSteps = cfg["a4988"]["numSteps"]
-        print("arm step %d, dir %d" % (self.armStep, self.armDir))
-        self.arm = cfg["arm"]["SENSE"]
-        if not DevEnvironment:
+            print("arm step + dir")
+            self.armEnable = cfg["a4988"]["ENABLE"]
+            self.armReset = cfg["a4988"]["RESET"]
+            self.armSleep = cfg["a4988"]["SLEEP"]
+            self.armStep = cfg["a4988"]["STEP"]
+            self.armDir = cfg["a4988"]["DIR"]
+            self.armSteps = cfg["a4988"]["numSteps"]
+            print("arm step %d + dir %d" % (self.armStep, self.armDir))
+
+            GPIO.setup(self.lightPin, GPIO.OUT)
+            GPIO.output(self.lightPin, False)
             GPIO.setup(self.armEnable, GPIO.OUT)
             GPIO.output(self.armEnable, True)
             GPIO.setup(self.armReset, GPIO.OUT)
@@ -75,46 +72,46 @@ class HectorHardware:
             GPIO.output(self.armSleep, True)
             GPIO.setup(self.armStep, GPIO.OUT)
             GPIO.setup(self.armDir, GPIO.OUT)
+        print("done")
+
+        self.arm = cfg["arm"]["SENSE"]
+        if not devEnvironment:
             GPIO.setup(self.arm, GPIO.IN)
 
-        # setup air pump (GPIO)
         self.pump = cfg["pump"]["MOTOR"]
-        if not DevEnvironment:
+        if not devEnvironment:
             GPIO.setup(self.pump, GPIO.IN)  # pump off; will be turned on with GPIO.OUT (?!?)
 
     def light_on(self):
-        print("turn on light")
-        if not DevEnvironment:
+        if not devEnvironment:
             GPIO.output(self.lightPin, True)
 
     def light_off(self):
-        print("turn off light")
-        if not DevEnvironment:
+        if not devEnvironment:
             GPIO.output(self.lightPin, False)
 
     def arm_out(self):
-        if not DevEnvironment:
+        if not devEnvironment:
             GPIO.output(self.armEnable, False)
         print("move arm out")
-        if not DevEnvironment:
+        if not devEnvironment:
             GPIO.output(self.armDir, True)
         while not self.arm_pos():
-            if not DevEnvironment:
+            if not devEnvironment:
                 GPIO.output(self.armStep, False)
                 time.sleep(.001)
                 GPIO.output(self.armStep, True)
                 time.sleep(.001)
-        if not DevEnvironment:
+        if not devEnvironment:
             GPIO.output(self.armEnable, True)
-        print("arm is in OUT position")
+        print("arm is in out position")
 
 
     def arm_in(self):
         self.arm_out()
-        if not DevEnvironment:
+        if not devEnvironment:
             GPIO.output(self.armEnable, False)
-        print("move arm in")
-        if not DevEnvironment:
+            print("move arm in")
             GPIO.output(self.armDir, False)
             for i in range(self.armSteps):
                 GPIO.output(self.armStep, False)
@@ -122,23 +119,24 @@ class HectorHardware:
                 GPIO.output(self.armStep, True)
                 time.sleep(.001)
             GPIO.output(self.armEnable, True)
-        print("arm is in IN position")
+        print("arm is in in position")
 
     def arm_pos(self):
-        if DevEnvironment:
-            print("no arm pos available")
-            return 100
-        pos = GPIO.input(self.arm)
+        if not devEnvironment:
+            pos = GPIO.input(self.arm)
         print("arm_pos: %d" % pos)
-        pos = (pos != 0)
-        if pos:
-            print("arm_pos = out")
+        if not devEnvironment:
+            pos = (pos != 0)
+            if pos:
+                print("arm_pos = out")
+            else:
+                print("arm_pos = in")
         else:
-            print("arm_pos = in")
+            pos = 100
         return pos
 
     def scale_readout(self):
-        if not DevEnvironment:
+        if not devEnvironment:
             weight = self.hx.get_weight(5)
             print("weight = %.1f" % weight)
         else:
@@ -146,24 +144,20 @@ class HectorHardware:
         return weight
 
     def scale_tare(self):
-        if not DevEnvironment:
+        if not devEnvironment:
             self.hx.tare()
 
     def pump_start(self):
         print("start pump")
-        if not DevEnvironment:
+        if not devEnvironment:
             GPIO.setup(self.pump, GPIO.OUT)
 
     def pump_stop(self):
         print("stop pump")
-        if not DevEnvironment:
+        if not devEnvironment:
             GPIO.setup(self.pump, GPIO.IN)
 
     def valve_open(self, index, open=1):
-        if open == 0:
-            print("close valve")
-        else:
-            print("open valve")
         if (index < 0 and index >= len(self.valveChannels) - 1):
             return
         if open == 0:
@@ -173,17 +167,17 @@ class HectorHardware:
         ch = self.valveChannels[index]
         pos = self.valvePositions[index][1 - open]
         print("ch %d, pos %d" % (ch, pos))
-        if not DevEnvironment:
+
+        if not devEnvironment:
             self.pca.set_pwm(ch, 0, pos)
 
     def valve_close(self, index):
-        if not DevEnvironment:
+        if not devEnvironment:
             self.valve_open(index, open=0)
 
     def valve_dose(self, index, amount, timeout=30):
-        print("dose channel %d, amount %d" % (index, amount))
         sr = 0
-        if not DevEnvironment:
+        if not devEnvironment:
             if (index < 0 and index >= len(self.valveChannels) - 1):
                 return
             t0 = time.time()
@@ -200,17 +194,15 @@ class HectorHardware:
                 time.sleep(0.1)
             self.pump_stop()
             self.valve_close(index)
-        else:
-            time.sleep(3)
         return sr
 
     def finger(self, pos=0):
-        if not DevEnvironment:
+        if not devEnvironment:
             self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[pos])
 
     def ping(self, num, retract=True):
         print("ping :-)")
-        if not DevEnvironment:
+        if not devEnvironment:
             self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[1])
             for i in range(num):
                 self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[1])
@@ -224,7 +216,7 @@ class HectorHardware:
 
     def cleanAndExit(self):
         print("Cleaning...")
-        if not DevEnvironment:
+        if not devEnvironment:
             GPIO.cleanup()
         print("Bye!")
         sys.exit()
@@ -233,19 +225,24 @@ class HectorHardware:
     def set_servo_pulse(self, channel, pulse):
         pulse_length = 1000000  # 1,000,000 us per second
         pulse_length //= 60  # 60 Hz
-        print('{0} µs per period'.format(pulse_length))
+        print('{0} us per period'.format(pulse_length))
         pulse_length //= 4096  # 12 bits of resolution
-        print('{0} µs per bit'.format(pulse_length))
+        print('{0} us per bit'.format(pulse_length))
         pulse *= 1000
         pulse //= pulse_length
-        if not DevEnvironment:
+        if not devEnvironment:
             self.pca.set_pwm(channel, 0, pulse)
 
 
 # end class HectorHardware
 
 if __name__ == "__main__":
-    #if not DevEnvironment:
+    if not devEnvironment:
+        hector = HectorHardware(config)
+        hector.ping(int(sys.argv[1]))
+        hector.finger(0)
+if __name__ == "XX__main__":
+    if not devEnvironment:
         hector = HectorHardware(config)
         hector.finger(0)
         hector.arm_in()

@@ -21,14 +21,18 @@ class Configure(Screen):
             Label(text='Do you realy want to close Hector9000 ? \nThere will be no more drinks ....'))
         root.add_widget(root2)
 
-        content = Button(text='OK', font_size=60, size_hint_y=0.15)
-        root.add_widget(content)
+        buttOK = Button(text='OK', font_size=60, size_hint_y=0.15)
+        root.add_widget(buttOK)
+
+        buttCancel = Button(text='Cancel', font_size=60, size_hint_y=0.15)
+        root.add_widget(buttCancel)
 
         popup = Popup(title='WAIT !!!', content=root,
                       auto_dismiss=False)
 
-        content.bind(on_press=popup.dismiss)
-        popup.bind(on_dismiss=self.shutdown)
+        buttOK.bind(on_press=self.shutdown)
+        buttCancel.bind(on_press=popup.dismiss)
+        #popup.bind(on_dismiss=self.shutdown)
         popup.open()
 
     def shutdown(self, instance):

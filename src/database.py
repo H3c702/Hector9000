@@ -1,5 +1,6 @@
 import sqlite3 as lite
 import datetime
+from time import *
 
 
 class Database:
@@ -31,3 +32,17 @@ class Database:
     def __del__(self):
         self.con.commit()
         self.con.close()
+
+# when called directly, read out database and generate a log
+if __name__ == "__main__":
+    db = Database("h9k")
+    db.cur.execute("SELECT * FROM DrinksLog WHERE date > '2018-12-11' ORDER BY date ASC")
+    #db.cur.execute("SELECT * FROM DrinksLog ORDER BY date ASC")
+    res = db.cur.fetchall()
+    #print("%d entries" % len(res))
+    for l in res:
+        number, name, tstampstr = l
+        tstamp = mktime(strptime(tstampstr.split(".")[0], "%Y-%m-%d %H:%M:%S"))
+        tstamp += (14*24*3600 + 10*3600 + 8*60 + 28)
+        print("%30s:  %s" % (strftime("%a %Y-%m-%d %H:%M:%S", localtime(tstamp)), name))
+
