@@ -10,6 +10,7 @@ Minimal Requirements
 
 Install on RaspberryPi
 ----
+
 First of all you have to install Python 3 and Kivy on your Raspberry Pi. 
 
 For this there  is a HowTo on the Kivy Homepage : 		
@@ -63,6 +64,7 @@ So because Hector has twelve valve channels you have 12 valves predefined (in `s
 Therefore you have to edit the `servo_config.json` file and set the `value` field to the ingredient identifier you put into the channel. 
 Only drinks that have all the required ingredients set in the `servo_config.json` will be shown in the menu.
 
+
 Example:
 
 	"pump_3": {
@@ -70,6 +72,7 @@ Example:
 		"channel": 2,
 		"value": "oj"
 	},
+
 
 
 Development on non-Hector hardware :
