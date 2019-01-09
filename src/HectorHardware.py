@@ -6,7 +6,7 @@
 # imports
 from __future__ import division
 
-devenvirement = True
+devEnvironment = False
 
 import time
 import sys
@@ -16,7 +16,7 @@ from HectorConfig import config
 # Uncomment to enable debug output.
 import logging
 
-if not devenvirement:
+if not devEnvironment:
     import RPi.GPIO as GPIO
     from hx711 import HX711
 
@@ -29,7 +29,7 @@ class HectorHardware:
     def __init__(self, cfg):
 
         self.config = cfg
-        if not devenvirement:
+        if not devEnvironment:
             GPIO.setmode(GPIO.BOARD)
 
             hx1 = cfg["hx711"]["CLK"]
@@ -49,7 +49,8 @@ class HectorHardware:
             self.valvePositions = cfg["pca9685"]["valvepositions"]
             self.fingerChannel = cfg["pca9685"]["fingerchannel"]
             self.fingerPositions = cfg["pca9685"]["fingerpositions"]
-            self.lightChannel = cfg["pca9685"]["lightchannel"]
+            self.lightPin = cfg["pca9685"]["lightpin"]
+            self.lightChannel = cfg["pca9685"]["lightpwmchannel"]
             self.lightPositions = cfg["pca9685"]["lightpositions"]
 
             print("arm step + dir")
@@ -61,6 +62,8 @@ class HectorHardware:
             self.armSteps = cfg["a4988"]["numSteps"]
             print("arm step %d + dir %d" % (self.armStep, self.armDir))
 
+            GPIO.setup(self.lightPin, GPIO.OUT)
+            GPIO.output(self.lightPin, False)
             GPIO.setup(self.armEnable, GPIO.OUT)
             GPIO.output(self.armEnable, True)
             GPIO.setup(self.armReset, GPIO.OUT)
@@ -72,33 +75,41 @@ class HectorHardware:
         print("done")
 
         self.arm = cfg["arm"]["SENSE"]
-        if not devenvirement:
+        if not devEnvironment:
             GPIO.setup(self.arm, GPIO.IN)
 
         self.pump = cfg["pump"]["MOTOR"]
-        if not devenvirement:
+        if not devEnvironment:
             GPIO.setup(self.pump, GPIO.IN)  # pump off; will be turned on with GPIO.OUT (?!?)
 
+    def light_on(self):
+        if not devEnvironment:
+            GPIO.output(self.lightPin, True)
+
+    def light_off(self):
+        if not devEnvironment:
+            GPIO.output(self.lightPin, False)
+
     def arm_out(self):
-        if not devenvirement:
+        if not devEnvironment:
             GPIO.output(self.armEnable, False)
         print("move arm out")
-        if not devenvirement:
+        if not devEnvironment:
             GPIO.output(self.armDir, True)
         while not self.arm_pos():
-            if not devenvirement:
+            if not devEnvironment:
                 GPIO.output(self.armStep, False)
                 time.sleep(.001)
                 GPIO.output(self.armStep, True)
                 time.sleep(.001)
-        if not devenvirement:
+        if not devEnvironment:
             GPIO.output(self.armEnable, True)
         print("arm is in out position")
 
 
     def arm_in(self):
         self.arm_out()
-        if not devenvirement:
+        if not devEnvironment:
             GPIO.output(self.armEnable, False)
             print("move arm in")
             GPIO.output(self.armDir, False)
@@ -111,10 +122,10 @@ class HectorHardware:
         print("arm is in in position")
 
     def arm_pos(self):
-        if not devenvirement:
+        if not devEnvironment:
             pos = GPIO.input(self.arm)
         print("arm_pos: %d" % pos)
-        if not devenvirement:
+        if not devEnvironment:
             pos = (pos != 0)
             if pos:
                 print("arm_pos = out")
@@ -125,7 +136,7 @@ class HectorHardware:
         return pos
 
     def scale_readout(self):
-        if not devenvirement:
+        if not devEnvironment:
             weight = self.hx.get_weight(5)
             print("weight = %.1f" % weight)
         else:
@@ -133,17 +144,17 @@ class HectorHardware:
         return weight
 
     def scale_tare(self):
-        if not devenvirement:
+        if not devEnvironment:
             self.hx.tare()
 
     def pump_start(self):
         print("start pump")
-        if not devenvirement:
+        if not devEnvironment:
             GPIO.setup(self.pump, GPIO.OUT)
 
     def pump_stop(self):
         print("stop pump")
-        if not devenvirement:
+        if not devEnvironment:
             GPIO.setup(self.pump, GPIO.IN)
 
     def valve_open(self, index, open=1):
@@ -157,16 +168,16 @@ class HectorHardware:
         pos = self.valvePositions[index][1 - open]
         print("ch %d, pos %d" % (ch, pos))
 
-        if not devenvirement:
+        if not devEnvironment:
             self.pca.set_pwm(ch, 0, pos)
 
     def valve_close(self, index):
-        if not devenvirement:
+        if not devEnvironment:
             self.valve_open(index, open=0)
 
     def valve_dose(self, index, amount, timeout=30):
         sr = 0
-        if not devenvirement:
+        if not devEnvironment:
             if (index < 0 and index >= len(self.valveChannels) - 1):
                 return
             t0 = time.time()
@@ -186,12 +197,12 @@ class HectorHardware:
         return sr
 
     def finger(self, pos=0):
-        if not devenvirement:
+        if not devEnvironment:
             self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[pos])
 
     def ping(self, num, retract=True):
         print("ping :-)")
-        if not devenvirement:
+        if not devEnvironment:
             self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[1])
             for i in range(num):
                 self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[1])
@@ -205,7 +216,7 @@ class HectorHardware:
 
     def cleanAndExit(self):
         print("Cleaning...")
-        if not devenvirement:
+        if not devEnvironment:
             GPIO.cleanup()
         print("Bye!")
         sys.exit()
@@ -219,14 +230,19 @@ class HectorHardware:
         print('{0} us per bit'.format(pulse_length))
         pulse *= 1000
         pulse //= pulse_length
-        if not devenvirement:
+        if not devEnvironment:
             self.pca.set_pwm(channel, 0, pulse)
 
 
 # end class HectorHardware
 
 if __name__ == "__main__":
-    if not devenvirement:
+    if not devEnvironment:
+        hector = HectorHardware(config)
+        hector.ping(int(sys.argv[1]))
+        hector.finger(0)
+if __name__ == "XX__main__":
+    if not devEnvironment:
         hector = HectorHardware(config)
         hector.finger(0)
         hector.arm_in()

@@ -2,61 +2,61 @@
 	"pump_1": {
 		"name": "Pump 1",
 		"channel": 0,
-		"value": "gin"
+		"value": "gren"
 	},
 	"pump_2": {
 		"name": "Pump 2",
 		"channel": 1,
-		"value": "tonic"
+		"value": "cocos"
 	},
 	"pump_3": {
 		"name": "Pump 3",
 		"channel": 2,
-		"value": "oj"
+		"value": "lemonjuice"
 	},
 	"pump_4": {
 		"name": "Pump 4",
 		"channel": 3,
-		"value": "coke"
+		"value": "rum"
 	},
 	"pump_5": {
 		"name": "Pump 5",
 		"channel": 4,
-		"value": "tequila"
+		"value": "vodka"
 	},
 	"pump_6": {
 		"name": "Pump 6",
 		"channel": 5,
-		"value": "gren"
+		"value": "000_gin"
 	},
 	"pump_7": {
 		"name": "Pump 7",
 		"channel": 6,
-		"value": null
+		"value": "curacao"
 	},
 	"pump_8": {
 		"name": "Pump 8",
 		"channel": 7,
-		"value": null
+		"value": "mango"
 	},
 	"pump_9": {
 		"name": "Pump 9",
 		"channel": 8,
-		"value": null
+		"value": "pineapple"
 	},
 	"pump_10": {
 		"name": "Pump 10",
 		"channel": 9,
-		"value": null
+		"value": "mate"
 	},
 	"pump_11": {
 		"name": "Pump 11",
 		"channel": 10,
-		"value": null
+		"value": "bacardi"
 	},
 	"pump_12": {
 		"name": "Pump 12",
 		"channel": 11,
-		"value": null
+		"value": "oj"
 	}
 }

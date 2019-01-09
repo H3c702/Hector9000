@@ -5,7 +5,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 from MainPanel import MainPanel
 from ConfigureScreen import Configure
 
-Config.set('graphics', 'fullscreen', '0') # 'auto' -> Fullscreen | '0' -> NormalMode
+Config.set('graphics', 'fullscreen', 'auto') # 'auto' -> Fullscreen | '0' -> NormalMode
 
 
 class MyScreenManager(ScreenManager):

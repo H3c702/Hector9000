@@ -80,3 +80,7 @@ modules.xml
 *.pyc
 
 *.db
+
+src/log
+
+src/nohup\.out

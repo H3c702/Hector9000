@@ -72,7 +72,12 @@ class MainPanel(Screen):
         count = 0
         while count < countDrinksOnScreen:
             self.buttonText[count] = drinks[count]['name']
-            self.buttonColor[count] = [1, 0, 0, 1] if self.isalcoholic(drinks[count]) else [0, 1, 0, 1]
+            if self.buttonText[count].startswith("..."):
+                self.buttonColor[count] = [.3, .3, .3, 1]
+            elif self.isalcoholic(drinks[count]):
+                self.buttonColor[count] = [1, 0, 0, 1]
+            else: # non-alcoholic
+                self.buttonColor[count] = [0, 1, 0, 1]
             count += 1
 
         while count < 8:
@@ -90,25 +95,34 @@ class MainPanel(Screen):
         root2 = BoxLayout()
         root2.add_widget(Image(source='img/empty-glass.png'))
         root2.add_widget(
-            Label(text='Please be shoure ,\n that a Glas \nwith min 400ml \nstands under the extruder.'))
+            Label(text='Please be sure\n that a glass \nwith min 200 ml \nis placed onto the black fixture.', font_size='30sp'))
         root.add_widget(root2)
 
-        content = Button(text='OK', font_size=60, size_hint_y=0.15)
-        root.add_widget(content)
+        contentOK = Button(text='OK', font_size=60, size_hint_y=0.15)
+        root.add_widget(contentOK)
+
+        contentCancel = Button(text='Cancel', font_size=60, size_hint_y=0.15)
+        root.add_widget(contentCancel)
 
         popup = Popup(title='LOOK HERE !!!', content=root,
                       auto_dismiss=False)
 
         def closeme(button):
             popup.dismiss()
-            Clock.schedule_once(partial(self.doGiveDrink, args[0]), .5)
+            Clock.schedule_once(partial(self.doGiveDrink, args[0]), .01)
 
-        content.bind(on_press=closeme)
+        contentOK.bind(on_press=closeme)
+        
+        def cancelme(button):
+            popup.dismiss()
+
+        contentCancel.bind(on_press=cancelme)
+
         popup.open()
 
     def doGiveDrink(self, drink, intervaltime):
         root = BoxLayout(orientation='vertical')
-        content = Label(text='Take a break \nYour \n\n' + self.drinkOnScreen[drink]["name"]+'\n\nwill be mixed.')
+        content = Label(text='Take a break -- \nYour \n\n' + self.drinkOnScreen[drink]["name"]+'\n\nwill be mixed.', font_size='40sp')
         root.add_widget(content)
         popup = Popup(title='Life, the Universe, and Everything. There is an answer.', content=root,
                       auto_dismiss=False)
@@ -117,18 +131,22 @@ class MainPanel(Screen):
             drinks = self.drinkOnScreen[drink]
 
             hector = HectorHardware(config)
+            hector.light_on()
+            time.sleep(1)
             hector.arm_out()
 
             for ingridient in drinks["recipe"]:
                 hector.valve_dose(pumpList[ingridient[0]], ingridient[1])
-                time.sleep(1)
+                time.sleep(.1)
                 print("IndexPumpe: ", pumpList[ingridient[0]])
-                print("Incredence: ", ingridient[0])
+                print("Ingredient: ", ingridient[0])
                 print("Output in ml: ", ingridient[1])
                 self.db.countUpIngredient(ingridient[0],ingridient[1])
 
+            time.sleep(1)
             self.db.countUpDrink(drinks["name"])
             hector.arm_in()
+            hector.light_off()
             hector.finger(1)
             hector.ping(3)
             hector.finger(0)
