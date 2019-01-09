@@ -1,7 +1,7 @@
 HECTOR 9000
 ======================
 
-Min requirements
+Minimal Requirements
 ---
 
 	- Python 3
@@ -10,30 +10,35 @@ Min requirements
 
 Install on RaspberryPi
 ----
-First of all you have to install Python3 and Kivy on your RaspberryPi. 
-For this there  is a HowTo on the Kivi Homepage : 		
+
+First of all you have to install Python 3 and Kivy on your Raspberry Pi. 
+
+For this there  is a HowTo on the Kivy Homepage : 		
 
 	https://kivy.org/doc/stable/installation/installation-rpi.html
 
-After you habe installed Python and Kivy you can get you the sources by using Git
+After you have installed Python and Kivy you can get the sources by using Git
 
 	git clone https://github.com/H3c702/Hector9000.git
 
-have to install all the requiremets listend in the requirement.txt by using pip
+You can install all the requirements listed in the file `requirements.txt` by using `pip` (use `pip3` if `pip` uses Python 2)
 
 	pip3 install -r requirements.txt
 
 Add Drinks
 ---
 
-To add a new Drink you have to modify the drinks.py file and add a new item in the Array
+To add a new Drink you have to modify the `drinks.py` file and add a new item into the array
 
 	{
         "name": "NAME OF DRINK",
         "recipe": [
-            ("tequila", 50),
-            ("ingredients", ML)
-        ]	}
+            ("INGREDIENT1", AMOUNT1),
+            ("INGREDIENT2", AMOUNT2)
+        ]	
+    }
+
+All strings in `UPPERCASE` are placeholders, all lowercase strings have to be used literally in the definition. The `INGREDIENTx` names are not cleartext but are identifiers referencing into the `ingredients` list below in the same file. The `AMOUNTx` values are numerical values of the corresponding ingredient's amount in grams.
 
 At the moment there are only some ingredients but feel free to put in some new.
 
@@ -46,16 +51,19 @@ At the moment there are only some ingredients but feel free to put in some new.
 		"tonic": ("Tonic Water", False),
 		"coke": ("Coke", False),
 		"oj": ("Orange Juice", False),
-		"gren": ("Orange Juice", False),
+		"gren": ("Grenadine", False),
 		"mmix": ("Margarita Mix", True)
 
+Here each ingredient identifier is mapped into a tuple containing the NICENAME used in the UI and a flag that tells whether the ingredient contains alcohol.
+A future extension might allow multi-language UIs.
 
-Set value of pumps
+Assigning valves
 ---
 
-So because you have 12 pumps predefined (servo_config.json and HectorHardware) you have to manage the ingredients of the pumps.
-Therefore you have to edit the "servo_config.json" fiel and set the "value" to the ingredients you put in. 
-Only drinks that contain all needed ingredients, which are set in the "servo_config.json", will be shown in the Menu.
+So because Hector has twelve valve channels you have 12 valves predefined (in `servo_config.json` and `HectorHardware.py`) to manage the mapping of each ingredient to a valve.
+Therefore you have to edit the `servo_config.json` file and set the `value` field to the ingredient identifier you put into the channel. 
+Only drinks that have all the required ingredients set in the `servo_config.json` will be shown in the menu.
+
 
 Example:
 
@@ -66,11 +74,14 @@ Example:
 	},
 
 
-Development on not Pi-Machine :
---
 
-	If you are on a not RaspberryPi you can set the Var in Hectorhardware.py 
+Development on non-Hector hardware :
+---
 
-	devenvirement = True
+If you are not on the "real" Hector hardware you can set the var `devEnvironment` in `Hectorhardware.py` to `True`:
 
-	If you are in Production or dev direct on a Pi you can set this var to False.
+	devEnvironment = True
+
+The HectorHardware library will then emulate Hector's hardware to allow testing of the UI, for example.
+
+If you are in production or are developing directly on Hector's Pi you should set this var to `False`.
