@@ -61,6 +61,21 @@ class MainPanel(Screen):
         self.drinkOnScreen = drink_list[:8]
 
         self.fillButtons(self.drinkOnScreen)
+        self.initVent()
+
+    def initVent(self):
+        print("Prepare vets.")
+        h = HectorHardware(config)
+        h.light_on()
+        time.sleep(1)
+        h.arm_in()
+
+        h.pump_stop()
+        for vnum in range(12):
+            print("Vent %d closing..." % (vnum,))
+            time.sleep(1)
+            h.valve_close(vnum)
+        h.light_off()
 
     def isalcoholic(self, drink):
         for ing, _ in drink["recipe"]:

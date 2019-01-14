@@ -6,7 +6,7 @@
 # imports
 from __future__ import division
 
-devEnvironment = False
+devEnvironment = True
 
 import time
 import sys
@@ -19,7 +19,6 @@ import logging
 if not devEnvironment:
     import RPi.GPIO as GPIO
     from hx711 import HX711
-
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -106,7 +105,6 @@ class HectorHardware:
             GPIO.output(self.armEnable, True)
         print("arm is in out position")
 
-
     def arm_in(self):
         self.arm_out()
         if not devEnvironment:
@@ -124,8 +122,8 @@ class HectorHardware:
     def arm_pos(self):
         if not devEnvironment:
             pos = GPIO.input(self.arm)
-        print("arm_pos: %d" % pos)
-        if not devEnvironment:
+            print("arm_pos: %d" % pos)
+
             pos = (pos != 0)
             if pos:
                 print("arm_pos = out")
@@ -133,6 +131,7 @@ class HectorHardware:
                 print("arm_pos = in")
         else:
             pos = 100
+            print("arm_pos: %d" % pos)
         return pos
 
     def scale_readout(self):
