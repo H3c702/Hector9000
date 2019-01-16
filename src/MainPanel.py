@@ -3,7 +3,6 @@ import json
 from kivy.core.text import Label
 from drinks import drink_list, ingredients
 from kivy.properties import StringProperty, ListProperty
-from kivy.uix.progressbar import ProgressBar
 from functools import partial
 from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
@@ -73,7 +72,6 @@ class MainPanel(Screen):
         h.pump_stop()
         for vnum in range(12):
             print("Vent %d closing..." % (vnum,))
-            time.sleep(1)
             h.valve_close(vnum)
         h.light_off()
 
@@ -91,7 +89,7 @@ class MainPanel(Screen):
                 self.buttonColor[count] = [.3, .3, .3, 1]
             elif self.isalcoholic(drinks[count]):
                 self.buttonColor[count] = [1, 0, 0, 1]
-            else: # non-alcoholic
+            else:  # non-alcoholic
                 self.buttonColor[count] = [0, 1, 0, 1]
             count += 1
 
@@ -102,7 +100,7 @@ class MainPanel(Screen):
 
     def choiceDrink(self, *args):
         self.readPumpConfiguration()
-        if len(self.drinkOnScreen) -1 < args[0]:
+        if len(self.drinkOnScreen) - 1 < args[0]:
             print("no drinks found.")
             return
 
@@ -110,7 +108,8 @@ class MainPanel(Screen):
         root2 = BoxLayout()
         root2.add_widget(Image(source='img/empty-glass.png'))
         root2.add_widget(
-            Label(text='Please be sure\n that a glass \nwith min 200 ml \nis placed onto the black fixture.', font_size='30sp'))
+            Label(text='Please be sure\n that a glass \nwith min 200 ml \nis placed onto the black fixture.',
+                  font_size='30sp'))
         root.add_widget(root2)
 
         contentOK = Button(text='OK', font_size=60, size_hint_y=0.15)
@@ -127,7 +126,7 @@ class MainPanel(Screen):
             Clock.schedule_once(partial(self.doGiveDrink, args[0]), .01)
 
         contentOK.bind(on_press=closeme)
-        
+
         def cancelme(button):
             popup.dismiss()
 
@@ -137,7 +136,8 @@ class MainPanel(Screen):
 
     def doGiveDrink(self, drink, intervaltime):
         root = BoxLayout(orientation='vertical')
-        content = Label(text='Take a break -- \nYour \n\n' + self.drinkOnScreen[drink]["name"]+'\n\nwill be mixed.', font_size='40sp')
+        content = Label(text='Take a break -- \nYour \n\n' + self.drinkOnScreen[drink]["name"] + '\n\nwill be mixed.',
+                        font_size='40sp')
         root.add_widget(content)
         popup = Popup(title='Life, the Universe, and Everything. There is an answer.', content=root,
                       auto_dismiss=False)
@@ -156,7 +156,7 @@ class MainPanel(Screen):
                 print("IndexPumpe: ", pumpList[ingridient[0]])
                 print("Ingredient: ", ingridient[0])
                 print("Output in ml: ", ingridient[1])
-                self.db.countUpIngredient(ingridient[0],ingridient[1])
+                self.db.countUpIngredient(ingridient[0], ingridient[1])
 
             time.sleep(1)
             self.db.countUpDrink(drinks["name"])
