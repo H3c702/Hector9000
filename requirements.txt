@@ -1,3 +1,4 @@
+paho-mqtt
 Adafruit-GPIO
 Adafruit-PCA9685
 #RPi.GPIO

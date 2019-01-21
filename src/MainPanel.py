@@ -12,9 +12,9 @@ from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 from kivy.uix.image import Image
 from kivy.clock import Clock
 from database import Database
-from HectorConfig import config
-
-from HectorHardware import HectorHardware
+#from HectorConfig import config
+from HectorRemote import HectorRemote as Hector
+#from HectorHardware import HectorHardware as Hector
 
 
 class MainPanel(Screen):
@@ -40,6 +40,7 @@ class MainPanel(Screen):
     drinkOnScreen = None
     screenPage = None
     maxScreenPage = None
+    hector = None
 
     def __init__(self, **kwargs):
         super(MainPanel, self).__init__(**kwargs)
@@ -60,20 +61,21 @@ class MainPanel(Screen):
         self.drinkOnScreen = drink_list[:8]
 
         self.fillButtons(self.drinkOnScreen)
+        self.hector = Hector()
         self.initVent()
 
     def initVent(self):
         print("Prepare vets.")
-        h = HectorHardware(config)
-        h.light_on()
-        time.sleep(1)
-        h.arm_in()
 
-        h.pump_stop()
+        self.hector.light_on()
+        time.sleep(1)
+        self.hector.arm_in()
+
+        self.hector.pump_stop()
         for vnum in range(12):
             print("Vent %d closing..." % (vnum,))
-            h.valve_close(vnum)
-        h.light_off()
+            self.hector.valve_close(vnum)
+        self.hector.light_off()
 
     def isalcoholic(self, drink):
         for ing, _ in drink["recipe"]:
@@ -145,7 +147,7 @@ class MainPanel(Screen):
         def makeDrink(parentwindow):
             drinks = self.drinkOnScreen[drink]
 
-            hector = HectorHardware(config)
+            hector = self.hector
             hector.light_on()
             time.sleep(1)
             hector.arm_out()
