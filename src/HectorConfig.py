@@ -1,4 +1,6 @@
 # hardware configuration
+# all pin numbers are corresponding to physical P1 connector!
+
 config = {
     "hx711": {
         "CLK": 29,
