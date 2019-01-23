@@ -3,7 +3,7 @@
 apt update
 apt upgrade -y
 
-apt install python3 pip3 python3-setuptools mosquitto -y
+apt install python3 pip3 python3-setuptools mosquitto tmux -y
 
 # install KIVY
 sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \

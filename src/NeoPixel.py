@@ -1,6 +1,13 @@
-import time, board, neopixel
+import board
+import neopixel
+import time
+from HectorConfig import config as hectorCon
+# settings
 
-PORT = board.D18
+MQTTServer = hectorCon["mqtt"]["SERVER"]
+TopicPrefix = hectorCon["mqtt"]["TOPICPREFIX"]
+
+PORT = hectorCon["ws2812"]["DIN"]
 NUM = 15
 NUMBASE = 5
 

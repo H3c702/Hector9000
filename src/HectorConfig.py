@@ -46,6 +46,11 @@ config = {
         "MOTOR": 18
     },
     "ws2812": {
+        # D18
         "DIN": 12
+    },
+    "mqtt": {
+        "SERVER": "localhost",
+        "TOPICPREFIX": "Hector9000/Main/"
     }
 }

@@ -11,11 +11,11 @@ import time
 import traceback
 import paho.mqtt.client as mqtt
 from HectorHardware import HectorHardware
-
+from HectorConfig import config as hectorCon
 # settings
 
-MQTTServer = "10.2.3.2"
-TopicPrefix = "Hector9000/Main/"
+MQTTServer = hectorCon["mqtt"]["SERVER"]
+TopicPrefix = hectorCon["mqtt"]["TOPICPREFIX"]
 
 # global vars
 
