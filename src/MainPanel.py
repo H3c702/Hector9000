@@ -109,9 +109,19 @@ class MainPanel(Screen):
         root = BoxLayout(orientation='vertical')
         root2 = BoxLayout()
         root2.add_widget(Image(source='img/empty-glass.png'))
-        root2.add_widget(
-            Label(text='Please be sure\n that a glass \nwith min 200 ml \nis placed onto the black fixture.',
-                  font_size='30sp'))
+        root3 = BoxLayout(orientation='vertical')
+        root3.add_widget(
+            Label(text='Please be sure that a glass \nwith min 200 ml \nis placed onto the black fixture.',
+                  font_size='50sp'))
+
+        textingridient = self.drinkOnScreen[args[0]]["name"] + "\n Ingridient: "
+        for ingridient in self.drinkOnScreen[args[0]]["recipe"]:
+            textingridient = textingridient + "\n " + ingredients[ingridient[0]][0]
+
+        root3.add_widget(
+            Label(text=textingridient,
+                  font_size='40sp'))
+        root2.add_widget(root3)
         root.add_widget(root2)
 
         contentOK = Button(text='OK', font_size=60, size_hint_y=0.15)
