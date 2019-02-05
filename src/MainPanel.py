@@ -12,9 +12,11 @@ from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 from kivy.uix.image import Image
 from kivy.clock import Clock
 from database import Database
-#from HectorConfig import config
+# from HectorConfig import config
 from HectorRemote import HectorRemote as Hector
-#from HectorHardware import HectorHardware as Hector
+
+
+# from HectorHardware import HectorHardware as Hector
 
 
 class MainPanel(Screen):
@@ -41,6 +43,8 @@ class MainPanel(Screen):
     screenPage = None
     maxScreenPage = None
     hector = None
+    pumpList = None
+    drinksavailable = None
 
     def __init__(self, **kwargs):
         super(MainPanel, self).__init__(**kwargs)
@@ -51,14 +55,31 @@ class MainPanel(Screen):
 
         self.screenPage = 1
 
-        items = len(drink_list) % 8
-        self.maxScreenPage = (len(drink_list) // 8)
+        self.readPumpConfiguration()
+        self.drinksavailable = list()
+
+        for drink in drink_list:
+            allin = True
+            for ing in drink["recipe"]:
+                if ing[0] in self.pumpList:
+                    allin = True
+                else:
+                    allin = False
+
+            if allin:
+                self.drinksavailable.append(drink)
+
+        # self.drinksavailable = drink_list
+
+        items = len(self.drinksavailable) % 8
+        self.maxScreenPage = (len(self.drinksavailable) // 8)
 
         if items > 0:
             self.maxScreenPage += 1
 
         self.drinkOnScreen = list()
-        self.drinkOnScreen = drink_list[:8]
+
+        self.drinkOnScreen = self.drinksavailable[:8]
 
         self.fillButtons(self.drinkOnScreen)
         self.hector = Hector()
@@ -101,7 +122,6 @@ class MainPanel(Screen):
             count += 1
 
     def choiceDrink(self, *args):
-        self.readPumpConfiguration()
         if len(self.drinkOnScreen) - 1 < args[0]:
             print("no drinks found.")
             return
@@ -163,9 +183,9 @@ class MainPanel(Screen):
             hector.arm_out()
 
             for ingridient in drinks["recipe"]:
-                hector.valve_dose(pumpList[ingridient[0]], ingridient[1])
+                hector.valve_dose(self.pumpList[ingridient[0]], ingridient[1])
                 time.sleep(.1)
-                print("IndexPumpe: ", pumpList[ingridient[0]])
+                print("IndexPumpe: ", self.pumpList[ingridient[0]])
                 print("Ingredient: ", ingridient[0])
                 print("Output in ml: ", ingridient[1])
                 self.db.countUpIngredient(ingridient[0], ingridient[1])
@@ -190,7 +210,7 @@ class MainPanel(Screen):
         else:
             self.screenPage -= 1
 
-        self.drinkOnScreen = drink_list[(self.screenPage * 8) - 8:8 * self.screenPage]
+        self.drinkOnScreen = self.drinksavailable[(self.screenPage * 8) - 8:8 * self.screenPage]
         self.fillButtons(self.drinkOnScreen)
 
     def forward(self):
@@ -199,17 +219,14 @@ class MainPanel(Screen):
         else:
             self.screenPage += 1
         i = (self.screenPage * 8) - 8
-        self.drinkOnScreen = drink_list[i:8 * self.screenPage]
+        self.drinkOnScreen = self.drinksavailable[i:8 * self.screenPage]
         self.fillButtons(self.drinkOnScreen)
 
     def readPumpConfiguration(self):
         x = json.load(open('servo_config.json'))
-        global pumpList
-        pumpList = {}
+        self.pumpList = {}
         for key in x:
             chan = x[key]
-            pumpList[chan['value']] = chan['channel']
-
-        return pumpList
+            self.pumpList[chan['value']] = chan['channel']
 
     pass
