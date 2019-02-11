@@ -84,3 +84,7 @@ modules.xml
 src/log
 
 src/nohup\.out
+
+*.py-0
+
+*.py-1
