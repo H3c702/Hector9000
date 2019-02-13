@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf8 -*-
 ##
-#   HardwareRunner.py       Hector server with MQTT interface
+#   HectorServer.py       Hector server with MQTT interface
 #
 
 
@@ -12,7 +12,9 @@ import time, traceback
 import paho.mqtt.client as mqtt
 
 from HectorConfig import config
-from HectorHardware import HectorHardware
+
+#from HectorHardware import HectorHardware as Hector
+from HectorSimulator import HectorSimulator as Hector
 
 # settings
 
@@ -21,7 +23,7 @@ TopicPrefix = "Hector9000/Main/"
 
 # global vars
 
-hector = HectorHardware(config)
+hector = Hector(config)
 currentTopic = ""
 
 

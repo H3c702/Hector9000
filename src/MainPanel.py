@@ -15,7 +15,8 @@ from kivy.clock import Clock
 from database import Database
 from HectorConfig import config
 
-from HectorHardware import HectorHardware
+#from HectorHardware import HectorHardware as Hector
+from HectorSimulator import HectorSimulator as Hector
 
 
 class MainPanel(Screen):
@@ -118,7 +119,7 @@ class MainPanel(Screen):
         def makeDrink(parentwindow):
             drinks = self.drinkOnScreen[drink]
 
-            hector = HectorHardware(config)
+            hector = Hector(config)
             hector.arm_out()
 
             for ingridient in drinks["recipe"]:
