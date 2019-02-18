@@ -1,5 +1,6 @@
-import QtQuick 2.4
-import QtQuick.Controls 2.4
+import QtQuick 2.7
+import QtQuick.Controls 2.0
+import QtQuick.Controls.Material 2.0
 
 Item {
     id: buttonMenuContainer
@@ -30,13 +31,14 @@ Item {
             height: GridView.view.cellHeight
             width: GridView.view.cellWidth
 
-            RoundButton {
+            Button {
                 id: rect
-                radius: 15
+                //radius: 15
                 anchors.centerIn: parent
                 width: parent.GridView.view.idealCellWidth - 20
                 height: parent.height - 20
-                palette.button: colorCode
+                //palette.button: colorCode
+		Material.background: colorCode
                 onClicked: menuManager.clickedId = menuId
             }
 
