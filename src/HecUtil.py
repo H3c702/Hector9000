@@ -2,7 +2,8 @@
 #	HecUtil
 #
 
-from PySide2.QtCore import Qt, QObject, Signal, Slot, Property
+from PyQt5.QtCore import Qt, QObject
+from PyQt5.QtCore import pyqtSignal as Signal, pyqtSlot as Slot, pyqtProperty as Property
 
 
 class HecProperty(Property):

@@ -88,3 +88,5 @@ modules.xml
 *.py-1
 
 src/nohup\.out
+
+*.py-pyside2

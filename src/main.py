@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import os, sys, urllib.request, json, time, math
-import PySide2.QtQml
+import PyQt5.QtQml
 # from OpenGL import GL
-from PySide2.QtQuick import QQuickView
-from PySide2.QtCore import Qt, QCoreApplication, QUrl, QThread
-from PySide2.QtCore import QObject, Signal
-from PySide2.QtGui import QGuiApplication
-from PySide2.QtQml import QQmlApplicationEngine
+from PyQt5.QtQuick import QQuickView
+from PyQt5.QtCore import Qt, QCoreApplication, QUrl, QThread
+from PyQt5.QtCore import QObject, pyqtSignal as Signal
+from PyQt5.QtGui import QGuiApplication
+from PyQt5.QtQml import QQmlApplicationEngine
 
 from Menu import MenuModel, MenuManager
 from Screen import ScreenManager
@@ -188,7 +188,7 @@ if __name__ == "__main__":
     hector = Hector(config)
     readChannelConfiguration()
 
-    # os.environ["QT_QUICK_CONTROLS_STYLE"] = "Material"
+    os.environ["QT_QUICK_CONTROLS_STYLE"] = "Material"
     app = QGuiApplication(sys.argv)
     global view
     view = QQuickView()

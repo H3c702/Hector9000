@@ -1,7 +1,9 @@
 #
 #		Menu.py
 #
-from PySide2.QtCore import Qt, QObject, Signal, Slot, Property, QAbstractListModel
+from PyQt5.QtCore import Qt, QObject, QAbstractListModel
+from PyQt5.QtCore import pyqtSignal as Signal, pyqtSlot as Slot, pyqtProperty as Property
+from PyQt5.QtCore import QAbstractListModel
 
 
 class MenuModel(QAbstractListModel):
