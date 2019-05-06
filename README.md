@@ -5,23 +5,22 @@ Min requirements
 ---
 
 	- Python 3
-	- Kivy 
 	- RaspberryPi 3
 
 Install on RaspberryPi
 ----
-First of all you have to install Python3 and Kivi on your RaspberryPi. 
-For this there  is a HowTo on the Kivi Homepage : 		
-
-	https://kivy.org/doc/stable/installation/installation-rpi.html
-
-After you habe installed Python and Kivy you can get you the sources by using Git
+After you habe installed Python you can get you the sources by using Git
 
 	git clone https://github.com/H3c702/Hector9000.git
+
+move into the directory
+
+	cd Hector9000
 
 have to install all the requiremets listend in the requirement.txt by using pip
 
 	pip3 install -r requirements.txt
+
 
 Add Drinks
 ---
@@ -74,3 +73,14 @@ Development on not Pi-Mashine :
 	devenvirement = True
 
 	If you are in Production or dev direct on a Pi you can set this var to False.
+
+---
+Special thanks to
+<div>
+
+  <a href="https://www.jetbrains.com/pycharm/">
+    <img alt="PyCharm" width="128" heigth="128" hspace="40" src="./images/PyCharm_logo.png">
+  </a>
+
+</div>
+
