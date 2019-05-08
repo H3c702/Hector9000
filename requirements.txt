@@ -7,14 +7,7 @@ certifi
 chardet
 docutils
 idna
-#Kivy
-#Kivy-Garden
-#kivy.deps.glew
-#kivy.deps.gstreamer
-#kivy.deps.sdl2
 Pygments
-#pypiwin32
-#pywin32
 requests
 urllib3
 PySide2

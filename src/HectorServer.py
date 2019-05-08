@@ -7,13 +7,13 @@
 
 # imports
 
-import time, traceback
+import time
+import traceback
 
 import paho.mqtt.client as mqtt
 
 from HectorConfig import config
-
-#from HectorHardware import HectorHardware as Hector
+# from HectorHardware import HectorHardware as Hector
 from HectorSimulator import HectorSimulator as Hector
 
 # settings

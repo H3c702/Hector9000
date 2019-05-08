@@ -2,6 +2,13 @@
 
 drink_list = [
     {
+        "name": "Mate DDDD",
+        "color": "gold",
+        "recipe": [
+            ("ingr", "mate", 50),
+        ]
+    },
+    {
         "name": "Mate Quickie",
         "color": "gold",
         "recipe": [
