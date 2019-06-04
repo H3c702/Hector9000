@@ -11,3 +11,4 @@ Pygments
 requests
 urllib3
 PySide2
+paho-mqtt
