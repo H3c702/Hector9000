@@ -24,7 +24,8 @@ def on_log(client, userdata, level, buf):
     print("LOG " + str(level) + ": " + str(userdata) + " -- " + str(buf))
 
 
-def do_get_drinks(msg):
+def do_get_drinks(msg,topic):
+    client.publish(topic + "/return", available_drinks)
     pass
 
 
@@ -40,7 +41,7 @@ def on_message(client, userdata, msg):
 
         # low-level
         elif msg.topic == TopicPrefix + "get_drinks":
-            do_get_drinks(msg)
+            do_get_drinks(msg,msg.topic)
         elif msg.topic == TopicPrefix + "light_on":
             pass
             #do_light_on(msg)
