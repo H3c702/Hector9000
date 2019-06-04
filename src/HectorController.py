@@ -1,9 +1,8 @@
 from HectorRemote import HectorRemote as Hector
 
 
-from drinks import available_drinks, ingredients, actions, alcoholic
+from conf.drinks import available_drinks
 
-import re
 import paho.mqtt.client as mqtt
 import traceback
 

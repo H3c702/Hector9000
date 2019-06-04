@@ -12,7 +12,7 @@ import traceback
 
 import paho.mqtt.client as mqtt
 
-from HectorConfig import config
+from conf.HectorConfig import config
 # from HectorHardware import HectorHardware as Hector
 from HectorSimulator import HectorSimulator as Hector
 
@@ -306,15 +306,15 @@ def on_message(client, userdata, msg):
 
 
 # main program
+if __name__ == "__main__":
+    client = mqtt.Client()
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.on_log = on_log
 
-client = mqtt.Client()
-client.on_connect = on_connect
-client.on_message = on_message
-client.on_log = on_log
+    client.connect(MQTTServer, 1883, 60)
 
-client.connect(MQTTServer, 1883, 60)
-
-while True:
-    client.loop()
+    while True:
+        client.loop()
 
 # EOF

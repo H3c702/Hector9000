@@ -11,9 +11,6 @@ import paho.mqtt.client as mqtt
 from HectorAPI import HectorAPI
 
 
-# from HectorConfig import config
-
-
 def debugOut(name, value):
     print("=> %s: %d" % (name, value))
 

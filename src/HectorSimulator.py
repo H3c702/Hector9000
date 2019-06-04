@@ -1,25 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf8 -*-
 ##
-#   HectorSimulator.py       API class for simulating the Hector9000 hardware (same as old HectorHardware with DevEnvironment = True)
+#   HectorSimulator.py       API class for simulating the Hector9000 hardware (same as old HectorHardware with
+#   DevEnvironment = True)
 #
 
 
 ## imports
 from __future__ import division
 
-from time import sleep, time
+from time import sleep
 import sys
 
 from HectorAPI import HectorAPI
-from HectorConfig import config
-
+from conf.HectorConfig import config
 
 ## settings
 
 # Uncomment to enable debug output:
 import logging
-
 
 ## initialization
 logging.basicConfig(level=logging.DEBUG)
@@ -34,7 +33,7 @@ def debugOut(name, value):
 class HectorSimulator(HectorAPI):
 
     def __init__(self, cfg):
-    
+
         print("HectorSimulator")
 
         self.config = cfg
@@ -105,16 +104,13 @@ class HectorSimulator(HectorAPI):
         return pos
 
     def scale_readout(self):
-        if not DevEnvironment:
-            weight = self.hx.get_weight(5)
-            print("weight = %.1f" % weight)
-        else:
-            weight = 0
+        #todo: Must be simulated
+        weight = 0
         return weight
 
     def scale_tare(self):
         print("scale tare")
-        
+
     def pump_start(self):
         print("start pump")
 
@@ -138,7 +134,7 @@ class HectorSimulator(HectorAPI):
 
     def valve_close(self, index):
         self.valve_open(index, 0)
-        
+
     def valve_dose(self, index, amount, timeout=30, cback=debugOut):
         print("dose channel %d, amount %d" % (index, amount))
         if cback: cback("valve_dose", 0)
