@@ -5,25 +5,22 @@ Minimal Requirements
 ---
 
 	- Python 3
-	- Kivy 
 	- RaspberryPi 3
 
 Install on RaspberryPi
 ----
-
-First of all you have to install Python 3 and Kivy on your Raspberry Pi. 
-
-For this there  is a HowTo on the Kivy Homepage : 		
-
-	https://kivy.org/doc/stable/installation/installation-rpi.html
-
-After you have installed Python and Kivy you can get the sources by using Git
+After you habe installed Python you can get you the sources by using Git
 
 	git clone https://github.com/H3c702/Hector9000.git
+
+move into the directory
+
+	cd Hector9000
 
 You can install all the requirements listed in the file `requirements.txt` by using `pip` (use `pip3` if `pip` uses Python 2)
 
 	pip3 install -r requirements.txt
+
 
 Add Drinks
 ---
@@ -82,6 +79,13 @@ If you are not on the "real" Hector hardware you can set the var `devEnvironment
 
 	devEnvironment = True
 
-The HectorHardware library will then emulate Hector's hardware to allow testing of the UI, for example.
+---
+Special thanks to
+<div>
 
-If you are in production or are developing directly on Hector's Pi you should set this var to `False`.
+  <a href="https://www.jetbrains.com/pycharm/">
+    <img alt="PyCharm" width="128" heigth="128" hspace="40" src="./images/PyCharm_logo.png">
+  </a>
+
+</div>
+

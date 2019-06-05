@@ -11,9 +11,6 @@ import paho.mqtt.client as mqtt
 from HectorAPI import HectorAPI
 
 
-from HectorConfig import config as hectorCon
-
-
 def debugOut(name, value):
     print("=> %s: %d" % (name, value))
 
@@ -21,8 +18,8 @@ def debugOut(name, value):
 class HectorRemote(HectorAPI):
     # settings
 
-    MQTTServer = hectorCon["mqtt"]["SERVER"]
-    TopicPrefix = hectorCon["mqtt"]["TOPICPREFIX"]
+    MQTTServer = "localhost"
+    TopicPrefix = "Hector9000/Main/"
     initDone = False
     currentCall = None
     returnValue = None

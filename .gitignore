@@ -81,6 +81,17 @@ modules.xml
 
 *.db
 
+*.qmlc
+
+*.py-0
+
+*.py-1
+
+src/nohup\.out
+
+*.py-pyside2
+
+
 src/log
 
 src/nohup\.out

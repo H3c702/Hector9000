@@ -1,13 +1,6 @@
-import board
-import neopixel
-import time
-from HectorConfig import config as hectorCon
-# settings
+import time, board, neopixel
 
-MQTTServer = hectorCon["mqtt"]["SERVER"]
-TopicPrefix = hectorCon["mqtt"]["TOPICPREFIX"]
-
-PORT = hectorCon["ws2812"]["DIN"]
+PORT = board.D18
 NUM = 15
 NUMBASE = 5
 
@@ -40,14 +33,6 @@ def mode2():
         time.sleep(.05)
         pixels.fill((255, 255, 255))
         time.sleep(.05)
-
-
-def modeClean():
-    while True:
-        pixels.fill((255, 255, 255))
-        time.sleep(.5)
-        pixels.fill((255, 255, 0))
-        time.sleep(.5)
 
 
 def mode3():
@@ -100,8 +85,7 @@ def rainbow_cycle(wait):
     for j in range(255):
         for i in range(NUM - NUMBASE):
             pixel_index = (i * 256 // num_pixels) + j
-            # pixels[NUMBASE+i] = wheel((int(-pixel_index * 20 / 256) + 55) & 255)
-            pixels[NUMBASE + i] = wheel(int(pixel_index) & 255)
+            pixels[NUMBASE + i] = wheel(pixel_index & 255)
         for j in range(NUMBASE):
             pixels[j] = pixels[NUMBASE]
         pixels.show()
@@ -135,4 +119,4 @@ def mode4():
         rainbow_cycle(0.001)  # rainbow cycle with 1ms delay per step
 
 
-modeClean()
+mode4()
