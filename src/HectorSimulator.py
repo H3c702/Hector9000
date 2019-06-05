@@ -9,7 +9,7 @@
 ## imports
 from __future__ import division
 
-from time import sleep
+from time import sleep, time
 import sys
 
 from HectorAPI import HectorAPI
@@ -62,6 +62,10 @@ class HectorSimulator(HectorAPI):
         # setup air pump (GPIO)
         self.pump = cfg["pump"]["MOTOR"]
 
+        # setup weight
+        self.weight = 0
+        self.openedValveAt = 0
+
     def getConfig(self):
         return self.config
 
@@ -104,11 +108,10 @@ class HectorSimulator(HectorAPI):
         return pos
 
     def scale_readout(self):
-        #todo: Must be simulated
-        weight = 0
-        return weight
+        return (self.weight + (time() - self.openedValveAt)) * 5
 
     def scale_tare(self):
+        self.weight = 0
         print("scale tare")
 
     def pump_start(self):
@@ -117,19 +120,20 @@ class HectorSimulator(HectorAPI):
     def pump_stop(self):
         print("stop pump")
 
-    def valve_open(self, index, open=1):
-        if open == 0:
-            print("close valve")
-        else:
-            print("open valve")
-        if (index < 0 and index >= len(self.valveChannels) - 1):
+    def valve_open(self, index, openValve = 1):
+        if 0 > index >= len(self.valveChannels) - 1:
             return
-        if open == 0:
+
+        if openValve == 0:
             print("close valve no. %d" % index)
+            self.weight = self.scale_readout()
         else:
             print("open valve no. %d" % index)
+            self.openedValveAt = time()
+
         ch = self.valveChannels[index]
-        pos = self.valvePositions[index][1 - open]
+        pos = self.valvePositions[index][1 - openValve]
+
         print("ch %d, pos %d" % (ch, pos))
 
     def valve_close(self, index):
@@ -138,13 +142,12 @@ class HectorSimulator(HectorAPI):
     def valve_dose(self, index, amount, timeout=30, cback=debugOut):
         print("dose channel %d, amount %d" % (index, amount))
         if cback: cback("valve_dose", 0)
-        sr = 0
+
         for i in range(amount):
             sleep(.1)
             if cback: cback("valve_dose", i)
         if cback: cback("valve_dose", amount)
-        sr = amount
-        return sr
+        return amount
 
     def finger(self, pos=0):
         print("finger")
