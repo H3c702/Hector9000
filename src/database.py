@@ -14,9 +14,10 @@ class Database:
         self.cur.execute("CREATE TABLE if not exists DrinksLog(ID Integer primary key, drink TEXT, date timestamp)")
         self.cur.execute("CREATE TABLE if not exists IngredientsLog(ID Integer primary key, ingredient TEXT,"
                          "ml integer, date timestamp)")
-
+        '''
         self.cur.execute("CREATE TABLE if not exists Ingredients (ID Integer primary key, name TEXT, nicename TEXT, "
                          "isalcoholic bool)")
+        '''
 
         self.con.commit()
 
