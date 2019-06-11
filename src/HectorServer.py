@@ -51,7 +51,7 @@ def on_log(client, userdata, level, buf):
 
 def do_get_config(msg):
     print("get configuration")
-    ret = hector.config
+    ret = hector.getConfig()
     client.publish(currentTopic + "/return", str(ret))
 
 

@@ -71,9 +71,11 @@ class HectorSimulator(HectorAPI):
 
     def light_on(self):
         print("turn on light")
+        return 1
 
     def light_off(self):
         print("turn off light")
+        return 0
 
     def arm_out(self, cback=debugOut):
         armMaxSteps = int(self.armNumSteps * 1.1)
@@ -113,12 +115,15 @@ class HectorSimulator(HectorAPI):
     def scale_tare(self):
         self.weight = 0
         print("scale tare")
+        return self.weight
 
     def pump_start(self):
         print("start pump")
+        return 1
 
     def pump_stop(self):
         print("stop pump")
+        return 0
 
     def valve_open(self, index, openValve = 1):
         if 0 > index >= len(self.valveChannels) - 1:
