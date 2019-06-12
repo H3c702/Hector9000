@@ -5,6 +5,11 @@ from src.conf.HectorConfig import config
 hector = Hector(config)
 
 
+def test_scale_readout():
+    scale = hector.scale_readout()
+    assert scale == 0
+
+
 def test_Scale_Tare():
     tar = hector.scale_tare()
     assert tar == 0

@@ -110,6 +110,9 @@ class HectorSimulator(HectorAPI):
         return pos
 
     def scale_readout(self):
+        if self.openedValveAt == 0:
+            return self.weight
+
         return (self.weight + (time() - self.openedValveAt)) * 5
 
     def scale_tare(self):
@@ -127,7 +130,7 @@ class HectorSimulator(HectorAPI):
 
     def valve_open(self, index, openValve = 1):
         if 0 > index >= len(self.valveChannels) - 1:
-            return
+            return 0
 
         if openValve == 0:
             print("close valve no. %d" % index)
@@ -140,9 +143,10 @@ class HectorSimulator(HectorAPI):
         pos = self.valvePositions[index][1 - openValve]
 
         print("ch %d, pos %d" % (ch, pos))
+        return 1
 
     def valve_close(self, index):
-        self.valve_open(index, 0)
+        return self.valve_open(index, 0)
 
     def valve_dose(self, index, amount, timeout=30, cback=debugOut):
         print("dose channel %d, amount %d" % (index, amount))
