@@ -1,5 +1,4 @@
 # drinks.py
-
 drink_list = [
     {
         "name": "Mate DDDD",
@@ -103,28 +102,15 @@ def alcoholic(drink):
     return True in [ingredients[step[1]][1] for step in drink["recipe"] if step[0] == "ingr"]
 
 
+
+
+
 print("doable:")
 for drink in drink_list:    print(drink["name"], doable(drink, available_ingredients))
 
 available_drinks = [drink for drink in drink_list if doable(drink, available_ingredients)]
 
+
 print("available:")
 for d in available_drinks:
     print(d["name"] + " (" + ("" if alcoholic(d) else "non-") + "alcoholic)")
-
-
-# alt
-
-def doable_alt(drink, ingredients):
-    # return reduce(lambda x,y: x and y, [ing in ingredients for ing, _ in drink["recipe"]])
-    for ing, _ in drink["recipe"]:
-        if ing not in ingredients:
-            return False
-    return True
-
-
-def alcoholic_alt(drink):
-    # return reduce(lambda x,y: x or y, [ingredients[ing][1] for ing, _ in drink["recipe"]])
-    for ing, _ in drink["recipe"]:
-        if ingredients[ing][1]: return True
-    return False
