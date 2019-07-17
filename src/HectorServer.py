@@ -4,7 +4,6 @@
 #   HectorServer.py       Hector server with MQTT interface
 #
 
-
 # imports
 
 import time
@@ -15,6 +14,7 @@ import paho.mqtt.client as mqtt
 from conf.HectorConfig import config
 # from HectorHardware import HectorHardware as Hector
 from HectorSimulator import HectorSimulator as Hector
+
 
 # settings
 
@@ -107,6 +107,31 @@ def do_pump_stop(msg):
     print("stop pump")
     hector.pump_stop()
     client.publish(currentTopic + "/return", "ok")
+
+
+def do_all_valve_open(msg):
+    hector.light_on()
+    time.sleep(1)
+    hector.arm_in()
+    hector.pump_stop()
+    for vnum in range(12):
+        print("Ventil %d wird geöffnet" % (vnum,))
+        time.sleep(1)
+        hector.valve_open(vnum)
+    hector.light_off()
+
+
+def do_all_valve_close(msg):
+    hector.light_on()
+    time.sleep(1)
+    hector.arm_in()
+
+    hector.pump_stop()
+    for vnum in range(12):
+        print("Ventil %d wird geschlossen" % (vnum,))
+        time.sleep(1)
+        hector.valve_close(vnum)
+    hector.light_off()
 
 
 def do_valve_open(msg):
@@ -275,6 +300,10 @@ def on_message(client, userdata, msg):
             do_pump_stop(msg)
         elif msg.topic == TopicPrefix + "valve_open":
             do_valve_open(msg)
+        elif msg.topic == TopicPrefix + "all_valve_open":
+            do_all_valve_open(msg)
+        elif msg.topic == TopicPrefix + "all_valve_close":
+            do_all_valve_close(msg)
         elif msg.topic == TopicPrefix + "valve_close":
             do_valve_close(msg)
         elif msg.topic == TopicPrefix + "valve_dose":

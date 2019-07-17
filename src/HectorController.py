@@ -14,6 +14,9 @@ class HectorController:
     initDone = False
     client = mqtt.Client()
 
+    def __init__(self):
+        self.hector = Hector()
+
     def available_drinks_as_JSON(self):
         datalist = []
         idOfDrink = 1
@@ -24,7 +27,7 @@ class HectorController:
         return json.dumps({"drinks": datalist})
 
     def get_drink_as_JSON(self, id):
-        return json.dumps(drinks.available_drinks[id])
+        return json.dumps(self.available_drinks[id])
 
     def on_connect(self, client, userdata, flags, rc):
         print("Connected with result code " + str(rc))
@@ -34,7 +37,7 @@ class HectorController:
         print("LOG " + str(level) + ": " + str(userdata) + " -- " + str(buf))
 
     def do_get_drinks(self, msg, topic):
-        self.client.publish(topic + "/return", drinks.available_drinks_as_JSON())
+        self.client.publish(topic + "/return", self.available_drinks_as_JSON())
         pass
 
     def on_message(self, client, userdata, msg):
@@ -42,41 +45,43 @@ class HectorController:
             global currentTopic
             currentTopic = msg.topic
 
-            if msg.topic.endswith("/progress"):
+            if currentTopic.endswith("/progress"):
                 return  # ignore our own progress messages
-            elif msg.topic.endswith("/return"):
+            elif currentTopic.endswith("/return"):
                 return  # ignore our own return messages
 
             # low-level
-            elif msg.topic == self.TopicPrefix + "get_drinks":
+            elif currentTopic == self.TopicPrefix + "get_drinks":
                 self.do_get_drinks(msg, msg.topic)
-            elif msg.topic == self.TopicPrefix + "get_ingredients":
+            elif currentTopic == self.TopicPrefix + "get_ingredients":
+                self.get_drink_as_JSON(msg)
                 pass
-            elif msg.topic == self.TopicPrefix + "light_on":
+            elif currentTopic == self.TopicPrefix + "light_on":
                 pass
-            elif msg.topic == self.TopicPrefix + "light_off":
+            elif currentTopic == self.TopicPrefix + "light_off":
                 pass
                 # do_light_on(msg)
 
             # high-level
-            elif msg.topic == self.TopicPrefix + "ring":
+            elif currentTopic == self.TopicPrefix + "ring":
                 pass
                 # ring(msg)
-            elif msg.topic == self.TopicPrefix + "doseDrink":
+            elif currentTopic == self.TopicPrefix + "doseDrink":
                 pass
                 # valve_dose(msg)
-            elif msg.topic == self.TopicPrefix + "cleanMe":
+            elif currentTopic == self.TopicPrefix + "cleanMe":
                 pass
                 # clean(msg)
-            elif msg.topic == self.TopicPrefix + "dryMe":
+            elif currentTopic == self.TopicPrefix + "dryMe":
                 pass
-                # dry(msg)
+            elif currentTopic == self.TopicPrefix + "openAllValves":
+                pass
 
             # unknown
             else:
-                print("unknown topic: " + msg.topic + ", msg " + str(msg.payload))
+                print("unknown topic: " + currentTopic + ", msg " + str(msg.payload))
 
-            print("done with msg " + msg.topic + " / " + str(msg.payload))
+            print("done with msg " + currentTopic + " / " + str(msg.payload))
 
         except Exception as e:
             print("Error! " + str(e))
@@ -84,10 +89,12 @@ class HectorController:
 
     def connect(self):
         # main program
-
-        self.hector = Hector()
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
         self.client.on_log = self.on_log
 
         self.client.connect(self.MQTTServer, 1883, 60)
+
+        while True:
+            self.client.loop()
+
