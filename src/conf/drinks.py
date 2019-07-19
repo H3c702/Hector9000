@@ -78,6 +78,9 @@ ingredients = {
     "gren": ("Grenadine", False),
     "mmix": ("Margarita Mix", True),
     "mate": ("Mate", False),
+    "pine": ("Pineapple Juice", False),
+    "raspberry": ("Raspberry", False),
+    "gga": ("Ginger Ale", False),
 }
 
 actions = {
