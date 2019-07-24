@@ -81,6 +81,8 @@ ingredients = {
     "pine": ("Pineapple Juice", False),
     "raspberry": ("Raspberry", False),
     "gga": ("Ginger Ale", False),
+    "cocos": ("Cocos", False),
+    "mango": ("Mango Juice", False),
 }
 
 actions = {
