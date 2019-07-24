@@ -14,6 +14,10 @@ class HectorController:
     initDone = False
     client = mqtt.Client()
 
+    @staticmethod
+    def get_returnTopic(topic):
+        return topic + "/return"
+
     def __init__(self):
         self.hector = Hector()
 
@@ -26,8 +30,9 @@ class HectorController:
             idOfDrink = idOfDrink + 1
         return json.dumps({"drinks": datalist})
 
-    def get_drink_as_JSON(self, id):
-        return json.dumps(self.available_drinks[id])
+    def get_drink_as_JSON(self, msg):
+        id = int(msg.payload)
+        return json.dumps(drinks.available_drinks[id])
 
     def on_connect(self, client, userdata, flags, rc):
         print("Connected with result code " + str(rc))
@@ -36,9 +41,12 @@ class HectorController:
     def on_log(self, client, userdata, level, buf):
         print("LOG " + str(level) + ": " + str(userdata) + " -- " + str(buf))
 
-    def do_get_drinks(self, msg, topic):
-        self.client.publish(topic + "/return", self.available_drinks_as_JSON())
+    def do_get_drinks(self, msg):
+        self.client.publish(self.get_returnTopic(msg.topic), self.available_drinks_as_JSON())
         pass
+
+    def do_get_drink(self, msg):
+        self.client.publish(self.get_returnTopic(msg.topic), self.get_drink_as_JSON(msg))
 
     def on_message(self, client, userdata, msg):
         try:
@@ -52,9 +60,9 @@ class HectorController:
 
             # low-level
             elif currentTopic == self.TopicPrefix + "get_drinks":
-                self.do_get_drinks(msg, msg.topic)
+                self.do_get_drinks(msg)
             elif currentTopic == self.TopicPrefix + "get_ingredients":
-                self.get_drink_as_JSON(msg)
+                self.do_get_drink(msg)
                 pass
             elif currentTopic == self.TopicPrefix + "light_on":
                 pass
@@ -97,4 +105,3 @@ class HectorController:
 
         while True:
             self.client.loop()
-
