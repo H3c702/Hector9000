@@ -18,6 +18,10 @@ class HectorController:
     def get_returnTopic(topic):
         return topic + "/return"
 
+    @staticmethod
+    def get_progressTopic(topic):
+        return topic + "/progress"
+
     def __init__(self):
         self.hector = Hector()
 
@@ -65,10 +69,11 @@ class HectorController:
                 self.do_get_drink(msg)
                 pass
             elif currentTopic == self.TopicPrefix + "light_on":
+                Hector.light_on()
                 pass
             elif currentTopic == self.TopicPrefix + "light_off":
+                Hector.light_off()
                 pass
-                # do_light_on(msg)
 
             # high-level
             elif currentTopic == self.TopicPrefix + "ring":
