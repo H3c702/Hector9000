@@ -25,6 +25,12 @@ You can install all the requirements listed in the file `requirements.txt` by us
 
 	pip3 install -r requirements.txt
 
+Start Hector :
+
+	cd Hector9000
+	cd srv
+	python3 main.py
+
 Add Drinks
 ---
 
