@@ -36,7 +36,10 @@ class HectorController:
 
     def get_drink_as_JSON(self, msg):
         id = int(msg.payload)
-        return json.dumps(drinks.available_drinks[id])
+        drink = drinks.available_drinks[id]
+        inglist = [{"name": drinks.ingredients[step[1]][0], "ammount": step[2]} for step in drink["recipe"] if step[0] == "ingr"]
+        data = {"id": id, "name": drink["name"], "ingredients": inglist}
+        return json.dumps(data)
 
     def on_connect(self, client, userdata, flags, rc):
         print("Connected with result code " + str(rc))
@@ -77,19 +80,24 @@ class HectorController:
 
             # high-level
             elif currentTopic == self.TopicPrefix + "ring":
+                Hector.ping()
                 pass
-                # ring(msg)
             elif currentTopic == self.TopicPrefix + "doseDrink":
                 pass
-                # valve_dose(msg)
             elif currentTopic == self.TopicPrefix + "cleanMe":
+                #ToDo: Develop proper methode in Server
+                Hector.all_valve_open()
+                Hector.cleanAndExit()
                 pass
                 # clean(msg)
             elif currentTopic == self.TopicPrefix + "dryMe":
                 pass
             elif currentTopic == self.TopicPrefix + "openAllValves":
+                Hector.all_valve_open()
                 pass
-
+            elif currentTopic == self.TopicPrefix + "closeAllValves":
+                Hector.all_valve_close()
+                pass
             # unknown
             else:
                 print("unknown topic: " + currentTopic + ", msg " + str(msg.payload))

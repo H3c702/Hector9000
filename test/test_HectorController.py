@@ -5,6 +5,7 @@ import src.HectorController
 Controller = src.HectorController.HectorController()
 
 
+
 def test_GetDrinksAsJSON():
     jsonfile = Controller.available_drinks_as_JSON()
 
@@ -12,7 +13,15 @@ def test_GetDrinksAsJSON():
 
 
 def test_Get_DrinkByID():
-    drink = Controller.get_drink_as_JSON(2-1)
 
-    assert drink == '{"name": "Mate Quickie", "color": "gold", "recipe": [["ingr", "mate", 50]]}'
+    msg = message()
+    msg.payload = 5
 
+    drink = Controller.get_drink_as_JSON(msg)
+    print(drink)
+    assert drink == '{"id": 5, "name": "Margarita", "ingredients": [{"name": "Tequila", "ammount": 50}, {"name": "Margarita Mix", "ammount": 150}]}'
+
+class message():
+    def __init__(self):
+        self.payload = "0"
+        self.topic = "topic"

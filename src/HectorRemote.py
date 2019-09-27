@@ -215,6 +215,16 @@ class HectorRemote(HectorAPI):
         self.client.publish(self.TopicPrefix + self.currentCall, "%d,%d" % (num, 1 if retract else 0))
         self.waitForReturn()
 
+    def all_valve_close(self):
+        self.setCurrentCall("all_valve_close")
+        self.client.publish(self.TopicPrefix + self.currentCall, "%d" % 1)
+        self.waitForReturn()
+
+    def all_valve_open(self):
+        self.setCurrentCall("all_valve_open")
+        self.client.publish(self.TopicPrefix + self.currentCall, "%d" % 1)
+        self.waitForReturn()
+
     def cleanAndExit(self):
         self.client.loop_stop()
 

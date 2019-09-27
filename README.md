@@ -21,6 +21,11 @@ You can install all the requirements listed in the file `requirements.txt` by us
 
 	pip3 install -r requirements.txt
 
+For starting the software you have to start some Files:
+
+    python3 HectorServer.py
+    python3 HectorController.py
+    python3 
 
 Add Drinks
 ---
