@@ -95,7 +95,7 @@ actions = {
     "umb": ("Add Umbrella", False),
 }
 
-# To DB -> replace Servo_config
+# To DB -> replace
 available_ingredients = ["oj", "tequila", "gren", "vodka", "mmix", "rum", "coke", "gin", "tonic", "mate"]
 
 
