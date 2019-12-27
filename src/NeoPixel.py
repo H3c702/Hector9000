@@ -1,4 +1,4 @@
-import time, board, neopixel
+import time, board, neopixel, sys
 
 PORT = board.D18
 NUM = 15
@@ -18,6 +18,10 @@ cols = [
 col_neutral = (80, 80, 30)
 
 NUMCOLS = len(cols)
+
+
+def mode0():
+    pixels.fill(col_neutral)
 
 
 def mode1():
@@ -119,4 +123,35 @@ def mode4():
         rainbow_cycle(0.001)  # rainbow cycle with 1ms delay per step
 
 
-mode4()
+def mode5():
+    state = True
+    while True:
+        if state:
+            pixels.fill((0,0,0))
+        else:
+            pixels.fill((255,255,255))
+        pixels.show()
+        state = not state
+        time.sleep(0.03)
+
+
+if(len(sys.argv) is 1):
+    print(len(sys.argv))
+    mode0()
+else:
+    print(sys.argv[0])
+if(sys.argv[1] is "0"):
+    mode0()
+elif(sys.argv[1] is "1"):
+    mode1()
+elif(sys.argv[1] is "2"):
+    mode2()
+elif(sys.argv[1] is "3"):
+    mode3()
+elif(sys.argv[1] is "4"):
+    mode4()
+elif(sys.argv[1] is "5"):
+    mode5()
+else:
+    mode0()
+

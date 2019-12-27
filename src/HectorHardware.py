@@ -86,6 +86,7 @@ class HectorHardware(HectorAPI):
         GPIO.setup(self.armStep, GPIO.OUT)
         GPIO.setup(self.armDir, GPIO.OUT)
         GPIO.setup(self.arm, GPIO.IN)
+        GPIO.setup(self.lightPin, GPIO.OUT)
 
         # setup air pump (GPIO)
         self.pump = cfg["pump"]["MOTOR"]

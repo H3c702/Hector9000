@@ -1,7 +1,4 @@
-from HectorRemote import HectorRemote as Hector
 
-import json
-import conf.drinks as drinks
 
 import paho.mqtt.client as mqtt
 import traceback
@@ -23,43 +20,22 @@ class HectorController:
         return topic + "/progress"
 
     def __init__(self):
-        #self.hector = Hector()
-        print("init")
-
-    def available_drinks_as_JSON(self):
-        datalist = []
-        idOfDrink = 1
-        for drinkitem in drinks.available_drinks:
-            data = {"name": drinkitem["name"], "id": idOfDrink, "alcohol": drinks.alcoholic(drinkitem)}
-            datalist.append(data)
-            idOfDrink = idOfDrink + 1
-        return json.dumps({"drinks": datalist})
-
-    def get_drink_as_JSON(self, msg):
-        id = int(msg.payload)
-        drink = drinks.available_drinks[id]
-        inglist = [{"name": drinks.ingredients[step[1]][0], "ammount": step[2]} for step in drink["recipe"] if step[0] == "ingr"]
-        data = {"id": id, "name": drink["name"], "ingredients": inglist}
-        print(data)
-        return json.dumps(data)
+        pass
 
     def on_connect(self, client, userdata, flags, rc):
         print("Connected with result code " + str(rc))
         client.subscribe(self.TopicPrefix + "#")
+        print("done subscribing")
 
     def on_log(self, client, userdata, level, buf):
-        pass#print("LOG " + str(level) + ": " + str(userdata) + " -- " + str(buf))
+        print("LOG " + str(level) + ": " + str(userdata) + " -- " + str(buf))
 
-    def do_get_drinks(self, msg):
-        self.client.publish(self.get_returnTopic(msg.topic), self.available_drinks_as_JSON())
-        pass
-
-    def do_get_drink(self, msg):
-        self.client.publish(self.get_returnTopic(msg.topic), self.get_drink_as_JSON(msg))
+    def on_message2(self, client, userdata, msg):
+        print("on_message: topic " + str(msg.topic) + ", msg: " + str(msg.payload))
 
     def on_message(self, client, userdata, msg):
         print("on_message: topic " + str(msg.topic) + ", msg: " + str(msg.payload))
-        try: 
+        try:
             global currentTopic
             currentTopic = msg.topic
 
@@ -68,7 +44,7 @@ class HectorController:
             elif currentTopic.endswith("/return"):
                 return  # ignore our own return messages
 
-        # low-level
+            # low-level
             elif currentTopic == self.TopicPrefix + "get_drinks":
                 self.do_get_drinks(msg)
             elif currentTopic == self.TopicPrefix + "get_ingredients":
@@ -112,13 +88,20 @@ class HectorController:
             print(traceback.format_exc())
 
     def connect(self):
-        print("HECTORCONTROLLER")
         # main program
+        print("register callbacks")
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
         self.client.on_log = self.on_log
 
+        print("connect to server")
         self.client.connect(self.MQTTServer, 1883, 60)
 
         while True:
             self.client.loop()
+
+print("start test");
+hc = HectorController()
+hc.connect()
+print("done.")
+

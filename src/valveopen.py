@@ -11,7 +11,7 @@ def openValve():
     if hardware:
         h = HectorHardware(config)
 
-    print("VENTILE ÖFFNEN")
+    print("VENTILE OEFFNEN")
     print("")
 
     if hardware:
@@ -21,7 +21,7 @@ def openValve():
 
         h.pump_stop()
         for vnum in range(12):
-            print("Ventil %d wird geöffnet" % (vnum,))
+            print("Ventil %d wird geoeffnet" % (vnum,))
             time.sleep(1)
             h.valve_open(vnum)
 

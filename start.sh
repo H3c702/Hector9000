@@ -11,5 +11,5 @@ echo"-----------------------------------------------------------------------"
 
 
 tmux new-session -d -s hector 'python3 src/HectorServer.py'
-tmux new-window -t  hector:1 'python3 src/NeoPixel.py'
+tmux new-window -t  hector:1 'sudo python3 src/NeoPixel.py'
 python3 src/main.py
