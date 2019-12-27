@@ -17,7 +17,7 @@ def test_Get_DrinkByID():
     msg = message()
     msg.payload = 5
 
-    drink = Controller.get_drink_as_JSON(msg)
+    drink = Controller._get_drink_as_JSON(msg)
     print(drink)
     assert drink == '{"id": 5, "name": "Margarita", "ingredients": [{"name": "Tequila", "ammount": 50}, {"name": "Margarita Mix", "ammount": 150}]}'
 

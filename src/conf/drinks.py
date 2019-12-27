@@ -66,6 +66,8 @@ drink_list = [
     }
 ]
 
+
+#-> Read out of DB
 ingredients = {
     # code				text		is_alcoholic?
     "gin": ("Gin", True),
@@ -94,6 +96,7 @@ actions = {
     "ice": ("Add Ice", False),
     "umb": ("Add Umbrella", False),
 }
+
 
 # To DB -> replace
 available_ingredients = ["oj", "tequila", "gren", "vodka", "mmix", "rum", "coke", "gin", "tonic", "mate"]

@@ -23,7 +23,7 @@ class HectorController:
         return topic + "/progress"
 
     def __init__(self):
-        #self.hector = Hector()
+        # self.hector = Hector()
         print("init")
 
     def available_drinks_as_JSON(self):
@@ -35,10 +35,11 @@ class HectorController:
             idOfDrink = idOfDrink + 1
         return json.dumps({"drinks": datalist})
 
-    def get_drink_as_JSON(self, msg):
+    def _get_drink_as_JSON(self, msg):
         id = int(msg.payload)
         drink = drinks.available_drinks[id]
-        inglist = [{"name": drinks.ingredients[step[1]][0], "ammount": step[2]} for step in drink["recipe"] if step[0] == "ingr"]
+        inglist = [{"name": drinks.ingredients[step[1]][0], "ammount": step[2]} for step in drink["recipe"] if
+                   step[0] == "ingr"]
         data = {"id": id, "name": drink["name"], "ingredients": inglist}
         print(data)
         return json.dumps(data)
@@ -48,18 +49,39 @@ class HectorController:
         client.subscribe(self.TopicPrefix + "#")
 
     def on_log(self, client, userdata, level, buf):
-        pass#print("LOG " + str(level) + ": " + str(userdata) + " -- " + str(buf))
+        pass  # print("LOG " + str(level) + ": " + str(userdata) + " -- " + str(buf))
 
-    def do_get_drinks(self, msg):
+    def _do_get_drinks(self, msg):
         self.client.publish(self.get_returnTopic(msg.topic), self.available_drinks_as_JSON())
         pass
 
-    def do_get_drink(self, msg):
-        self.client.publish(self.get_returnTopic(msg.topic), self.get_drink_as_JSON(msg))
+    def _do_get_drink(self, msg):
+        self.client.publish(self.get_returnTopic(msg.topic), self._get_drink_as_JSON(msg))
+
+    def _do_dose_drink(self, msg):
+        id = int(msg.payload)
+        drink = drinks.available_drinks[id]
+        # Return ID of drink to identify that drink creation starts
+        self.client.publish(self.get_returnTopic(msg.topic), msg.payload)
+        progress = 0
+        self.client.publish(self.get_progressTopic(msg.topic), progress)
+        steps = 100 / len(drink["recipe"])
+
+        for step in drink["recipe"]:
+            # could be other things than ingr.
+            progress = progress + steps
+            if step[0] == "ingr":
+                pump = drinks.available_ingredients.index(step[1])
+                Hector.valve_dose(pump, step[2])
+
+                self.client.publish(self.get_progressTopic(msg.topic), progress)
+
+        self.client.publish(self.get_progressTopic(msg.topic), 100)
+        self.client.publish(self.get_progressTopic(msg.topic), "end")
 
     def on_message(self, client, userdata, msg):
         print("on_message: topic " + str(msg.topic) + ", msg: " + str(msg.payload))
-        try: 
+        try:
             global currentTopic
             currentTopic = msg.topic
 
@@ -68,11 +90,17 @@ class HectorController:
             elif currentTopic.endswith("/return"):
                 return  # ignore our own return messages
 
-        # low-level
+            # low-level
             elif currentTopic == self.TopicPrefix + "get_drinks":
-                self.do_get_drinks(msg)
-            elif currentTopic == self.TopicPrefix + "get_ingredients":
-                self.do_get_drink(msg)
+                self._do_get_drinks(msg)
+            elif currentTopic == self.TopicPrefix + "get_ingredientsForDrink":
+                self._do_get_drink(msg)
+                pass
+            elif currentTopic == self.TopicPrefix + "get_ingredientsList":
+                # gibt liste aller Ing aus der DB
+                pass
+            elif currentTopic == self.TopicPrefix + "set_ingredients":
+                # Setzt die Ing in der DB
                 pass
             elif currentTopic == self.TopicPrefix + "light_on":
                 Hector.light_on()
@@ -86,9 +114,10 @@ class HectorController:
                 Hector.ping()
                 pass
             elif currentTopic == self.TopicPrefix + "doseDrink":
+                self._do_dose_drink(msg)
                 pass
             elif currentTopic == self.TopicPrefix + "cleanMe":
-                #ToDo: Develop proper methode in Server
+                # ToDo: Develop proper methode in Server
                 Hector.all_valve_open()
                 Hector.cleanAndExit()
                 pass
