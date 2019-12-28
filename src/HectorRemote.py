@@ -59,7 +59,7 @@ class HectorRemote(HectorAPI):
             self.client.subscribe(self.TopicPrefix + "#")
             print("subscription sent")
             # request configuration
-            self.client.publish(self.TopicPrefix + "get_config", "")
+            self.client.publish(self.TopicPrefix + "get_config", "true")
             print("published get_config")
             print("done with on_connect()")
         except Exception as e:

@@ -12,8 +12,8 @@ import traceback
 import paho.mqtt.client as mqtt
 
 from conf.HectorConfig import config
-# from HectorHardware import HectorHardware as Hector
-from HectorSimulator import HectorSimulator as Hector
+from HectorHardware import HectorHardware as Hector
+#from HectorSimulator import HectorSimulator as Hector
 
 
 # settings
@@ -52,7 +52,7 @@ def on_log(client, userdata, level, buf):
 def do_get_config(msg):
     print("get configuration")
     ret = hector.getConfig()
-    client.publish(currentTopic + "/return", str(ret))
+    client.publish(TopicPrefix + "/return", str(ret))
 
 
 def do_light_on(msg):
