@@ -23,7 +23,7 @@ class HectorController:
         return topic + "/progress"
 
     def __init__(self):
-        # self.hector = Hector()
+        self.hector = Hector()
         print("init")
 
     def available_drinks_as_JSON(self):
@@ -72,7 +72,7 @@ class HectorController:
             progress = progress + steps
             if step[0] == "ingr":
                 pump = drinks.available_ingredients.index(step[1])
-                Hector.valve_dose(pump, step[2])
+                self.hector.valve_dose(index=int(pump), amount=int(step[2]))
 
                 self.client.publish(self.get_progressTopic(msg.topic), progress)
 
@@ -103,32 +103,32 @@ class HectorController:
                 # Setzt die Ing in der DB
                 pass
             elif currentTopic == self.TopicPrefix + "light_on":
-                Hector.light_on()
+                self.hector.light_on()
                 pass
             elif currentTopic == self.TopicPrefix + "light_off":
-                Hector.light_off()
+                self.hector.light_off()
                 pass
 
             # high-level
             elif currentTopic == self.TopicPrefix + "ring":
-                Hector.ping()
+                self.hector.ping()
                 pass
             elif currentTopic == self.TopicPrefix + "doseDrink":
                 self._do_dose_drink(msg)
                 pass
             elif currentTopic == self.TopicPrefix + "cleanMe":
                 # ToDo: Develop proper methode in Server
-                Hector.all_valve_open()
-                Hector.cleanAndExit()
+                self.hector.all_valve_open()
+                self.hector.cleanAndExit()
                 pass
                 # clean(msg)
             elif currentTopic == self.TopicPrefix + "dryMe":
                 pass
             elif currentTopic == self.TopicPrefix + "openAllValves":
-                Hector.all_valve_open()
+                self.hector.all_valve_open()
                 pass
             elif currentTopic == self.TopicPrefix + "closeAllValves":
-                Hector.all_valve_close()
+                self.hector.all_valve_close()
                 pass
             # unknown
             else:
