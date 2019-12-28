@@ -5,6 +5,7 @@ import conf.drinks as drinks
 
 import paho.mqtt.client as mqtt
 import traceback
+import threading
 
 
 def log(obj):
@@ -69,7 +70,9 @@ class HectorController:
         progress = 0
         self.client.publish(self.get_progressTopic(msg.topic), progress)
         steps = 100 / len(drink["recipe"])
-
+        Hector.do_pump_start()
+        Hector.do_light_on()
+        Hector.do_arm_out()
         for step in drink["recipe"]:
             # could be other things than ingr.
             progress = progress + steps
@@ -77,6 +80,10 @@ class HectorController:
                 pump = drinks.available_ingredients.index(step[1])
                 Hector.do_valve_dose(index=int(pump), amount=int(step[2]))
                 self.client.publish(self.get_progressTopic(msg.topic), progress)
+        Hector.do_arm_in()
+        Hector.do_light_off()
+        Hector.do_pump_stop()
+        Hector.do_ping(3,0)
         self.client.publish(self.get_progressTopic(msg.topic), 100)
         self.client.publish(self.get_progressTopic(msg.topic), "end")
 
@@ -146,6 +153,5 @@ class HectorController:
         self.client.on_log = self.on_log
 
         self.client.connect(self.MQTTServer, 1883, 60)
-
         while True:
             self.client.loop()

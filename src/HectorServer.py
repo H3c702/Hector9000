@@ -46,13 +46,13 @@ def do_light_off():
 
 def do_arm_out():
     log("drive arm out")
-    hector.arm_out(on_callback)
+    hector.arm_out()
     return "ok"
 
 
 def do_arm_in():
     log("drive arm in")
-    hector.arm_in(on_callback)
+    hector.arm_in()
     return "ok"
 
 
@@ -122,7 +122,7 @@ def do_valve_close(index):
 
 def do_valve_dose(index, amount, timeout=30):
     log("dose valve")
-    return hector.valve_dose(index, amount, timeout, on_callback)
+    return hector.valve_dose(index=index, amount=amount, timeout=timeout)
 
 
 def do_finger(pos):
@@ -132,7 +132,7 @@ def do_finger(pos):
 
 
 def do_ping(num, retract):
-    hector.ping(num, retract, on_callback)
+    hector.ping(num, retract)
     return "ok"
 
 
@@ -145,7 +145,7 @@ def ring(timesToRing):
 
 
 def valve_dose(index, amount):
-    hector.valve_dose(index, amount, cback=on_callback)
+    hector.valve_dose(index, amount)
     return "ok"
 
 
