@@ -14,9 +14,9 @@ import paho.mqtt.client as mqtt
 
 from conf.HectorConfig import config
 
-from HectorHardware import HectorHardware as Hector
+#from HectorHardware import HectorHardware as Hector
 
-#from HectorSimulator import HectorSimulator as Hector
+from HectorSimulator import HectorSimulator as Hector
 
 
 # global vars
@@ -183,13 +183,9 @@ def clean(pump):
 def on_message(client, userdata, msg):
     print("Server: on_message: " + str(msg.topic) + "," + str(msg.payload))
     topic = str(msg.topic)
-    #print("a: " + topic)
-    #print(topic.endswith("return"))
     if (topic.endswith("return") or topic.endswith("progress")):
-        print("return")
         return
     topic = topic.replace(MainTopic, "")
-    print(topic)
     if topic == "get_config":
         res = do_get_config()
         client.publish(MainTopic + topic + "/return", res)
@@ -230,30 +226,27 @@ def on_message(client, userdata, msg):
             return
         do_valve_close(int(msg.payload.decode("utf-8")))
     elif topic == "ping":
-        print("inping")
         if not msg.payload.decode("utf-8").isnumeric():
-            print("error")
+            print("error in ping")
             error("Wrong payload in ping")
             return
-        print("does ping")
         do_ping(int(msg.payload.decode("utf-8")), 0)
-        print("didping")
+        print("PING PING")
     elif topic == "valve_dose":
+        print("dosing valve")
         span = valve_pattern.match(msg.payload.decode("utf-8")).span()
         if not (span[0] == 0 and span[1] == len(msg.payload.decode("utf-8"))):
             error("Wrong payload in valve dose")
             print("error")
             return
-        print("abc")
         args = list(map(int, msg.payload.decode("utf-8").split(",")))
-        print("abc")
         ret = do_valve_dose(index=args[0], amount=args[1], timeout=args[2])
-        print("abc")
-        print(ret)
         res = 1 if ret else -1
-        print(res)
+        print("Sending return")
         client.publish(MainTopic + topic + "/return", res, qos=1)
-        print("pulished")
+        if client.want_write():
+            client.loop_write()
+        print("Dosed Valve")
     else:
         error("Unknown topic")
 

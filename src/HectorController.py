@@ -80,58 +80,45 @@ class HectorController:
                 self.hector.dosedrink(color=webcolors.name_to_rgb(drink["color"]))
             else:
                 self.hector.dosedrink()
-        self.client.loop()
-        print("after loop")
-        self.hector.pump_start()
+        if self.client.want_write():
+            self.client.loop_write()
         self.hector.light_on()
         self.hector.arm_out()
         print("preparation complete")
         for step in drink["recipe"]:
             print("dose :" + str(progress))
-            # could be other things than ingr.
             if step[0] == "ingr":
                 pump = drinks.available_ingredients.index(step[1])
                 self.hector.valve_dose(index=int(pump), amount=int(step[2]), cback=self.dose_callback, progress=(progress, steps), topic="Hector9000/doseDrink/progress")
-                    #error("DOSE NOT SUCESFULL: " + str(pump) + "; " + str(step[2]))
-                    #self.hector.arm_in()
-                    #self.hector.light_off()
-                    #self.hector.pump_stop()
-                    #self.hector.ping(3, 0)
-                    #self.client.publish(self.get_progressTopic(msg.topic), msg.payload.decode("utf-8") + ",end", qos=1)
-                    #print("after abort")
-                    #self.client.loop()
-                    #return
+                self.client.publish(self.get_progressTopic(msg.topic), progress + steps)
+                if self.client.want_write():
+                    self.client.loop_write()
             progress = progress + steps
-        print("dose sucessfull")
+        print("dosing finished")
         if self.LED: self.hector.drinkfinish()
         time.sleep(1)
         self.hector.arm_in()
         self.hector.light_off()
-        self.hector.pump_stop()
         self.hector.ping(3,0)
-        print("ended dose")
-        self.client.publish(self.get_progressTopic(msg.topic), msg.payload.decode("utf-8") + ",end", qos=1)
-        self.client.loop_write()
-        print("published")
+        self.client.publish(self.get_progressTopic(msg.topic), "end", qos=1)
+        if self.client.want_write():
+            self.client.loop_write()
 
     def dose_callback(self, progress):
         self.client.publish(self.TopicPrefix + "doseDrink/progress", progress)
 
     def on_message(self, client, userdata, msg):
+        if self.client.want_write():
+            self.client.loop_write()
         log("on_message: topic " + str(msg.topic) + ", msg: " + str(msg.payload))
         try:
-            global currentTopic
             currentTopic = msg.topic
-
             if "/Hardware/" in currentTopic:
                 return
-
             elif currentTopic.endswith("/progress"):
                 return  # ignore our own progress messages
             elif currentTopic.endswith("/return"):
                 return  # ignore our own return messages
-
-            # low-level
             elif currentTopic == self.TopicPrefix + "standby":
                 self.hector.standby()
             elif currentTopic == self.TopicPrefix + "standart":
@@ -177,6 +164,8 @@ class HectorController:
                 log("unknown topic: " + currentTopic + ", msg " + str(msg.payload))
 
             log("handled message " + currentTopic + " / " + str(msg.payload))
+            if self.client.want_write():
+                self.client.loop_write()
 
         except Exception as e:
             log("Error! " + str(e))

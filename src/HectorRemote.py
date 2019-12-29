@@ -94,11 +94,18 @@ class HectorRemote(HectorAPI, LEDStripAPI):
         self.dose_sucessfull = False
         self.pub_with_subtopic("valve_dose", str(index) + "," + str(amount) + "," + str(timeout))
         while self.waiting_dose:
-            pass
-        if not topic == "" and self.dose_sucessfull : 
-            self.client.publish(topic, progress[0] + progress[1])
+            if self.client.want_write():
+                self.client.loop_write()
+            else:
+                pass
+        if not topic == "" and self.dose_sucessfull:
+            full_process = progress[0] + progress[1]
+            self.client.publish(topic, full_process)
+            if full_process > 95:
+                self.client.publish(topic, "end")
         else:
-            if cback: cback(progress[0] + progress[1])
+            if cback:
+                cback(progress[0] + progress[1])
         return self.dose_sucessfull
 
     def finger(self, pos=0):
@@ -121,7 +128,7 @@ class HectorRemote(HectorAPI, LEDStripAPI):
         self.ledstripmessage("dosedrink", color, type)
 
     def drinkfinish(self, color=(80, 80, 30), type=0):
-        self.client.publish(self.LEDTopic + "drinkfinish", "")
+        self.client.publish(self.LEDTopic + "drinkfinish", "true")
 
     def standby(self, color=(80,80,30), type=0):
         self.ledstripmessage("standby", color, type)
