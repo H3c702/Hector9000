@@ -63,7 +63,7 @@ class HectorRemote(HectorAPI, LEDStripAPI):
         self.arm_pos = 0
         self.pub_with_subtopic("arm_position")
         while self.waiting_pos:
-            self.client.loop()
+            pass
         return self.arm_pos
 
     def scale_readout(self):
@@ -71,7 +71,7 @@ class HectorRemote(HectorAPI, LEDStripAPI):
         self.scale_read = 0
         self.pub_with_subtopic("scale_readout")
         while self.waiting_scale:
-            self.client.loop()
+            pass
         return self.scale_read
 
     def scale_tare(self):
@@ -94,17 +94,18 @@ class HectorRemote(HectorAPI, LEDStripAPI):
         self.dose_sucessfull = False
         self.pub_with_subtopic("valve_dose", str(index) + "," + str(amount) + "," + str(timeout))
         while self.waiting_dose:
-            self.client.loop()
-        if self.dose_sucessfull:
+            pass
+        if not topic == "" and self.dose_sucessfull : 
+            self.client.publish(topic, progress[0] + progress[1])
+        else:
             if cback: cback(progress[0] + progress[1])
-        if not topic == "" : self.client.publish(topic, progress[0] + progress[1])
         return self.dose_sucessfull
 
     def finger(self, pos=0):
         self.pub_with_subtopic("finger")
 
     def ping(self, num, retract=True, cback=None):
-        self.pub_with_subtopic("ping")
+        self.pub_with_subtopic("ping", "3")
 
     def cleanAndExit(self):
         self.pub_with_subtopic("clean_and_exit")
@@ -120,7 +121,7 @@ class HectorRemote(HectorAPI, LEDStripAPI):
         self.ledstripmessage("dosedrink", color, type)
 
     def drinkfinish(self, color=(80, 80, 30), type=0):
-        self.ledstripmessage("drinkfinish", color, type)
+        self.client.publish(self.LEDTopic + "drinkfinish", "")
 
     def standby(self, color=(80,80,30), type=0):
         self.ledstripmessage("standby", color, type)

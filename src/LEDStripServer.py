@@ -1,23 +1,26 @@
-import LEDStripAPI
 import paho.mqtt.client as mqtt
-import time
 
 from LEDStripConnector import LEDStripConnector as LEDStrip
 
 MQTT_Server = "localhost"
 port = 1883
-MainTopic = "Hector9000/LED/"
+MainTopic = "Hector9000/LEDStrip/"
 
 
 def debugOut(message):
     print("LED_Strip_Server: => " + message)
 
 def on_message(client, userdata, msg):
+    print("err")
+    debugOut("abc")
+    #print("LED_Server on_message: " + str(mgs.topic) + " , " + msg.payload.decode("utf-8"))
     topic = msg.topic
     topic = topic.replace(MainTopic, "")
-    if topic is "standart":
-        args = tuple(msg.payload.split(","))
-        if msg.payload is "":
+    print("topic: " + topic)
+    if topic == "standart":
+        print("standart")
+        args = tuple(msg.payload.decode("utf-8").split(","))
+        if msg.payload.decode("utf-8") is "":
             pixels.standart()
         elif len(args) == 1:
             pixels.standart(type=args[0])
@@ -25,48 +28,84 @@ def on_message(client, userdata, msg):
             pixels.standart(type=args[0], color=tuple(map(int, args[1].split(";"))))
         else:
             debugOut("Error to many args for standart")
-    elif topic is "standby":
-        args = tuple(msg.payload.split(","))
-        if msg.payload is "":
+    elif topic == "standby":
+        print("standby")
+        args = tuple(msg.payload.decode("utf-8").split(","))
+        if msg.payload.decode("utf-8") is "":
             pixels.standby()
         elif len(args) == 1:
             pixels.standby(type=args[0])
         elif len(args) == 2:
             pixels.standby(type=args[0], color=tuple(map(int, args[1].split(";"))))
         else:
-            debugOut("Error to many args for standart")
-    elif topic is "dose":
-        args = tuple(msg.payload.split(","))
-        if msg.payload is "":
+            debugOut("Error to many args for standby")
+    elif topic == "dosedrink":
+        print("dosedrink")
+        args = list(msg.payload.decode("utf-8").split(","))
+        if msg.payload.decode("utf-8") is "":
+            print("no args")
             pixels.dosedrink()
         elif len(args) == 1:
+            print("one arg")
             pixels.dosedrink(type=args[0])
         elif len(args) == 2:
-            pixels.dosedrink(type=args[0], color=tuple(map(int, args[1].split(";"))))
+            print("two args")
+            print(args[1])
+            args[1] = args[1].replace("(", "")
+            print(args[1])
+            args[1] = args[1].replace(")", "")
+            print(args[1])
+            # temp = [int(i) for i in args[1].split(";"
+            temp = tuple(map(int, args[1].split(";")))
+            print(temp)
+            pixels.dosedrink(type=args[0], color=temp)
+            print("after dose_drink")
         else:
-            debugOut("Error to many args for standart")
-    elif topic is "finish":
-        args = tuple(msg.payload.split(","))
-        if msg.payload is "":
+            debugOut("Error to many args for dosedrink")
+    elif topic == "drinkfinish":
+        print("drinkfinish")
+        pixels.finish()
+        return
+        args = tuple(msg.payload.decode("utf-8").split(","))
+        if msg.payload.decode("utf-8") is "":
             pixels.finish()
         elif len(args) == 1:
             pixels.finish(type=args[0])
         elif len(args) == 2:
             pixels.finish(type=args[0], color=tuple(map(int, args[1].split(";"))))
         else:
-            debugOut("Error to many args for standart")
+            debugOut("Error to many args for drinkfinish")
     else:
         debugOut("Unknown topic")
 
 
 def on_connect(client, userdata, flags, rc):
-    client.subscribe(MainTopic + "#")
+    print("Server connected")
+    print(MainTopic + "#")
+    print("subb ret1: " + str(client.subscribe(MainTopic + "+", 1)))
+    a = MainTopic + "#"
+    print("topic: " + a)
+    #print("sub ret 2: " + str(client.subscribe(a, 1)))
+    #client.publish(MainTopic + "abc", "test")
+    print("Subscribed to Topic")
 
+def on_subscribe(client, userdata, mid, granted_qos):
+    print("subbed")
+    print(userdata)
+    print(mid)
+
+print("server started")
 pixels = LEDStrip()
 client = mqtt.Client()
 client.on_message = on_message
 client.on_connect = on_connect
-client = client.connect(MQTT_Server, port, 60)
+client.on_subscribe = on_subscribe
+client.connect(MQTT_Server, port, 60)
 client.loop_start()
+print("after forever")
+index = 0
 while True:
-    pixels.led_loop()
+   # pixels.led_loop()
+   #print(index)
+   pixels.loop()
+   index = index + 1

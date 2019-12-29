@@ -14,9 +14,9 @@ import paho.mqtt.client as mqtt
 
 from conf.HectorConfig import config
 
-#from HectorHardware import HectorHardware as Hector
+from HectorHardware import HectorHardware as Hector
 
-from HectorSimulator import HectorSimulator as Hector
+#from HectorSimulator import HectorSimulator as Hector
 
 
 # global vars
@@ -91,6 +91,13 @@ def do_scale_tare():
 def do_pump_start():
     log("start pump")
     hector.pump_start()
+
+def do_reset():
+    do_pump_stop()
+    do_all_valve_close()
+    do_arm_in()
+    do_light_off()
+    do_ping(2, 0)
 
 
 def do_pump_stop():
@@ -176,13 +183,13 @@ def clean(pump):
 def on_message(client, userdata, msg):
     print("Server: on_message: " + str(msg.topic) + "," + str(msg.payload))
     topic = str(msg.topic)
-    print("a: " + topic)
-    print(topic.endswith("return"))
+    #print("a: " + topic)
+    #print(topic.endswith("return"))
     if (topic.endswith("return") or topic.endswith("progress")):
         print("return")
         return
     topic = topic.replace(MainTopic, "")
-    print(topic == "valve_dose")
+    print(topic)
     if topic == "get_config":
         res = do_get_config()
         client.publish(MainTopic + topic + "/return", res)
@@ -190,6 +197,8 @@ def on_message(client, userdata, msg):
         do_light_on()
     elif topic == "light_off":
         do_light_off()
+    elif topic == "reset":
+        do_reset()
     elif topic == "arm_out":
         do_arm_out()
     elif topic == "arm_in":
@@ -211,20 +220,24 @@ def on_message(client, userdata, msg):
     elif topic == "all_valve_close":
         do_all_valve_close()
     elif topic == "valve_open":
-        if not msg.payload.isDigit():
+        if not msg.payload.decode("utf-8").isnumeric():
             error("Wrong payload in valve open")
             return
-        do_valve_open(int(msg.payload))
+        do_valve_open(int(msg.payload.decode("utf-8")))
     elif topic == "valve_close":
-        if not msg.payload.isDigit():
+        if not msg.payload.decode("utf-8").isnumeric():
             error("Wrong payload in valve close")
             return
-        do_valve_close(int(msg.payload))
+        do_valve_close(int(msg.payload.decode("utf-8")))
     elif topic == "ping":
-        if not msg.payload.isDigit():
+        print("inping")
+        if not msg.payload.decode("utf-8").isnumeric():
+            print("error")
             error("Wrong payload in ping")
             return
-        do_ping(int(msg.payload), 0)
+        print("does ping")
+        do_ping(int(msg.payload.decode("utf-8")), 0)
+        print("didping")
     elif topic == "valve_dose":
         span = valve_pattern.match(msg.payload.decode("utf-8")).span()
         if not (span[0] == 0 and span[1] == len(msg.payload.decode("utf-8"))):
@@ -238,7 +251,9 @@ def on_message(client, userdata, msg):
         print("abc")
         print(ret)
         res = 1 if ret else -1
-        client.publish(MainTopic + topic + "/return", res)
+        print(res)
+        client.publish(MainTopic + topic + "/return", res, qos=1)
+        print("pulished")
     else:
         error("Unknown topic")
 
@@ -256,5 +271,10 @@ if __name__ == "__main__":
     client.on_connect = on_connect
     client.connect(MQTTIP, MQTTPORT, 60)
     print("abc")
+    ac = 0
     while True:
+        ac = ac + 1
+        if ac % 100 == 0:
+            ac = 0
+            #print("100")
         client.loop()

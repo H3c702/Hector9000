@@ -1,12 +1,8 @@
 # drinks.py
 drink_list = [
-        {
-            "name": "Mate",
-            "color": "gold",
-            "recipe": [
-                ("ingr", "mate", 200),
-                ]
-         }, {
+        { "name": "Extra Schuss Mate",
+            "recipe":[("ingr", "mate", 75)]},
+         {
             "name": "Rum & Coke",
             "color": "chocolate",
             "recipe": [
@@ -62,7 +58,7 @@ drink_list = [
                                         "alc": True,
                                         "recipe": [
                                             ("ingr", "rum", 40),
-                                            ("ingr", "mate", 100)
+                                            ("ingr", "mate", 200)
                                             ]
                                         }, {
                                              #   "name": "Virgin Sunrise",
@@ -149,17 +145,17 @@ drink_list = [
                                                                                                                                                         "name": "Kamikaze",
                                                                                                                                                         "recipe": [
                                                                                                                                                             ("ingr", "vodka", 30),
-                                                                                                                                                            ("ingr", "cointreau", 30),
+                                                                                                                                                            ("ingr", "coin", 30),
                                                                                                                                                             ("ingr", "lms", 30)
                                                                                                                                                             ]   
                                                                                                                                                         }, {
-                                                                                                                                               #                 "name": "Margarita",
-                                                                                                                                                #                "recipe": [
-                                                                                                                                                 #                   ("ingr", "tequila", 50),
-                                                                                                                                                  #                  ("ingr", "cointreau", 30),
-                                                                                                                                                   #                 ("ingr", "lms", 10)
-                                                                                                                                                    #                ]   
-                                                                                                                                                     #           }, {
+                                                                                                                                                                "name": "Margarita Special",
+                                                                                                                                                                "recipe": [
+                                                                                                                                                                    ("ingr", "tequila", 50),
+                                                                                                                                                                    ("ingr", "coin", 30),
+                                                                                                                                                                    ("ingr", "lms", 10)
+                                                                                                                                                                    ]   
+                                                                                                                                                                }, {
                                                                                                                                                                         "name": "Monkey Gland",
                                                                                                                                                                         "recipe": [
                                                                                                                                                                             ("ingr", "gin", 50),
@@ -194,7 +190,25 @@ drink_list = [
                                                                                                                                                                                                             ("ingr", "lms", 10),
                                                                                                                                                                                                             ("ingr","coke", 50)
                                                                                                                                                                                                             ]   
-                                                                                                                                                                                                        }
+                                                                                                                                                                                                        },
+                                                                                                                                                                                                {
+                                                                                                                                                                                                        "name": "Raspberry Zero",
+                                                                                                                                                                                                        "recipe": [
+                                                                                                                                                                                                            ("ingr", "oj", 200),
+                                                                                                                                                                                                            ("ingr", "pine", 80),
+                                                                                                                                                                                                            ("ingr", "raspberry", 20)
+                                                                                                                                                                                                            ]
+                                                                                                                                                                                                        },
+                                                                                                                                                                                                {
+                                                                                                                                                                                                        "name": "Raspberry Pi",
+                                                                                                                                                                                                        "recipe": [
+                                                                                                                                                                                                            ("ingr", "oj", 180),
+                                                                                                                                                                                                            ("ingr", "pine", 80),
+                                                                                                                                                                                                            ("ingr", "raspberry", 20),
+                                                                                                                                                                                                            ("ingr", "vodka", 20)
+                                                                                                                                                                                                            ]
+                                                                                                                                                                                                        },{"name":"Extra Schuss Cola",
+                                                                                                                                                                                                                "recipe":[("ingr", "coke", 75)]}
                                                                                                                                                                                                 ]
 
 
@@ -217,6 +231,7 @@ ingredients = {
         "cocos": ("Cocos", False),
         "mango": ("Mango Juice", False),
         "lms": ("Limettensaft", False),
+        "coin": ("Cointreau", True)
         }
 
 actions = {
@@ -231,8 +246,7 @@ actions = {
 
 
 # To DB -> replace
-available_ingredients = ["oj", "tequila", "gren", "vodka", "mmix", "rum", "coke", "gin", "tonic", "mate"]
-
+available_ingredients = ["gren", "coin", "lms", "oj", "mate", "gin", "vodka", "tequila", "rum", "raspberry", "coke", "pine"]
 
 def doable(drink, available):
     return False not in [ing in available for ing in [step[1] for step in drink["recipe"] if step[0] == "ingr"]]
@@ -245,12 +259,12 @@ def alcoholic(drink):
 
 
 
-print("doable:")
-for drink in drink_list:    print(drink["name"], doable(drink, available_ingredients))
+#print("doable:")
+#for drink in drink_list:    print(drink["name"], doable(drink, available_ingredients))
 
 available_drinks = [drink for drink in drink_list if doable(drink, available_ingredients)]
 
 
-print("available:")
-for d in available_drinks:
-    print(d["name"] + " (" + ("" if alcoholic(d) else "non-") + "alcoholic)")
+#print("available:")
+#for d in available_drinks:
+#    print(d["name"] + " (" + ("" if alcoholic(d) else "non-") + "alcoholic)")

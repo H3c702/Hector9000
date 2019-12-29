@@ -187,26 +187,34 @@ class HectorHardware(HectorAPI):
         print("dose channel %d, amount %d" % (index, amount))
         if (index < 0 and index >= len(self.valveChannels) - 1):
             return -1
+        if not self.arm_isInOutPos():
+            return -1
         t0 = time()
         self.scale_tare()
         self.pump_start()
         self.valve_open(index)
-        amount = amount * 3
         sr = self.scale_readout()
-        index = 0
+        last_over = False
+        last = sr
         while True:
-            if sr >= amount - 10:
-                index = index + 1
-            else:
-                index = 0
-            if sr >= amount - 1:
-                if index >= 3:
-                    break
             sr = self.scale_readout()
+            if sr > amount:
+                if last_over:
+                    print("done")
+                    break
+                else:
+                    last_over = True
+            else:
+                last_over = False
+            print("sr: " + str(sr))
+            print(last_over)
+            if (sr - last) > 3:
+                t0 = time()
+                last = sr
             if (time() - t0) > timeout:
                 self.pump_stop()
                 self.valve_close(index)
-                debugOut("valve_dose", "ERROR: TIMEOUT")
+                #debugOut("valve_dose", "ERROR: TIMEOUT")
                 return False
             sleep(0.1)
         self.pump_stop()

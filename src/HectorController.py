@@ -45,7 +45,7 @@ class HectorController:
 
     def _get_drink_as_JSON(self, msg):
         id = int(msg.payload)
-        drink = drinks.available_drinks[id]
+        drink = drinks.available_drinks[id - 1]
         inglist = [{"name": drinks.ingredients[step[1]][0], "ammount": step[2]} for step in drink["recipe"] if
                    step[0] == "ingr"]
         data = {"id": id, "name": drink["name"], "ingredients": inglist}
@@ -69,7 +69,7 @@ class HectorController:
     def _do_dose_drink(self, msg):
         print("do dose drink")
         id = int(msg.payload)
-        drink = drinks.available_drinks[id]
+        drink = drinks.available_drinks[id - 1]
         # Return ID of drink to identify that drink creation starts
         self.client.publish(self.get_returnTopic(msg.topic), msg.payload)
         progress = 0
@@ -81,6 +81,7 @@ class HectorController:
             else:
                 self.hector.dosedrink()
         self.client.loop()
+        print("after loop")
         self.hector.pump_start()
         self.hector.light_on()
         self.hector.arm_out()
@@ -90,14 +91,16 @@ class HectorController:
             # could be other things than ingr.
             if step[0] == "ingr":
                 pump = drinks.available_ingredients.index(step[1])
-                if not self.hector.valve_dose(index=int(pump), amount=int(step[2]), cback=self.dose_callback, progress=(progress, steps), topic="Hector9000/doseDrink/progress"):
-                    error("DOSE NOT SUCESFULL: " + str(pump) + "; " + str(step[2]))
-                    self.hector.arm_in()
-                    self.hector.light_off()
-                    self.hector.pump_stop()
-                    self.hector.ping(3, 0)
-                    self.client.publish(self.get_progressTopic(msg.topic), msg.payload.decode("utf-8") + ",end")
-                    return
+                self.hector.valve_dose(index=int(pump), amount=int(step[2]), cback=self.dose_callback, progress=(progress, steps), topic="Hector9000/doseDrink/progress")
+                    #error("DOSE NOT SUCESFULL: " + str(pump) + "; " + str(step[2]))
+                    #self.hector.arm_in()
+                    #self.hector.light_off()
+                    #self.hector.pump_stop()
+                    #self.hector.ping(3, 0)
+                    #self.client.publish(self.get_progressTopic(msg.topic), msg.payload.decode("utf-8") + ",end", qos=1)
+                    #print("after abort")
+                    #self.client.loop()
+                    #return
             progress = progress + steps
         print("dose sucessfull")
         if self.LED: self.hector.drinkfinish()
@@ -107,10 +110,12 @@ class HectorController:
         self.hector.pump_stop()
         self.hector.ping(3,0)
         print("ended dose")
-        self.client.publish(self.get_progressTopic(msg.topic), msg.payload.decode("utf-8") + ",end")
+        self.client.publish(self.get_progressTopic(msg.topic), msg.payload.decode("utf-8") + ",end", qos=1)
+        self.client.loop_write()
+        print("published")
 
     def dose_callback(self, progress):
-        self.client.publish(self.TopicPrefix + "/doseDrink/progress", progress)
+        self.client.publish(self.TopicPrefix + "doseDrink/progress", progress)
 
     def on_message(self, client, userdata, msg):
         log("on_message: topic " + str(msg.topic) + ", msg: " + str(msg.payload))
