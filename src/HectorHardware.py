@@ -27,7 +27,7 @@ import logging
 
 
 ## initialization
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARNING)
 
 
 def debugOut(name, value):
@@ -183,29 +183,36 @@ class HectorHardware(HectorAPI):
         print("close valve")
         self.valve_open(index, open=0)
 
-    def valve_dose(self, index, amount, timeout=30, cback=debugOut):
+    def valve_dose(self, index, amount, timeout=30, cback=None, progress=(0,100), topic=""):
         print("dose channel %d, amount %d" % (index, amount))
-        if cback: cback("valve_dose", 0)
-        sr = 0
         if (index < 0 and index >= len(self.valveChannels) - 1):
             return -1
         t0 = time()
         self.scale_tare()
         self.pump_start()
         self.valve_open(index)
+        amount = amount * 3
         sr = self.scale_readout()
-        while sr < amount:
+        index = 0
+        while True:
+            if sr >= amount - 10:
+                index = index + 1
+            else:
+                index = 0
+            if sr >= amount - 1:
+                if index >= 3:
+                    break
             sr = self.scale_readout()
-            if cback: cback("valve_dose", sr)
             if (time() - t0) > timeout:
                 self.pump_stop()
                 self.valve_close(index)
-                if cback: cback("valve_dose", amount)
-                return -1
+                debugOut("valve_dose", "ERROR: TIMEOUT")
+                return False
             sleep(0.1)
         self.pump_stop()
         self.valve_close(index)
-        return sr
+        if cback: cback(progress[0] + progress[1])
+        return True
 
     def finger(self, pos=0):
         self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[pos])

@@ -56,7 +56,7 @@ class HectorSimulator(HectorAPI):
         self.armDir = cfg["a4988"]["DIR"]
         self.armNumSteps = cfg["a4988"]["numSteps"]
         self.simulatedArmPos = self.armNumSteps / 2  # 50%
-        print("arm step %d, dir %d" % (self.armStep, self.armDir))
+        #print("arm step %d, dir %d" % (self.armStep, self.armDir))
         self.arm = cfg["arm"]["SENSE"]
 
         # setup air pump (GPIO)
@@ -156,7 +156,7 @@ class HectorSimulator(HectorAPI):
             sleep(.1)
             if cback: cback("valve_dose", i)
         if cback: cback("valve_dose", amount)
-        return amount
+        return True
 
     def finger(self, pos=0):
         print("finger")

@@ -1,23 +1,22 @@
-import HectorServer as Hector
+from HectorRemote import HectorRemote as Hector
 
 import json
 import conf.drinks as drinks
 
 import paho.mqtt.client as mqtt
+import time
 import traceback
-import threading
 
 
 def log(obj):
     print("Controller: " + str(obj))
-    
-    
+
+
+def error(obj):
+    print("CONTROLLER ERROR: " + str(obj))
+
 # settings
 class HectorController:
-    MQTTServer = "localhost"
-    TopicPrefix = "Hector9000/"
-    initDone = False
-    client = mqtt.Client()
 
     @staticmethod
     def get_returnTopic(topic):
@@ -28,7 +27,11 @@ class HectorController:
         return topic + "/progress"
 
     def __init__(self):
-        log("init")
+        self.MQTTServer = "localhost"
+        self.TopicPrefix = "Hector9000/"
+        self.initDone = False
+        self.client = mqtt.Client()
+        self.hector = Hector()
 
     def available_drinks_as_JSON(self):
         datalist = []
@@ -50,19 +53,19 @@ class HectorController:
 
     def on_connect(self, client, userdata, flags, rc):
         log("Connected with result code " + str(rc))
-        client.subscribe(self.TopicPrefix + "#")
+        self.client.subscribe(self.TopicPrefix + "#")
 
     def on_log(self, client, userdata, level, buf):
         pass  # log("LOG " + str(level) + ": " + str(userdata) + " -- " + str(buf))
 
     def _do_get_drinks(self, msg):
         self.client.publish(self.get_returnTopic(msg.topic), self.available_drinks_as_JSON())
-        pass
 
     def _do_get_drink(self, msg):
         self.client.publish(self.get_returnTopic(msg.topic), self._get_drink_as_JSON(msg))
 
     def _do_dose_drink(self, msg):
+        print("do dose drink")
         id = int(msg.payload)
         drink = drinks.available_drinks[id]
         # Return ID of drink to identify that drink creation starts
@@ -70,28 +73,46 @@ class HectorController:
         progress = 0
         self.client.publish(self.get_progressTopic(msg.topic), progress)
         steps = 100 / len(drink["recipe"])
-        Hector.do_pump_start()
-        Hector.do_light_on()
-        Hector.do_arm_out()
+        self.client.loop()
+        self.hector.pump_start()
+        self.hector.light_on()
+        self.hector.arm_out()
+        print("preparation complete")
         for step in drink["recipe"]:
+            print("dose :" + str(progress))
             # could be other things than ingr.
-            progress = progress + steps
             if step[0] == "ingr":
                 pump = drinks.available_ingredients.index(step[1])
-                Hector.do_valve_dose(index=int(pump), amount=int(step[2]))
-                self.client.publish(self.get_progressTopic(msg.topic), progress)
-        Hector.do_arm_in()
-        Hector.do_light_off()
-        Hector.do_pump_stop()
-        Hector.do_ping(3,0)
-        self.client.publish(self.get_progressTopic(msg.topic), 100)
-        self.client.publish(self.get_progressTopic(msg.topic), "end")
+                if not self.hector.valve_dose(index=int(pump), amount=int(step[2]), cback=self.dose_callback, progress=(progress, steps), topic="Hector9000/doseDrink/progress"):
+                    error("DOSE NOT SUCESFULL: " + str(pump) + "; " + str(step[2]))
+                    self.hector.arm_in()
+                    self.hector.light_off()
+                    self.hector.pump_stop()
+                    self.hector.ping(3, 0)
+                    self.client.publish(self.get_progressTopic(msg.topic), msg.payload.decode("utf-8") + ",end")
+                    return
+            progress = progress + steps
+        print("dose sucessfull")
+        time.sleep(1)
+        self.hector.arm_in()
+        self.hector.light_off()
+        self.hector.pump_stop()
+        self.hector.ping(3,0)
+        print("ended dose")
+        self.client.publish(self.get_progressTopic(msg.topic), msg.payload.decode("utf-8") + ",end")
+
+    def dose_callback(self, progress):
+        self.client.publish(self.TopicPrefix + "/doseDrink/progress", progress)
 
     def on_message(self, client, userdata, msg):
+        print("test")
         log("on_message: topic " + str(msg.topic) + ", msg: " + str(msg.payload))
         try:
             global currentTopic
             currentTopic = msg.topic
+
+            if currentTopic is self.TopicPrefix + "doseDrink/Hardware/progress":
+                pass
 
             if currentTopic.endswith("/progress"):
                 return  # ignore our own progress messages
@@ -111,15 +132,15 @@ class HectorController:
                 # Setzt die Ing in der DB
                 pass
             elif currentTopic == self.TopicPrefix + "light_on":
-                Hector.do_light_on()
+                self.hector.do_light_on()
                 pass
             elif currentTopic == self.TopicPrefix + "light_off":
-                Hector.do_light_off()
+                self.hector.do_light_off()
                 pass
 
             # high-level
             elif currentTopic == self.TopicPrefix + "ring":
-                Hector.do_ping(2, 1)
+                self.hector.do_ping(2, 1)
                 pass
             elif currentTopic == self.TopicPrefix + "doseDrink":
                 self._do_dose_drink(msg)
@@ -127,16 +148,16 @@ class HectorController:
             elif currentTopic == self.TopicPrefix + "cleanMe":
                 # ToDo: Develop proper methode in Server
                 for i in range(12):
-                    Hector.clean(1)
+                    self.hector.clean(1)
                 pass
                 # clean(msg)
             elif currentTopic == self.TopicPrefix + "dryMe":
                 pass
             elif currentTopic == self.TopicPrefix + "openAllValves":
-                Hector.all_valve_open()
+                self.hector.all_valve_open()
                 pass
             elif currentTopic == self.TopicPrefix + "closeAllValves":
-                Hector.all_valve_close()
+                self.hector.all_valve_close()
                 pass
             else:
                 log("unknown topic: " + currentTopic + ", msg " + str(msg.payload))
@@ -148,10 +169,10 @@ class HectorController:
             log(traceback.format_exc())
 
     def connect(self):
+        print("connect")
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
         self.client.on_log = self.on_log
-
         self.client.connect(self.MQTTServer, 1883, 60)
         while True:
             self.client.loop()
