@@ -2,7 +2,7 @@ from HectorRemote import HectorRemote as Hector
 
 import json
 import conf.drinks as drinks
-
+import webcolors
 import paho.mqtt.client as mqtt
 import time
 import traceback
@@ -32,6 +32,7 @@ class HectorController:
         self.initDone = False
         self.client = mqtt.Client()
         self.hector = Hector()
+        self.LED = True
 
     def available_drinks_as_JSON(self):
         datalist = []
@@ -54,6 +55,7 @@ class HectorController:
     def on_connect(self, client, userdata, flags, rc):
         log("Connected with result code " + str(rc))
         self.client.subscribe(self.TopicPrefix + "#")
+        if self.LED: self.hector.standart(type=3)
 
     def on_log(self, client, userdata, level, buf):
         pass  # log("LOG " + str(level) + ": " + str(userdata) + " -- " + str(buf))
@@ -73,6 +75,11 @@ class HectorController:
         progress = 0
         self.client.publish(self.get_progressTopic(msg.topic), progress)
         steps = 100 / len(drink["recipe"])
+        if self.LED:
+            if "color" in drink.keys():
+                self.hector.dosedrink(color=webcolors.name_to_rgb(drink["color"]))
+            else:
+                self.hector.dosedrink()
         self.client.loop()
         self.hector.pump_start()
         self.hector.light_on()
@@ -93,6 +100,7 @@ class HectorController:
                     return
             progress = progress + steps
         print("dose sucessfull")
+        if self.LED: self.hector.drinkfinish()
         time.sleep(1)
         self.hector.arm_in()
         self.hector.light_off()
@@ -105,26 +113,29 @@ class HectorController:
         self.client.publish(self.TopicPrefix + "/doseDrink/progress", progress)
 
     def on_message(self, client, userdata, msg):
-        print("test")
         log("on_message: topic " + str(msg.topic) + ", msg: " + str(msg.payload))
         try:
             global currentTopic
             currentTopic = msg.topic
 
-            if currentTopic is self.TopicPrefix + "doseDrink/Hardware/progress":
-                pass
+            if "/Hardware/" in currentTopic:
+                return
 
-            if currentTopic.endswith("/progress"):
+            elif currentTopic.endswith("/progress"):
                 return  # ignore our own progress messages
             elif currentTopic.endswith("/return"):
                 return  # ignore our own return messages
 
             # low-level
+            elif currentTopic == self.TopicPrefix + "standby":
+                self.hector.standby()
+            elif currentTopic == self.TopicPrefix + "standart":
+                color = tupel(msg.payload.decode("utf-8").split(","))
+                self.hector.standart(color=color)
             elif currentTopic == self.TopicPrefix + "get_drinks":
                 self._do_get_drinks(msg)
             elif currentTopic == self.TopicPrefix + "get_ingredientsForDrink":
                 self._do_get_drink(msg)
-                pass
             elif currentTopic == self.TopicPrefix + "get_ingredientsList":
                 # gibt liste aller Ing aus der DB
                 pass
@@ -133,10 +144,8 @@ class HectorController:
                 pass
             elif currentTopic == self.TopicPrefix + "light_on":
                 self.hector.do_light_on()
-                pass
             elif currentTopic == self.TopicPrefix + "light_off":
                 self.hector.do_light_off()
-                pass
 
             # high-level
             elif currentTopic == self.TopicPrefix + "ring":

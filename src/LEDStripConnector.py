@@ -70,6 +70,8 @@ class LEDStripConnector(LEDStripAPI):
                 self.pixels[j] = (0,0,0)
             self.pixels.show()
             time.sleep(0.05)
+        self.mode = 3
+
 
 
     def drinkloop(self):
@@ -89,18 +91,17 @@ class LEDStripConnector(LEDStripAPI):
                     time.sleep(0.3)
 
     def led_loop(self):
-        while True:
-            if self.mode is 1:
-                self.mode1()
-            elif self.mode is 2:
-                self.mode2()
-            elif self.mode is 3:
-                self.mode3()
-            elif self.mode is 4:
-                self.mode4()
-            elif self.mode is 99:
-                # dosedrink
-                self.drinkloop()
+        if self.mode is 1:
+            self.mode1()
+        elif self.mode is 2:
+            self.mode2()
+        elif self.mode is 3:
+            self.mode3()
+        elif self.mode is 4:
+            self.mode4()
+        elif self.mode is 99:
+            # dosedrink
+            self.drinkloop()
 
 
 

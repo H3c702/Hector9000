@@ -1,8 +1,9 @@
 from HectorAPI import HectorAPI
+from LEDStripAPI import LEDStripAPI
 import paho.mqtt.client as mqtt
 
 
-class HectorRemote(HectorAPI):
+class HectorRemote(HectorAPI, LEDStripAPI):
 
     def on_message(self, client, userdata, msg):
         print("REMOTE: on_message: " + msg.topic + ", " + msg.payload.decode("utf-8"))
@@ -27,6 +28,7 @@ class HectorRemote(HectorAPI):
 
     def __init__(self):
         self.client = mqtt.Client()
+        self.LEDTopic = "Hector9000/LEDStrip/"
         self.client.on_message = self.on_message
         self.client.on_connect = self.on_connect
         self.MainTopic = "Hector9000/Hardware/"
@@ -106,3 +108,19 @@ class HectorRemote(HectorAPI):
 
     def cleanAndExit(self):
         self.pub_with_subtopic("clean_and_exit")
+
+    def ledstripmessage(self,topic, color, type):
+        message = str(color[0]) + "," + str(color[1]) + "," + str(color[2]) + "," + str(type)
+        self.client.publish(self.LEDTopic + topic, message)
+
+    def standart(self, color=(80, 80, 30), type=0):
+        self.ledstripmessage("standart", color, type)
+
+    def dosedrink(self, color=(20, 20, 255), type=0):
+        self.ledstripmessage("dosedrink", color, type)
+
+    def drinkfinish(self, color=(80, 80, 30), type=0):
+        self.ledstripmessage("drinkfinish", color, type)
+
+    def standby(self, color=(80,80,30), type=0):
+        self.ledstripmessage("standby", color, type)
