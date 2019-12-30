@@ -14,9 +14,9 @@ import paho.mqtt.client as mqtt
 
 from conf.HectorConfig import config
 
-#from HectorHardware import HectorHardware as Hector
+from HectorHardware import HectorHardware as Hector
 
-from HectorSimulator import HectorSimulator as Hector
+#from HectorSimulator import HectorSimulator as Hector
 
 
 # global vars
@@ -111,8 +111,8 @@ def do_all_valve_open():
     hector.arm_in()
     hector.pump_stop()
     for vnum in range(12):
-        log("Ventil %d wird geöffnet" % (vnum,))
-        time.sleep(1)
+        #log("Ventil %d wird geöffnet" % (vnum,))
+        time.sleep(0.5)
         hector.valve_open(vnum)
     hector.light_off()
 
@@ -123,14 +123,14 @@ def do_all_valve_close():
     hector.arm_in()
     hector.pump_stop()
     for vnum in range(12):
-        log("Ventil %d wird geschlossen" % (vnum,))
-        time.sleep(1)
+        #log("Ventil %d wird geschlossen" % (vnum,))
+        time.sleep(0.5)
         hector.valve_close(vnum)
     hector.light_off()
 
 
 def do_valve_open(index, open):
-    log("open valve")
+    #log("open valve")
     hector.valve_open(index, open)
 
 
