@@ -140,18 +140,18 @@ if(len(sys.argv) is 1):
     mode0()
 else:
     print(sys.argv[0])
-if(sys.argv[1] is "0"):
+if(sys.argv[1] == "0"):
     mode0()
-elif(sys.argv[1] is "1"):
+elif(sys.argv[1] == "1"):
     mode1()
-elif(sys.argv[1] is "2"):
+elif(sys.argv[1] == "2"):
     mode2()
-elif(sys.argv[1] is "3"):
+elif(sys.argv[1] == "3"):
     mode3()
-elif(sys.argv[1] is "4"):
+elif(sys.argv[1] == "4"):
     mode4()
-elif(sys.argv[1] is "5"):
-    mode5()
+elif(sys.argv[1] == "5"):
+    mode5()        
 else:
     mode0()
 

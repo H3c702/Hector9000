@@ -190,14 +190,21 @@ class HectorHardware(HectorAPI):
         if not self.arm_isInOutPos():
             return -1
         t0 = time()
+        balance = True
         self.scale_tare()
         self.pump_start()
         self.valve_open(index)
         sr = self.scale_readout()
+        if sr < -10:
+            amount = amount + sr
+            balance = False
         last_over = False
         last = sr
         while True:
             sr = self.scale_readout()
+            if balance and sr < -10:
+                amount = amount + sr
+                balance = False
             if sr > amount:
                 if last_over:
                     print("done")

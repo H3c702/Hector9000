@@ -1,9 +1,8 @@
 # drinks_more_recipes.py
 drink_list = [
-
     {
         "name": "Extra Schuss Mate",
-        "recipe": [("ingr", "mate", 75)]
+        "recipe": [("ingr", "mate", 50)]
     }, {
         "name": "Moscow Mule",
         "recipe": [

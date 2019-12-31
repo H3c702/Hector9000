@@ -11,6 +11,9 @@ def debugOut(message):
     print("LED_Strip_Server: => " + message)
 
 def on_message(client, userdata, msg):
+    print("message recieved")
+    pixels.drinkfinish()
+    return
     print("err")
     debugOut("abc")
     #print("LED_Server on_message: " + str(mgs.topic) + " , " + msg.payload.decode("utf-8"))
@@ -81,18 +84,13 @@ def on_message(client, userdata, msg):
 
 def on_connect(client, userdata, flags, rc):
     print("Server connected")
-    print(MainTopic + "#")
-    print("subb ret1: " + str(client.subscribe(MainTopic + "+", 1)))
+    print("subb ret1: " + str(client.subscribe(MainTopic + "drinkfinish", 1)))
     a = MainTopic + "#"
-    print("topic: " + a)
     #print("sub ret 2: " + str(client.subscribe(a, 1)))
     #client.publish(MainTopic + "abc", "test")
-    print("Subscribed to Topic")
 
 def on_subscribe(client, userdata, mid, granted_qos):
-    print("subbed")
-    print(userdata)
-    print(mid)
+    print("Subscribed to Topic")
 
 print("server started")
 pixels = LEDStrip()
