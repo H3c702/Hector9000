@@ -1,6 +1,6 @@
 import paho.mqtt.client as mqtt
 
-from LEDStripConnector import LEDStripConnector as LEDStrip
+from Simple_LED_Connector import Simple_LED_Connector as LEDStrip
 
 MQTT_Server = "localhost"
 port = 1883
@@ -66,15 +66,15 @@ def on_message(client, userdata, msg):
         print("drinkfinish")
         pixels.finish()
         return
-        args = tuple(msg.payload.decode("utf-8").split(","))
-        if msg.payload.decode("utf-8") is "":
-            pixels.finish()
-        elif len(args) == 1:
-            pixels.finish(type=args[0])
-        elif len(args) == 2:
-            pixels.finish(type=args[0], color=tuple(map(int, args[1].split(";"))))
-        else:
-            debugOut("Error to many args for drinkfinish")
+        #args = tuple(msg.payload.decode("utf-8").split(","))
+        #if msg.payload.decode("utf-8") is "":
+        #    pixels.finish()
+        #elif len(args) == 1:
+        #    pixels.finish(type=args[0])
+        #elif len(args) == 2:
+        #    pixels.finish(type=args[0], color=tuple(map(int, args[1].split(";"))))
+        #else:
+        #    debugOut("Error to many args for drinkfinish")
     else:
         debugOut("Unknown topic")
 
@@ -102,10 +102,5 @@ client.on_connect = on_connect
 client.on_subscribe = on_subscribe
 client.connect(MQTT_Server, port, 60)
 client.loop_start()
-print("after forever")
-index = 0
 while True:
-   # pixels.led_loop()
-   #print(index)
    pixels.loop()
-   index = index + 1

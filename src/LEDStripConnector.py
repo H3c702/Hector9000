@@ -53,7 +53,7 @@ class LEDStripConnector(LEDStripAPI):
         self.drinkcolor = color
 
     def drinkfinish(self, color=(255,255,255), type=0):
-        finish(color, type)
+        self.finish(color, type)
 
     def finish(self, color=(255,255,255), type=0):
         for i in range(self.NUMBASE):
@@ -98,6 +98,11 @@ class LEDStripConnector(LEDStripAPI):
                 else:
                     return
 
+
+
+    # mode 1: Farben einzeln durchgehen
+    # mode 2: Strobo
+    # mode 3:
     def led_loop(self):
         if self.mode is 1:
             self.mode1()
@@ -113,7 +118,6 @@ class LEDStripConnector(LEDStripAPI):
 
 
     def loop(self):
-        print("loop")
         self.led_loop()
 
     def mode1(self):
