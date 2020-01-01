@@ -99,7 +99,7 @@ class HectorController:
         time.sleep(1)
         self.hector.arm_in()
         self.hector.light_off()
-        self.hector.ping(3,0)
+        self.hector.ping(3, 0)
         self.client.publish(self.get_progressTopic(msg.topic), "end", qos=1)
         if self.client.want_write():
             self.client.loop_write()
