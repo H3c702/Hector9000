@@ -1,4 +1,6 @@
 # hardware configuration
+# all pin numbers are corresponding to physical P1 connector!
+
 config = {
     "hx711": {
         "CLK": 29,
@@ -37,7 +39,7 @@ config = {
         "SLEEP": 23,
         "STEP": 37,
         "DIR": 33,
-        "numSteps": 260
+        "numSteps": 261			# number of steps between IN and OUT positions
     },
     "arm": {
         "SENSE": 16
@@ -46,6 +48,11 @@ config = {
         "MOTOR": 18
     },
     "ws2812": {
+        # D18
         "DIN": 12
+    },
+    "mqtt": {
+        "SERVER": "localhost",
+        "TOPICPREFIX": "Hector9000/Main/"
     }
 }

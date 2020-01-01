@@ -1,5 +1,5 @@
 
-<<<<<<< HEAD
+
 \.DS_Store
 =======
 # Created by https://www.gitignore.io/api/pycharm+all
@@ -73,17 +73,25 @@ modules.xml
 .idea/misc.xml
 *.ipr
 
-
-# End of https://www.gitignore.io/api/pycharm+all
->>>>>>> 1b3f5187e0c2eecb17e2f43345612554420b8e25
-
 *.pyc
 
 *.db
 
-src/log
+
+*.qmlc
+
+*.py-0
+
+*.py-1
 
 src/nohup\.out
+
+*.py-pyside2
+
+
+src/log
+
+*.out
 
 *.py-0
 

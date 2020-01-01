@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys, time
-from HectorConfig import config
+from conf.HectorConfig import config
 from HectorHardware import HectorHardware
 
 hardware = True
@@ -29,12 +29,14 @@ if True:
         valves.append(i)
 if hardware:
     h.pump_start()
-    while True:
+    for i in range(10):
+        print("STEP: " + str(i))
         for vnum in valves:
             print("Ventil %d wird geöffnet, Ende mit <Return>" % (vnum,))
             h.valve_open(vnum)
             time.sleep(10)
             h.valve_close(vnum)
+    h.pump_stop()
 
 
 
