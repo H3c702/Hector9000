@@ -1,254 +1,133 @@
-#!/usr/bin/env python3
-# -*- coding: utf8 -*-
-##
-#   HectorRemote.py       Remote class for Hector9000 hardware via MQTT communication
-#
-
-from time import sleep
-import re
+from HectorAPI import HectorAPI
+from LEDStripAPI import LEDStripAPI
 import paho.mqtt.client as mqtt
 
-from HectorAPI import HectorAPI
 
-
-def debugOut(name, value):
-    print("=> %s: %d" % (name, value))
-
-
-class HectorRemote(HectorAPI):
-    # settings
-
-    MQTTServer = "localhost"
-    TopicPrefix = "Hector9000/Main/"
-    initDone = False
-    currentCall = None
-    returnValue = None
-    currentCallback = None
-
-    # global vars
-
-    pass
-
-    # constructor
-
-    def __init__(self, cfg=None):
-        self.initDone = False
-        self.client = mqtt.Client()
-        self.client.on_connect = self.on_connect
-        self.client.on_message = self.on_message
-        self.client.on_publish = self.on_publish
-        self.client.on_subscribe = self.on_subscribe
-        self.client.connect(self.MQTTServer, 1883, 60)
-        self.client.loop_start()  # fork background thread
-        self.progressPattern = re.compile(self.TopicPrefix + r"(\w+)/progress")
-        self.returnPattern = re.compile(self.TopicPrefix + r"(\w+)/return")
-
-        sleep(0.5)
-        while not self.initDone:
-            sleep(1)
-            print(".", end="")
-        print(" -- HectorRemote init done")
-
-    # methods
-
-    #  callbacks
-
-    def on_connect(self, client, userdata, flags, rc):
-        try:
-            print("HectorRemote connected with result code " + str(rc))
-            self.client.subscribe(self.TopicPrefix + "#")
-            print("subscription sent")
-            # request configuration
-            self.client.publish(self.TopicPrefix + "get_config", "true")
-            print("published get_config")
-            print("done with on_connect()")
-        except Exception as e:
-            print("error: " + str(e))
-
-    def on_publish(self, client, userdata, mid):
-        # print("published: %s" % str(userdata))
-        pass
-
-    def on_subscribe(self, client, userdata, mid, granted_qos):
-        print("subscribed: %s" % str(userdata))
+class HectorRemote(HectorAPI, LEDStripAPI):
 
     def on_message(self, client, userdata, msg):
-        try:
-            topic = msg.topic
-            payload = msg.payload
-            print("got message => %s: %s" % (topic, payload))
-            if topic.startswith(self.TopicPrefix) and topic.endswith("/progress"):
-                print("is progress topic: " + topic)
-                m = self.progressPattern.fullmatch(topic)
-                if m:
-                    subTopic = m.group(1)
-                    print("match! " + subTopic)
-                    if subTopic == self.currentCall:
-                        if self.currentCallback:
-                            value = str(msg.payload.decode("utf-8"))
-                            if value.isdigit:
-                                self.currentCallback(subTopic, int(value))
-                else:
-                    print("no match-")
-            elif topic.startswith(self.TopicPrefix) and topic.endswith("/return"):
-                print("is return topic: " + topic)
-                m = self.returnPattern.fullmatch(topic)
-                if m:
-                    subTopic = m.group(1)
-                    print("match! " + subTopic)
-                    if subTopic == self.currentCall:
-                        self.returnValue = str(payload)
-                        self.currentCall = None
-                        self.currentCallback = None
-                    elif subTopic == "get_config":
-                        cfg = eval(payload)  # !!
-                        self.config = cfg
-                        self.valveChannels = cfg["pca9685"]["valvechannels"]
-                        self.numValves = len(self.valveChannels)
-                        print("Config: " + str(self.config))
-                        print("  valveChannels: " + str(self.valveChannels))
-                        print("  numValves:     " + str(self.numValves))
-                        self.initDone = True
-                else:
-                    print("no match-")
-        except Exception as e:
-            print("Error: " + str(e))
+        print("REMOTE: on_message: " + msg.topic + ", " + msg.payload.decode("utf-8"))
+        topic = msg.topic.replace(self.MainTopic, "")
+        if topic == "scale_readout/return":
+            self.scale_read = int(msg.payload.decode("utf-8"))
+            self.waiting_scale = False
+        elif topic == "arm_position/return":
+            self.arm_pos = int(msg.payload.decode("utf-8"))
+            self.waiting_pos = False
+        elif topic == "valve_dose/return":
+            self.dose_sucessfull = not (msg.payload.decode("utf-8") == "-1")
+            self.waiting_dose = False
+        else:
+            print("REMOTE WARNING: Unknown topic in HectorRemote")
 
-    # helpers
+    def on_connect(self, client, userdata, flags, rc):
+        self.client.subscribe(self.MainTopic + "scale_readout/return")
+        self.client.subscribe(self.MainTopic + "arm_position/return")
+        self.client.subscribe(self.MainTopic + "valve_dose/return")
 
-    def setCurrentCall(self, topic, callback=None):
-        if self.currentCall != None:
-            raise Exception("current call conflict: " + topic + " - still waiting for " + self.currentCall)
-        self.currentCall = topic
-        self.currentCallback = callback
+    def __init__(self):
+        self.client = mqtt.Client()
+        self.LEDTopic = "Hector9000/LEDStrip/"
+        self.client.on_message = self.on_message
+        self.client.on_connect = self.on_connect
+        self.MainTopic = "Hector9000/Hardware/"
+        self.mqttip = "localhost"
+        self.mqttport = 1883
+        self.waiting_pos = False
+        self.arm_pos = 0
+        self.waiting_scale = False
+        self.scale_read = 0
+        self.waiting_dose = False
+        self.dose_sucessfull = False
+        self.client.connect(self.mqttip, self.mqttport, 60)
+        self.client.loop_start()
 
-    def waitForReturn(self):
-        print("waitForReturn ", end="")
-        delay = 0.01
-        while self.currentCall:
-            sleep(delay)
-            delay *= 1.01
-            print(".", end="")
-        pass
-
-    def waitForReturnValue(self):
-        print("waitForReturnValue ", end="")
-        delay = 0.01
-        while self.currentCall:
-            sleep(delay)
-            delay *= 1.01
-            print(".", end="")
-        return self.returnValue
-
-    #  API calls
+    def pub_with_subtopic(self, topic, message="true"):
+        self.client.publish(self.MainTopic + topic, message)
 
     def light_on(self):
-        self.setCurrentCall("light_on")
-        self.client.publish(self.TopicPrefix + self.currentCall, "")
-        self.waitForReturn()
+        self.pub_with_subtopic("light_on")
 
     def light_off(self):
-        self.setCurrentCall("light_off")
-        self.client.publish(self.TopicPrefix + self.currentCall, "")
-        self.waitForReturn()
+        self.pub_with_subtopic("light_off")
 
-    def arm_out(self, cback=debugOut):
-        self.setCurrentCall("arm_out", cback)
-        self.client.publish(self.TopicPrefix + self.currentCall, "")
-        self.waitForReturn()
+    def arm_out(self, cback=None):
+        self.pub_with_subtopic("arm_out")
 
-    def arm_in(self, cback=debugOut):
-        self.setCurrentCall("arm_in", cback)
-        self.client.publish(self.TopicPrefix + self.currentCall, "")
-        self.waitForReturn()
+    def arm_in(self, cback=None):
+        self.pub_with_subtopic("arm_in")
 
     def arm_isInOutPos(self):
-        self.setCurrentCall("arm_isInOutPos")
-        self.client.publish(self.TopicPrefix + self.currentCall, "")
-        ret = self.waitForReturnValue()
-        return ret
+        self.waiting_pos = True
+        self.arm_pos = 0
+        self.pub_with_subtopic("arm_position")
+        while self.waiting_pos:
+            pass
+        return self.arm_pos
 
     def scale_readout(self):
-        self.setCurrentCall("scale_readout")
-        self.client.publish(self.TopicPrefix + self.currentCall, "")
-        ret = self.waitForReturnValue()
-        return ret
+        self.waiting_scale = True
+        self.scale_read = 0
+        self.pub_with_subtopic("scale_readout")
+        while self.waiting_scale:
+            pass
+        return self.scale_read
 
     def scale_tare(self):
-        self.setCurrentCall("scale_tare")
-        self.client.publish(self.TopicPrefix + self.currentCall, "")
-        self.waitForReturn()
+        self.pub_with_subtopic("scale_tare")
 
     def pump_start(self):
-        self.setCurrentCall("pump_start")
-        self.client.publish(self.TopicPrefix + self.currentCall, "")
-        self.waitForReturn()
+        self.pub_with_subtopic("pump_start")
 
     def pump_stop(self):
-        self.setCurrentCall("pump_stop")
-        self.client.publish(self.TopicPrefix + self.currentCall, "")
-        self.waitForReturn()
+        self.pub_with_subtopic("pump_stop")
 
     def valve_open(self, index, open=1):
-        self.setCurrentCall("valve_open")
-        self.client.publish(self.TopicPrefix + self.currentCall, "%d,%d" % (index, open))
-        self.waitForReturn()
+        self.pub_with_subtopic("valve_open")
 
     def valve_close(self, index):
-        self.setCurrentCall("valve_close")
-        self.client.publish(self.TopicPrefix + self.currentCall, "%d" % index)
-        self.waitForReturn()
+        self.pub_with_subtopic("valve_close")
 
-    def valve_dose(self, index, amount, timeout=30, cback=debugOut):
-        self.setCurrentCall("valve_dose", cback)
-        self.client.publish(self.TopicPrefix + self.currentCall, "%d,%d,%d" % (index, amount, timeout))
-        ret = self.waitForReturnValue()
-        return ret
+    def valve_dose(self, index, amount, timeout=30, cback=None, progress=(0,100), topic=""):
+        self.waiting_dose = True
+        self.dose_sucessfull = False
+        self.pub_with_subtopic("valve_dose", str(index) + "," + str(amount) + "," + str(timeout))
+        while self.waiting_dose:
+            if self.client.want_write():
+                self.client.loop_write()
+            else:
+                pass
+        if not topic == "" and self.dose_sucessfull:
+            full_process = progress[0] + progress[1]
+            self.client.publish(topic, full_process)
+            if full_process > 99: # use 99% for rounding error
+                self.client.publish(topic, "end")
+        else:
+            if cback:
+                cback(progress[0] + progress[1])
+        return self.dose_sucessfull
 
     def finger(self, pos=0):
-        self.setCurrentCall("finger")
-        self.client.publish(self.TopicPrefix + self.currentCall, "%d" % pos)
-        self.waitForReturn()
+        self.pub_with_subtopic("finger")
 
     def ping(self, num, retract=True, cback=None):
-        self.setCurrentCall("ping", cback)
-        self.client.publish(self.TopicPrefix + self.currentCall, "%d,%d" % (num, 1 if retract else 0))
-        self.waitForReturn()
-
-    def all_valve_close(self):
-        self.setCurrentCall("all_valve_close")
-        self.client.publish(self.TopicPrefix + self.currentCall, "%d" % 1)
-        self.waitForReturn()
-
-    def all_valve_open(self):
-        self.setCurrentCall("all_valve_open")
-        self.client.publish(self.TopicPrefix + self.currentCall, "%d" % 1)
-        self.waitForReturn()
+        self.pub_with_subtopic("ping", "3")
 
     def cleanAndExit(self):
-        self.client.loop_stop()
+        self.pub_with_subtopic("clean_and_exit")
 
+    def ledstripmessage(self,topic, color, type):
+        message = str(color[0]) + "," + str(color[1]) + "," + str(color[2]) + "," + str(type)
+        self.client.publish(self.LEDTopic + topic, message)
 
-## main (for testing only)
-if __name__ == "__main__":
-    # if not DevEnvironment:
-    hector = HectorRemote()
-    hector.finger(0)
-    hector.arm_in()
+    def standart(self, color=(80, 80, 30), type=0):
+        self.ledstripmessage("standart", color, type)
 
-    for i in range(hector.numValves):
-        print("close valve %d = channel %d" % (i, hector.valveChannels[i]))
-        hector.valve_close(hector.valveChannels[i])
-    input("Bitte Glas auf die Markierung stellen")
-    # hector.ping(1)
-    hector.arm_out()
-    hector.valve_dose(1, 100)
-    hector.valve_dose(3, 20)
-    hector.finger(1)
-    hector.valve_dose(11, 100)
-    hector.arm_in()
-    hector.ping(3)
-    hector.finger(0)
-    hector.cleanAndExit()
+    def dosedrink(self, color=(20, 20, 255), type=0):
+        self.ledstripmessage("dosedrink", color, type)
 
-    print("done.")
+    def drinkfinish(self, color=(80, 80, 30), type=0):
+        self.client.publish(self.LEDTopic + "drinkfinish", "true")
+
+    def standby(self, color=(80,80,30), type=0):
+        self.ledstripmessage("standby", color, type)

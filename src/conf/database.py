@@ -24,7 +24,6 @@ class Database:
         self.cur.execute("""CREATE TABLE if not exists Servos ( ServoNr integer not null constraint Servos_pk primary key, Code varchar(50) not null);""")
         self.cur.execute("""create unique index if not exists Servos_ID_uindex on Servos (ServoNr);""")
 
-
         self.con.commit()
 
     def setDefaultValues(self):
@@ -43,7 +42,6 @@ class Database:
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('gga', 'Ginger Ale');""")
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('cocos', 'Cocos');""")
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('mango', 'Mango Juice');""")
-            
         self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (1, 'oj');""")
         self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (2, 'tequila');""")
         self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (3, 'gren');""")
@@ -56,7 +54,6 @@ class Database:
         self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (10, 'mate');""")
         self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (11, 'rum');""")
         self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (12, 'pine');""")
-
         self.con.commit()
 
     def get_Servos(self):

@@ -9,7 +9,7 @@
 from __future__ import division
 
 from time import sleep, time
-import sys
+import sys, Enum
 
 from HectorAPI import HectorAPI
 from conf.HectorConfig import config
@@ -27,20 +27,39 @@ import logging
 
 
 ## initialization
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.CRITICAL)
 
 
-def debugOut(name, value):
-    print("=> %s: %d" % (name, value))
+class Verbose_Level(Enum):
+    DEGUB = 0
+    WARNING = 1
+    ERROR = 2
+    SILENT = 3
 
 
-## classes
+VERBOSE_LEVEL = Verbose_Level.DEGUB
+
+
+def log(message):
+    if VERBOSE_LEVEL == 0:
+        log("" + str(message))
+
+
+def error(message):
+    if VERBOSE_LEVEL < 3:
+        print("Hardware ERROR: " + str(message))
+
+
+def warning(message):
+    if VERBOSE_LEVEL < 2:
+        print("Hardware WARNING: " + str(message))
+
 
 class HectorHardware(HectorAPI):
 
     def __init__(self, cfg):
     
-        print("HectorHardware")
+        log("initialization HectorHardware")
     
         self.config = cfg
         GPIO.setmode(GPIO.BOARD)
@@ -75,7 +94,6 @@ class HectorHardware(HectorAPI):
         self.armStep = cfg["a4988"]["STEP"]
         self.armDir = cfg["a4988"]["DIR"]
         self.armNumSteps = cfg["a4988"]["numSteps"]
-        print("arm step %d, dir %d" % (self.armStep, self.armDir))
         self.arm = cfg["arm"]["SENSE"]
         GPIO.setup(self.armEnable, GPIO.OUT)
         GPIO.output(self.armEnable, True)
@@ -96,22 +114,22 @@ class HectorHardware(HectorAPI):
         return self.config
 
     def light_on(self):
-        print("turn on light")
+        log("turn on light")
         GPIO.output(self.lightPin, True)
 
     def light_off(self):
-        print("turn off light")
+        log("turn off light")
         GPIO.output(self.lightPin, False)
 
-    def arm_out(self, cback=debugOut):
+    def arm_out(self, cback=None):
         armMaxSteps = int(self.armNumSteps * 1.1)
         GPIO.output(self.armEnable, False)
-        print("move arm out")
+        log("move arm out")
         GPIO.output(self.armDir, True)
         for i in range(armMaxSteps):
             if self.arm_isInOutPos():
                 GPIO.output(self.armEnable, True)
-                print("arm is in OUT position")
+                log("arm is in OUT position")
                 if cback: cback("arm_out", 100)
                 return
             GPIO.output(self.armStep, False)
@@ -120,12 +138,12 @@ class HectorHardware(HectorAPI):
             sleep(.001)
             if cback: cback("arm_out", i * 100 / self.armNumSteps)
         GPIO.output(self.armEnable, True)
-        print("arm is in OUT position (with timeout)")
+        log("arm is in OUT position (with timeout)")
 
-    def arm_in(self, cback=debugOut):
+    def arm_in(self, cback=None):
         self.arm_out(cback)
         GPIO.output(self.armEnable, False)
-        print("move arm in")
+        log("move arm in")
         GPIO.output(self.armDir, False)
         for i in range(self.armNumSteps, 0, -1):
             GPIO.output(self.armStep, False)
@@ -134,84 +152,107 @@ class HectorHardware(HectorAPI):
             sleep(.001)
             if cback and (i % 10 == 0): cback("arm_in", i * 100 / self.armNumSteps)
         GPIO.output(self.armEnable, True)
-        print("arm is in IN position")
+        log("arm is in IN position")
 
     def arm_isInOutPos(self):
         pos = GPIO.input(self.arm)
-        print("arm_isInOutPos: %d" % pos)
         pos = (pos != 0)
         if pos:
-            print("arm_isInOutPos = True")
+            log("arm_isInOutPos = True")
         else:
-            print("arm_isInOutPos = False")
+            log("arm_isInOutPos = False")
         return pos
 
     def scale_readout(self):
         weight = self.hx.get_weight(5)
-        print("weight = %.1f" % weight)
         return weight
 
     def scale_tare(self):
-        print("scale tare")
+        log("scale tare")
         self.hx.tare()
 
     def pump_start(self):
-        print("start pump")
+        log("start pump")
         GPIO.setup(self.pump, GPIO.OUT)
 
     def pump_stop(self):
-        print("stop pump")
+        log("stop pump")
         GPIO.setup(self.pump, GPIO.IN)
 
     def valve_open(self, index, open=1):
         if open == 0:
-            print("close valve")
+            log("close valve")
         else:
-            print("open valve")
+            log("open valve")
         if (index < 0 and index >= len(self.valveChannels) - 1):
             return
         if open == 0:
-            print("close valve no. %d" % index)
+            log("close valve no. %d" % index)
         else:
-            print("open valve no. %d" % index)
+            log("open valve no. %d" % index)
         ch = self.valveChannels[index]
         pos = self.valvePositions[index][1 - open]
-        print("ch %d, pos %d" % (ch, pos))
+        log("ch %d, pos %d" % (ch, pos))
         self.pca.set_pwm(ch, 0, pos)
 
     def valve_close(self, index):
-        print("close valve")
+        log("close valve")
         self.valve_open(index, open=0)
 
-    def valve_dose(self, index, amount, timeout=30, cback=debugOut):
-        print("dose channel %d, amount %d" % (index, amount))
-        if cback: cback("valve_dose", 0)
-        sr = 0
-        if (index < 0 and index >= len(self.valveChannels) - 1):
+    def valve_dose(self, index, amount, timeout=30, cback=None, progress=(0,100), topic=""):
+        log("dose channel %d, amount %d" % (index, amount))
+        if index < 0 and index >= len(self.valveChannels) - 1:
+            return -1
+        if not self.arm_isInOutPos():
             return -1
         t0 = time()
+        balance = True
         self.scale_tare()
         self.pump_start()
         self.valve_open(index)
         sr = self.scale_readout()
-        while sr < amount:
+        if sr < -10:
+            amount = amount + sr
+            balance = False
+        last_over = False
+        last = sr
+        while True:
             sr = self.scale_readout()
-            if cback: cback("valve_dose", sr)
+            if balance and sr < -10:
+                warning("weight abnormality: scale balanced")
+                amount = amount + sr
+                balance = False
+            if sr > amount:
+                if last_over:
+                    log("dosing complete")
+                    break
+                else:
+                    last_over = True
+            else:
+                last_over = False
+            log("Read scale: %d" % sr)
+            if (sr - last) > 5:
+                log("reset timeout")
+                t0 = time()
+                last = sr
             if (time() - t0) > timeout:
+                error("timeout reached")
                 self.pump_stop()
                 self.valve_close(index)
-                if cback: cback("valve_dose", amount)
-                return -1
+                if cback: cback(progress[0] + progress[1])
+                return False
             sleep(0.1)
         self.pump_stop()
         self.valve_close(index)
-        return sr
+        if cback: cback(progress[0] + progress[1])
+        log("completed reset after dosing")
+        return True
 
     def finger(self, pos=0):
         self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[pos])
 
     def ping(self, num, retract=True, cback=None):
-        print("ping :-)")
+        log("ping")
         self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[1])
         for i in range(num):
             self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[1])
@@ -224,18 +265,18 @@ class HectorHardware(HectorAPI):
             self.pca.set_pwm(self.fingerChannel, 0, self.fingerPositions[0])
 
     def cleanAndExit(self):
-        print("Cleaning...")
+        log("Cleaning...")
         GPIO.cleanup()
-        print("Bye!")
+        log("Bye!")
         sys.exit()
 
     # Helper function to make setting a servo pulse width simpler.
     def set_servo_pulse(self, channel, pulse):
         pulse_length = 1000000  # 1,000,000 us per second
         pulse_length //= 60  # 60 Hz
-        print('{0} µs per period'.format(pulse_length))
+        log('{0} µs per period'.format(pulse_length))
         pulse_length //= 4096  # 12 bits of resolution
-        print('{0} µs per bit'.format(pulse_length))
+        log('{0} µs per bit'.format(pulse_length))
         pulse *= 1000
         pulse //= pulse_length
         self.pca.set_pwm(channel, 0, pulse)
@@ -250,7 +291,7 @@ if __name__ == "__main__":
     hector.finger(0)
     hector.arm_in()
     for i in range(hector.numValves):
-        print("close valve %d = channel %d" % (i, hector.valveChannels[i]))
+        log("close valve %d = channel %d" % (i, hector.valveChannels[i]))
         hector.valve_close(hector.valveChannels[i])
     input("Bitte Glas auf die Markierung stellen")
     # hector.ping(1)
@@ -263,4 +304,4 @@ if __name__ == "__main__":
     hector.ping(3)
     hector.finger(0)
     hector.cleanAndExit()
-    print("done.")
+    log("done.")

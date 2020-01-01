@@ -1,53 +1,35 @@
-# drinks.py
+# drinks_more_recipes.py
 drink_list = [
     {
-        "name": "Mate DDDD",
-        "color": "gold",
-        "recipe": [
-            ("ingr", "mate", 50),
-        ]
-    },
-    {
-        "name": "Mate Quickie",
-        "color": "gold",
-        "recipe": [
-            ("ingr", "mate", 50),
-        ]
+        "name": "Extra Schuss Mate",
+        "recipe": [("ingr", "mate", 50)]
     }, {
-        "name": "Rum & Coke",
-        "color": "chocolate",
+        "name": "Moscow Mule",
         "recipe": [
-            ("ingr", "rum", 50),
-            ("ingr", "coke", 150),
+            ("ingr", "vodka", 60),
+            ("ingr", "lime", 10),
+            ("ingr", "gibe", 180)
         ]
     }, {
         "name": "Gin & Tonic",
         "color": "white",
         "recipe": [
-            ("ingr", "gin", 50),
-            ("ingr", "tonic", 150),
+            ("ingr", "gin", 40),
+            ("ingr", "tonic", 120),
         ]
     }, {
         "name": "Screwdriver",
         "color": "orange",
         "recipe": [
-            ("ingr", "vodka", 50),
-            ("ingr", "oj", 150),
+            ("ingr", "vodka", 40),
+            ("ingr", "oj", 120),
             ("stir", True),
-        ]
-    }, {
-        "name": "Margarita",
-        "color": "gold",
-        "recipe": [
-            ("ingr", "tequila", 50),
-            ("ingr", "mmix", 150),
-            ("umb", True),
         ]
     }, {
         "name": "Virgin Sunrise",
         "color": "red",
         "recipe": [
-            ("ingr", "oj", 150),
+            ("ingr", "oj", 140),
             ("ingr", "gren", 15),
             ("umb", True),
         ]
@@ -63,11 +45,71 @@ drink_list = [
             ("ingr", "gren", 15),
             ("umb", True),
         ]
+    },
+    {
+        "name": "Tschunk",
+        "recipe": [
+            ("ingr", "rum", 40),
+            ("ingr", "mate", 120)
+        ]
+    }, {
+        "name": "Caipirinha",
+        "recipe": [
+            ("ingr", "rum", 40),
+            ("ingr", "gga", 120)
+        ]
+    }, {
+        "name": "Gin and Sin",
+        "recipe": [
+            ("ingr", "gin", 35),
+            ("ingr", "lime", 20),
+            ("ingr", "gren", 5),
+            ("ingr", "oj", 40)
+        ]
+    }, {
+        "name": "Horny Bull",
+        "recipe": [
+            ("ingr", "tequila", 20),
+            ("ingr", "oj", 120)
+        ]
+    }, {
+        "name": "Monkey Gland",
+        "recipe": [
+            ("ingr", "gin", 30),
+            ("ingr", "oj", 40),
+            ("ingr", "gren", 5)
+        ]
+    }, {
+        "name": "Margarita",
+        "recipe": [
+            ("ingr", "vodka", 20),
+            ("ingr", "oj", 120)
+        ]
+    }, {
+        "name": "Shirley Temple",
+        "recipe": [
+            ("ingr", "gga", 100),
+            ("ingr", "gren", 5)
+        ]
+    }, {
+        "name": "Raspberry Zero",
+        "recipe": [
+            ("ingr", "oj", 160),
+            ("ingr", "pine", 60),
+            ("ingr", "gren", 20)
+        ]
+    }, {
+        "name": "Raspberry Pi",
+        "recipe": [
+            ("ingr", "oj", 140),
+            ("ingr", "pine", 60),
+            ("ingr", "gren", 20),
+            ("ingr", "vodka", 20)
+        ]
     }
 ]
 
-
-#-> Read out of DB
+# -> Read out of DB
 ingredients = {
     # code				text		is_alcoholic?
     "gin": ("Gin", True),
@@ -85,6 +127,10 @@ ingredients = {
     "gga": ("Ginger Ale", False),
     "cocos": ("Cocos", False),
     "mango": ("Mango Juice", False),
+    "lms": ("Limettensaft", False),
+    "coin": ("Cointreau", True),
+    "lime": ("Lime", False),
+    "gibe": ("Ginger Beer", False)
 }
 
 actions = {
@@ -97,9 +143,8 @@ actions = {
     "umb": ("Add Umbrella", False),
 }
 
-
 # To DB -> replace
-available_ingredients = ["oj", "tequila", "gren", "vodka", "mmix", "rum", "coke", "gin", "tonic", "mate"]
+available_ingredients = ["gren", "rum", "vodka", "gin", "tequila", "gibe", "lime", "tonic", "mate", "gga", "pine", "oj"]
 
 
 def doable(drink, available):
@@ -109,16 +154,4 @@ def doable(drink, available):
 def alcoholic(drink):
     return True in [ingredients[step[1]][1] for step in drink["recipe"] if step[0] == "ingr"]
 
-
-
-
-
-print("doable:")
-for drink in drink_list:    print(drink["name"], doable(drink, available_ingredients))
-
 available_drinks = [drink for drink in drink_list if doable(drink, available_ingredients)]
-
-
-print("available:")
-for d in available_drinks:
-    print(d["name"] + " (" + ("" if alcoholic(d) else "non-") + "alcoholic)")
