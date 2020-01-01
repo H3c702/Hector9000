@@ -8,7 +8,6 @@ class HectorRemote(HectorAPI, LEDStripAPI):
     def on_message(self, client, userdata, msg):
         print("REMOTE: on_message: " + msg.topic + ", " + msg.payload.decode("utf-8"))
         topic = msg.topic.replace(self.MainTopic, "")
-        print(topic)
         if topic == "scale_readout/return":
             self.scale_read = int(msg.payload.decode("utf-8"))
             self.waiting_scale = False
@@ -19,7 +18,7 @@ class HectorRemote(HectorAPI, LEDStripAPI):
             self.dose_sucessfull = not (msg.payload.decode("utf-8") == "-1")
             self.waiting_dose = False
         else:
-            print("Unknown topic in HectorRemote")
+            print("REMOTE WARNING: Unknown topic in HectorRemote")
 
     def on_connect(self, client, userdata, flags, rc):
         self.client.subscribe(self.MainTopic + "scale_readout/return")
@@ -101,7 +100,7 @@ class HectorRemote(HectorAPI, LEDStripAPI):
         if not topic == "" and self.dose_sucessfull:
             full_process = progress[0] + progress[1]
             self.client.publish(topic, full_process)
-            if full_process > 95:
+            if full_process > 99: # use 99% for rounding error
                 self.client.publish(topic, "end")
         else:
             if cback:

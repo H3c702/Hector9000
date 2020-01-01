@@ -94,7 +94,7 @@ src/nohup\.out
 
 src/log
 
-src/nohup\.out
+*.out
 
 *.py-0
 

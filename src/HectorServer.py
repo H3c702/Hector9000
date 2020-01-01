@@ -7,16 +7,14 @@
 # imports
 
 import time
-import traceback
 import re
-
+import Enum
 import paho.mqtt.client as mqtt
 
 from conf.HectorConfig import config
 
-from HectorHardware import HectorHardware as Hector
-
-#from HectorSimulator import HectorSimulator as Hector
+#from HectorHardware import HectorHardware as Hector
+from HectorSimulator import HectorSimulator as Hector
 
 
 # global vars
@@ -28,22 +26,27 @@ MQTTPORT = 1883
 hector = Hector(config)
 valve_pattern = re.compile("[0-9]+\,[0-9]+\,[0-9]+")
 
+class Verbose_Level(Enum):
+    DEGUB = 0
+    WARNING = 1
+    ERROR = 2
+    SILENT = 3
 
-VERBOSE_LEVEL = "DEBUG"
-# DEBUG - Everthing
-# NORMAL - Only Errors
-# SILENT - Nothing
-
-
+VERBOSE_LEVEL = Verbose_Level.DEGUB
 
 def log(message):
-    if VERBOSE_LEVEL == "DEBUG":
-        print("HARDWARE-LOG: " + message)
+    if VERBOSE_LEVEL == 0:
+        print("Server: " + str(message))
 
 
 def error(message):
-    if VERBOSE_LEVEL == "DEBUG" or VERBOSE_LEVEL == "NORMAL":
-        print("HARDWARE-ERROR: " + message)
+    if VERBOSE_LEVEL < 3:
+        print("Server ERROR: " + str(message))
+
+
+def warning(message):
+    if VERBOSE_LEVEL < 2:
+        print("Server WARNING: " + str(message))
 
 # low-level functions
 
@@ -93,6 +96,7 @@ def do_pump_start():
     hector.pump_start()
 
 def do_reset():
+    log("reseting")
     do_pump_stop()
     do_all_valve_close()
     do_arm_in()
@@ -106,6 +110,7 @@ def do_pump_stop():
 
 
 def do_all_valve_open():
+    log("opening all valves")
     hector.light_on()
     time.sleep(1)
     hector.arm_in()
@@ -118,6 +123,7 @@ def do_all_valve_open():
 
 
 def do_all_valve_close():
+    log("close all valves")
     hector.light_on()
     time.sleep(1)
     hector.arm_in()
@@ -130,40 +136,36 @@ def do_all_valve_close():
 
 
 def do_valve_open(index, open):
-    #log("open valve")
+    log("open valve %d" % index)
     hector.valve_open(index, open)
 
 
 def do_valve_close(index):
-    log("close valve")
+    log("close valve %d" % index)
     hector.valve_close(index)
 
 
 def do_valve_dose(index, amount, timeout=30):
-    print("do_valve_dose")
-    log("dose valve")
+    log("dose valve %d with amount %d" % (index, amount))
     return hector.valve_dose(index=index, amount=amount, timeout=timeout)
-
-# not implemented yet
-#def do_finger(pos):
-#    log("set finger position")
-#    hector.finger(pos)
 
 
 def do_ping(num, retract):
+    log("ping %d times" % num)
     hector.ping(num, retract)
 
 
 # high-level functions
 
 def dry(pump):
-    log("IndexPump: " + pump)
+    log("drying pump %d" % pump)
     hector.valve_open(pump)
     time.sleep(20)
     hector.valve_open(pump, 0)
 
 
 def clean(pump):
+    print("cleaning pump %d" % pump)
     hector.pump_start()
     hector.valve_open(pump)
     time.sleep(10)
@@ -174,14 +176,13 @@ def clean(pump):
         hector.valve_open(pump)
         time.sleep(10)
         times += 1
-    log("IndexPump: ", pump)
     hector.valve_open(pump, 0)
     time.sleep(10)
     hector.pump_stop()
     time.sleep(1)
 
 def on_message(client, userdata, msg):
-    print("Server: on_message: " + str(msg.topic) + "," + str(msg.payload))
+    log("on_message: " + str(msg.topic) + "," + str(msg.payload))
     topic = str(msg.topic)
     if (topic.endswith("return") or topic.endswith("progress")):
         return
@@ -227,47 +228,44 @@ def on_message(client, userdata, msg):
         do_valve_close(int(msg.payload.decode("utf-8")))
     elif topic == "ping":
         if not msg.payload.decode("utf-8").isnumeric():
-            print("error in ping")
+            log("error in ping")
             error("Wrong payload in ping")
             return
         do_ping(int(msg.payload.decode("utf-8")), 0)
-        print("PING PING")
     elif topic == "valve_dose":
-        print("dosing valve")
         span = valve_pattern.match(msg.payload.decode("utf-8")).span()
         if not (span[0] == 0 and span[1] == len(msg.payload.decode("utf-8"))):
             error("Wrong payload in valve dose")
-            print("error")
             return
         args = list(map(int, msg.payload.decode("utf-8").split(",")))
         ret = do_valve_dose(index=args[0], amount=args[1], timeout=args[2])
         res = 1 if ret else -1
-        print("Sending return")
-        client.publish(MainTopic + topic + "/return", res, qos=1)
-        if client.want_write():
-            client.loop_write()
-        print("Dosed Valve")
+        log("Sending return")
+        client.publish(MainTopic + topic + "/return", res)
+        # ToDo: this line ^ causes trouble. Sometimes it just doesnt send the publish causing errors. Some tests need to be written to test the most reliable way to fix this
+        while not client.want_write():
+            pass
+        client.loop_write()
+        log("Return Send - Dosing Complete")
     else:
-        error("Unknown topic")
+        warning("Unknown topic")
 
 
 def on_connect(client, userdata, flags, rc):
-    print("subscribed")
+    log("Connected to Server")
     client.subscribe(MainTopic + "#")
 
-print(__name__)
-print(__name__ == "__main__")
+def on_subscribe(client, userdata, mid, granted_qos):
+    log("Subscribed to Topic")
+
 if __name__ == "__main__":
-    print("start")
+    do_reset()
+    log("starting")
     client = mqtt.Client()
     client.on_message = on_message
     client.on_connect = on_connect
+    client.on_subscribe = on_subscribe
     client.connect(MQTTIP, MQTTPORT, 60)
-    print("abc")
-    ac = 0
+    log("started")
     while True:
-        ac = ac + 1
-        if ac % 100 == 0:
-            ac = 0
-            #print("100")
         client.loop()
