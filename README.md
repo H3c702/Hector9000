@@ -30,6 +30,12 @@ To start the software run:
 	./start.sh
 
 
+Start Hector :
+
+	cd Hector9000
+	cd srv
+	python3 main.py
+
 Add Drinks
 ---
 
