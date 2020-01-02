@@ -12,6 +12,11 @@ class Test_databasees():
 
         assert len(servos) == 12
 
+    def test_GetServosAsList(self):
+        self.prepareDB()
+        servos = self.database.get_Servos_asList()
+        assert "['oj', 'tequila', 'gren', 'vodka', 'mmix', 'rum', 'coke', 'gin', 'tonic', 'mate', 'rum', 'pine']" == str(servos)
+
     def test_GetIngredients(self):
         self.prepareDB()
 

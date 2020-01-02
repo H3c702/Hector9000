@@ -21,8 +21,10 @@ class Database:
         self.cur.execute("""CREATE TABLE if not exists Ingredients ( Code varchar(50) not null primary key ,Name varchar(100) not null, IsAlcoholic integer default 0 not null);""")
         self.cur.execute("""create unique index if not exists Ingredients_Code_uindex on Ingredients (Code);""")
 
-        self.cur.execute("""CREATE TABLE if not exists Servos ( ServoNr integer not null constraint Servos_pk primary key, Code varchar(50) not null);""")
+        self.cur.execute("""CREATE TABLE if not exists Servos ( ServoNr integer not null constraint Servos_pk primary key, Code varchar(50) not null, Volume integer not null default 0);""")
         self.cur.execute("""create unique index if not exists Servos_ID_uindex on Servos (ServoNr);""")
+
+
 
         self.con.commit()
 
@@ -42,6 +44,7 @@ class Database:
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('gga', 'Ginger Ale');""")
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('cocos', 'Cocos');""")
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('mango', 'Mango Juice');""")
+
         self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (1, 'oj');""")
         self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (2, 'tequila');""")
         self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (3, 'gren');""")
@@ -57,9 +60,16 @@ class Database:
         self.con.commit()
 
     def get_Servos(self):
-        self.cur.execute("SELECT ServoNr,Code FROM Servos")
+        self.cur.execute("SELECT ServoNr,Code FROM Servos ORDER BY ServoNr")
         items = self.cur.fetchall()
         return items
+
+    def get_Servos_asList(self):
+        array = []
+        for item in self.get_Servos():
+            array.append(item[1])
+
+        return array
 
     def get_Servos_asJson(self):
         return json.dumps(self.get_Servos())
