@@ -8,7 +8,6 @@
 
 import time
 import re
-import Enum
 import paho.mqtt.client as mqtt
 
 from conf.HectorConfig import config
@@ -26,13 +25,8 @@ MQTTPORT = 1883
 hector = Hector(config)
 valve_pattern = re.compile("[0-9]+\,[0-9]+\,[0-9]+")
 
-class Verbose_Level(Enum):
-    DEGUB = 0
-    WARNING = 1
-    ERROR = 2
-    SILENT = 3
 
-VERBOSE_LEVEL = Verbose_Level.DEGUB
+VERBOSE_LEVEL = 0
 
 def log(message):
     if VERBOSE_LEVEL == 0:

@@ -1,33 +1,29 @@
 from HectorRemote import HectorRemote as Hector
-#from HectorHardware import HectorHardware as Hector
+# from HectorHardware import HectorHardware as Hector
 import json
 import conf.drinks as drinks
 import webcolors
 import paho.mqtt.client as mqtt
 import time
 import traceback
-import Enum
 
-class Verbose_Level(Enum):
-    DEGUB = 0
-    WARNING = 1
-    ERROR = 2
-    SILENT = 3
-
-VERBOSE_LEVEL = Verbose_Level.DEGUB
+VERBOSE_LEVEL = 0
 
 
 def debug(obj):
     if VERBOSE_LEVEL == 0:
         print("Controller: " + str(obj))
 
+
 def warning(obj):
     if VERBOSE_LEVEL < 2:
         print("Controller WARNING: " + str(obj))
 
+
 def error(obj):
     if VERBOSE_LEVEL < 3:
         print("Controller ERROR: " + str(obj))
+
 
 # settings
 class HectorController:
@@ -103,7 +99,8 @@ class HectorController:
             debug("dosing progress: " + str(progress))
             if step[0] == "ingr":
                 pump = drinks.available_ingredients.index(step[1])
-                self.hector.valve_dose(index=int(pump), amount=int(step[2]), cback=self.dose_callback, progress=(progress, steps), topic="Hector9000/doseDrink/progress")
+                self.hector.valve_dose(index=int(pump), amount=int(step[2]), cback=self.dose_callback,
+                                       progress=(progress, steps), topic="Hector9000/doseDrink/progress")
                 self.client.publish(self.get_progressTopic(msg.topic), progress + steps)
                 if self.client.want_write():
                     self.client.loop_write()
@@ -128,7 +125,7 @@ class HectorController:
         try:
             currentTopic = msg.topic
             if "/Hardware/" in currentTopic:
-                return # ignore own Hardware calls
+                return  # ignore own Hardware calls
             elif currentTopic.endswith("/progress"):
                 return  # ignore our own progress messages
             elif currentTopic.endswith("/return"):
@@ -191,6 +188,7 @@ class HectorController:
         debug("started")
         while True:
             self.client.loop()
+
 
 if __name__ == "__main__":
     controller = HectorController()
