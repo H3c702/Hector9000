@@ -154,4 +154,6 @@ def doable(drink, available):
 def alcoholic(drink):
     return True in [ingredients[step[1]][1] for step in drink["recipe"] if step[0] == "ingr"]
 
+
 available_drinks = [drink for drink in drink_list if doable(drink, available_ingredients)]
+

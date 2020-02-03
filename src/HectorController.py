@@ -2,6 +2,7 @@ from HectorRemote import HectorRemote as Hector
 # from HectorHardware import HectorHardware as Hector
 import json
 import conf.drinks as drinks
+import conf.database as db
 import webcolors
 import paho.mqtt.client as mqtt
 import time
@@ -43,6 +44,10 @@ class HectorController:
         self.client = mqtt.Client()
         self.hector = Hector()
         self.LED = True
+        self.db = db.Database('h9k')
+        self.db.createIfNotExists()
+        self.db.setDefaultValues()
+
 
     def available_drinks_as_JSON(self):
         datalist = []

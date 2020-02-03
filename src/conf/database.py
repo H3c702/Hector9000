@@ -1,6 +1,8 @@
 import sqlite3 as lite
 import datetime
 import json
+import csv
+import os
 
 from time import *
 
@@ -9,7 +11,7 @@ class Database:
     con = None
     cur = None
 
-    def __init__(self, dbname):
+    def __init__(self, dbname="h9k"):
         self.con = lite.connect(dbname + ".db")
         self.cur = self.con.cursor()
 
@@ -18,13 +20,18 @@ class Database:
         self.cur.execute("CREATE TABLE if not exists IngredientsLog(ID Integer primary key, ingredient TEXT,"
                          "ml integer, date timestamp)")
 
-        self.cur.execute("""CREATE TABLE if not exists Ingredients ( Code varchar(50) not null primary key ,Name varchar(100) not null, IsAlcoholic integer default 0 not null);""")
+        self.cur.execute(
+            """CREATE TABLE if not exists Ingredients ( Code varchar(50) not null primary key ,Name varchar(100) not null, IsAlcoholic integer default 0 not null);""")
         self.cur.execute("""create unique index if not exists Ingredients_Code_uindex on Ingredients (Code);""")
 
-        self.cur.execute("""CREATE TABLE if not exists Servos ( ServoNr integer not null constraint Servos_pk primary key, Code varchar(50) not null, Volume integer not null default 0);""")
+        self.cur.execute(
+            """CREATE TABLE if not exists Servos ( ServoNr integer not null constraint Servos_pk primary key, Code varchar(50) not null, Volume integer not null default 0);""")
         self.cur.execute("""create unique index if not exists Servos_ID_uindex on Servos (ServoNr);""")
 
+        self.cur.execute("""CREATE TABLE if not exists Drinks (`ID` INTEGER UNIQUE, `Name` TEXT, PRIMARY KEY(`ID`));""")
 
+        self.cur.execute(
+            """CREATE TABLE if not exists Actions (`code` TEXT UNIQUE, `Text` TEXT, `is_automatic`	INTEGER, PRIMARY KEY(`code`));""")
 
         self.con.commit()
 
@@ -32,12 +39,14 @@ class Database:
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name", "IsAlcoholic") VALUES ('gin', 'Gin', 1);""")
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name", "IsAlcoholic") VALUES ('rum', 'Rum', 1);""")
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name", "IsAlcoholic") VALUES ('vodka', 'Vodka', 1);""")
-        self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name", "IsAlcoholic") VALUES ('tequila', 'Tequila', 1);""")
+        self.cur.execute(
+            """INSERT INTO "Ingredients" ("Code", "Name", "IsAlcoholic") VALUES ('tequila', 'Tequila', 1);""")
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('tonic', 'Tonic Water');""")
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('coke', 'Cola');""")
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('oj', 'Orange Juice');""")
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('gren', 'Grenadine');""")
-        self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name", "IsAlcoholic") VALUES ('mmix', 'Margarita Mix', 1);""")
+        self.cur.execute(
+            """INSERT INTO "Ingredients" ("Code", "Name", "IsAlcoholic") VALUES ('mmix', 'Margarita Mix', 1);""")
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('mate', 'Mate');""")
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('pine', 'Pineapple Juice');""")
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('raspberry', 'Raspberry');""")
@@ -45,22 +54,48 @@ class Database:
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('cocos', 'Cocos');""")
         self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('mango', 'Mango Juice');""")
 
-        self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (1, 'oj');""")
-        self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (2, 'tequila');""")
-        self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (3, 'gren');""")
-        self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (4, 'vodka');""")
-        self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (5, 'mmix');""")
-        self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (6, 'rum');""")
-        self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (7, 'coke');""")
-        self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (8, 'gin');""")
-        self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (9, 'tonic');""")
-        self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (10, 'mate');""")
-        self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (11, 'rum');""")
-        self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (12, 'pine');""")
+        # self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (1, 'oj');""")
+        # self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (2, 'tequila');""")
+        # self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (3, 'gren');""")
+        # self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (4, 'vodka');""")
+        # self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (5, 'mmix');""")
+        # self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (6, 'rum');""")
+        # self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (7, 'coke');""")
+        # self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (8, 'gin');""")
+        # self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (9, 'tonic');""")
+        # self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (10, 'mate');""")
+        # self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (11, 'rum');""")
+        # self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (12, 'pine');""")
         self.con.commit()
 
+        self.import_servos()
+
+    def import_servos(self):
+        self._importCSV('servos')
+
+    def import_drinks(self):
+        self._importCSV('drinks')
+
+    @staticmethod
+    def _importCSV(table, delimiter=','):
+        cols = ''
+        colscout = 0
+        print(os.path)
+        with open('csv/' + table + '.csv') as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=delimiter)
+            line_count = 0
+            for row in csv_reader:
+                if line_count == 0:
+                    cols = {", ".join(row)}
+                    colscout = len(row)
+                    line_count += 1
+                else:
+                    #print(f'\t{row[0]} works in the {row[1]} department, and was born in {row[2]}.')
+                    line_count += 1
+            print(f'Processed {line_count} lines.')
+
     def get_Servos(self):
-        self.cur.execute("SELECT ServoNr,Code FROM Servos ORDER BY ServoNr")
+        self.cur.execute("SELECT ServoNr, Code, Volume FROM Servos ORDER BY ServoNr")
         items = self.cur.fetchall()
         return items
 

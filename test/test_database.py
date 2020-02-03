@@ -6,6 +6,9 @@ class Test_databasees():
     dbname = "temp"
     database = Database(dbname)
 
+    def test_os(self):
+        print(os.path)
+
     def test_GetServos(self):
         self.prepareDB()
         servos = self.database.get_Servos()
