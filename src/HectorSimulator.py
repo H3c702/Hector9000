@@ -28,8 +28,6 @@ def debugOut(name, value):
     print("=> %s: %d" % (name, value))
 
 
-## classes
-
 class HectorSimulator(HectorAPI):
 
     def __init__(self, cfg):
@@ -56,7 +54,7 @@ class HectorSimulator(HectorAPI):
         self.armDir = cfg["a4988"]["DIR"]
         self.armNumSteps = cfg["a4988"]["numSteps"]
         self.simulatedArmPos = self.armNumSteps / 2  # 50%
-        #print("arm step %d, dir %d" % (self.armStep, self.armDir))
+        # print("arm step %d, dir %d" % (self.armStep, self.armDir))
         self.arm = cfg["arm"]["SENSE"]
 
         # setup air pump (GPIO)
@@ -128,7 +126,7 @@ class HectorSimulator(HectorAPI):
         print("stop pump")
         return 0
 
-    def valve_open(self, index, openValve = 1):
+    def valve_open(self, index, openValve=1):
         if 0 > index >= len(self.valveChannels) - 1:
             return 0
 
@@ -148,7 +146,7 @@ class HectorSimulator(HectorAPI):
     def valve_close(self, index):
         return self.valve_open(index, 0)
 
-    def valve_dose(self, index, amount, timeout=30, cback=None, progress=(0,100), topic=""):
+    def valve_dose(self, index, amount, timeout=30, cback=None, progress=(0, 100), topic=""):
         print("dose channel %d, amount %d" % (index, amount))
         if not self.arm_isInOutPos():
             return False

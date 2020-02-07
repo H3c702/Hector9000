@@ -2,7 +2,7 @@ from conf.database import Database
 import os
 
 
-class Test_databasees():
+class Test_database:
     dbname = "temp"
     database = Database(dbname)
 
