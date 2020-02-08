@@ -1,9 +1,6 @@
 import sqlite3 as lite
 import datetime
 import json
-import csv
-import os
-
 from time import *
 
 
@@ -21,17 +18,20 @@ class Database:
                          "ml integer, date timestamp)")
 
         self.cur.execute(
-            """CREATE TABLE if not exists Ingredients ( Code varchar(50) not null primary key ,Name varchar(100) not null, IsAlcoholic integer default 0 not null);""")
+            """CREATE TABLE if not exists Ingredients ( Code varchar(50) not null primary key ,Name varchar(100) not 
+            null, IsAlcoholic integer default 0 not null);""")
         self.cur.execute("""create unique index if not exists Ingredients_Code_uindex on Ingredients (Code);""")
 
         self.cur.execute(
-            """CREATE TABLE if not exists Servos ( ServoNr integer not null constraint Servos_pk primary key, Code varchar(50) not null, Volume integer not null default 0);""")
+            """CREATE TABLE if not exists Servos ( ServoNr integer not null constraint Servos_pk primary key, 
+            Code varchar(50) not null, Volume integer not null default 0);""")
         self.cur.execute("""create unique index if not exists Servos_ID_uindex on Servos (ServoNr);""")
 
         self.cur.execute("""CREATE TABLE if not exists Drinks (`ID` INTEGER UNIQUE, `Name` TEXT, PRIMARY KEY(`ID`));""")
 
         self.cur.execute(
-            """CREATE TABLE if not exists Actions (`code` TEXT UNIQUE, `Text` TEXT, `is_automatic`	INTEGER, PRIMARY KEY(`code`));""")
+            """CREATE TABLE if not exists Actions (`code` TEXT UNIQUE, `Text` TEXT, `is_automatic`	INTEGER, 
+            PRIMARY KEY(`code`));""")
 
         self.con.commit()
 
@@ -125,6 +125,14 @@ class Database:
         self.cur.execute("INSERT INTO IngredientsLog (ingredient, ml, date) VALUES (?, ?, ?)",
                          (ingredient, ml, datetime.datetime.now()))
         self.con.commit()
+
+    def get_Ingredients_Log(self):
+        self.cur.execute("SELECT ID, ingredient, ml, date FROM IngredientsLog")
+        return self.cur.fetchall()
+
+    def get_Drinks_Log(self):
+        self.cur.execute("SELECT ID, drink, date FROM DrinksLog")
+        return self.cur.fetchall()
 
     def __del__(self):
         self.con.commit()

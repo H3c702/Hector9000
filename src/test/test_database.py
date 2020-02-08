@@ -18,7 +18,8 @@ class Test_database:
     def test_GetServosAsList(self):
         self.prepareDB()
         servos = self.database.get_Servos_asList()
-        assert "['oj', 'tequila', 'gren', 'vodka', 'mmix', 'rum', 'coke', 'gin', 'tonic', 'mate', 'rum', 'pine']" == str(servos)
+        assert "['oj', 'tequila', 'gren', 'vodka', 'mmix', 'rum', 'coke', 'gin', 'tonic', 'mate', 'rum', 'pine']" == str(
+            servos)
 
     def test_GetIngredients(self):
         self.prepareDB()
@@ -26,6 +27,21 @@ class Test_database:
         ing = self.database.get_AllIngredients()
 
         assert ing[0][1] == "Gin"
+
+    def test_count_up_ingredient(self):
+        self.prepareDB()
+        self.database.countUpIngredient("Gin", 200)
+
+        ingrcount = self.database.get_Ingredients_Log()
+        assert len(ingrcount) == 1
+
+    def test_count_up_Drinks(self):
+        self.prepareDB()
+        self.database.countUpDrink("Mate")
+
+        drinkCount = self.database.get_Drinks_Log()
+        assert  len(drinkCount) == 1
+
 
     # ---------------------------------------------------------------------
 
@@ -41,3 +57,6 @@ class Test_database:
 
     def __exit__(self):
         self.removeDB()
+
+
+
