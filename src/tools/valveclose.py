@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-import sys, time
-from conf.HectorConfig import config
+import time
+from src import config
 from HectorHardware import HectorHardware
 
 

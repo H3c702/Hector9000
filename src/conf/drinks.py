@@ -143,14 +143,16 @@ actions = {
     "umb": ("Add Umbrella", False),
 }
 
-import conf.database as DB
+import src.conf.database as DB
 
 myDB = DB.Database()
 
-# To DB -> replace available_ingredients = ["gren", "rum", "vodka", "gin", "tequila", "gibe", "lime", "tonic",
-# "mate", "gga", "pine", "oj"]
+# To DB -> replace
+available_ingredients = ["gren", "rum", "vodka", "gin", "tequila", "gibe", "lime", "tonic",
+                         "mate", "gga", "pine", "oj"]
 
-available_ingredients = myDB.get_Servos()
+
+# available_ingredients = myDB.get_Servos()
 
 
 def doable(drink, available):

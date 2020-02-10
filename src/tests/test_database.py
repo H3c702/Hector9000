@@ -1,10 +1,10 @@
-from conf.database import Database
+from src.conf.database import Database
 import os
 
 
 class Test_database:
-    dbname = "temp"
-    database = Database(dbname)
+    dbname = "temph9k"
+
 
     def test_os(self):
         print(os.path)
@@ -56,3 +56,4 @@ class Test_database:
 
     def __exit__(self):
         self.removeDB()
+

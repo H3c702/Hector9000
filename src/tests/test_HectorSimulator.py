@@ -1,7 +1,7 @@
 from HectorSimulator import HectorSimulator as Hector
-from conf.HectorConfig import config
+from src.conf import HectorConfig as config
 
-hector = Hector(config)
+hector = Hector(config.config)
 
 
 def test_scale_readout():

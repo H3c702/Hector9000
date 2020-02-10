@@ -10,7 +10,7 @@ import time
 import re
 import paho.mqtt.client as mqtt
 
-from conf.HectorConfig import config
+from src import config
 
 #from HectorHardware import HectorHardware as Hector
 from HectorSimulator import HectorSimulator as Hector

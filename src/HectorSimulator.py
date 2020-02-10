@@ -13,7 +13,7 @@ from time import sleep, time
 import sys
 
 from HectorAPI import HectorAPI
-from conf.HectorConfig import config
+from src.conf import HectorConfig as config
 
 ## settings
 

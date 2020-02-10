@@ -12,7 +12,7 @@ from time import sleep, time
 import sys, Enum
 
 from HectorAPI import HectorAPI
-from conf.HectorConfig import config
+from src import config
 
 # hardware modules
 import Adafruit_PCA9685
