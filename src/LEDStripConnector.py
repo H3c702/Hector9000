@@ -24,9 +24,9 @@ class LEDStripConnector(LEDStripAPI):
         self.ORDER = neopixel.GRB
         self.num_pixels = self.NUM
         self.pixels.fill(self.col_neutral)
-        self.drinkcolor = (0,0,0)
+        self.drinkcolor = (0, 0, 0)
 
-    def standart(self, color=(80,80,30), type=0):
+    def standart(self, color=(80, 80, 30), type=0):
         if type is 0:
             self.pixels.fill(color)
             self.mode = 0
@@ -42,22 +42,22 @@ class LEDStripConnector(LEDStripAPI):
             self.pixels.fill(color)
             self.mode = 0
 
-    def standby(self, color=(80,80,30), type=0):
+    def standby(self, color=(80, 80, 30), type=0):
         if type is 0:
             self.pixels.fill(color)
         else:
-            self.pixels.fill((0,0,0))
+            self.pixels.fill((0, 0, 0))
 
-    def dosedrink(self, color=(0,0,255), type=0):
+    def dosedrink(self, color=(0, 0, 255), type=0):
         self.mode = 99
         self.drinkcolor = color
 
-    def drinkfinish(self, color=(255,255,255), type=0):
+    def drinkfinish(self, color=(255, 255, 255), type=0):
         self.finish(color, type)
 
-    def finish(self, color=(255,255,255), type=0):
+    def finish(self, color=(255, 255, 255), type=0):
         for i in range(self.NUMBASE):
-            self.pixels[i] = (0,0,0)
+            self.pixels[i] = (0, 0, 0)
         self.pixels.show()
         for i in range(10):
             time.sleep(0.05)
@@ -69,12 +69,10 @@ class LEDStripConnector(LEDStripAPI):
             self.pixels.show()
             time.sleep(0.05)
             for j in range(self.NUMBASE):
-                self.pixels[j] = (0,0,0)
+                self.pixels[j] = (0, 0, 0)
             self.pixels.show()
             time.sleep(0.05)
         self.mode = 3
-
-
 
     def drinkloop(self):
         print("drinkloop")
@@ -91,14 +89,12 @@ class LEDStripConnector(LEDStripAPI):
                     if index is start:
                         self.pixels[index] = self.drinkcolor
                     else:
-                        self.pixels[index] = (0,0,0)
+                        self.pixels[index] = (0, 0, 0)
                 if self.mode == 99:
                     self.pixels.show()
                     time.sleep(0.3)
                 else:
                     return
-
-
 
     # mode 1: Farben einzeln durchgehen
     # mode 2: Strobo
@@ -115,7 +111,6 @@ class LEDStripConnector(LEDStripAPI):
         elif self.mode is 99:
             # dosedrink
             self.drinkloop()
-
 
     def loop(self):
         self.led_loop()
@@ -145,7 +140,6 @@ class LEDStripConnector(LEDStripAPI):
             for i in range(self.NUMBASE):
                 self.pixels[i] = (0, 0, 255)
 
-
     def wheel(self, pos):
         if pos < 0 or pos > 255:
             r = g = b = 0
@@ -163,8 +157,7 @@ class LEDStripConnector(LEDStripAPI):
             r = 0
             g = int(pos * 3)
             b = int(255 - pos * 3)
-        return (r, g, b) if ORDER == neopixel.RGB or ORDER == neopixel.GRB else (r, g, b, 0)
-
+        return (r, g, b) if self.ORDER == neopixel.RGB or self.ORDER == neopixel.GRB else (r, g, b, 0)
 
     def rainbow_cycle(self, wait):
         for j in range(255):
@@ -176,10 +169,10 @@ class LEDStripConnector(LEDStripAPI):
             self.pixels.show()
             time.sleep(wait)
 
-
     def mode4(self):
         for i in range(4):
             self.rainbow_cycle(0.001)  # rainbow cycle with 1ms delay per step
+
 
 if __name__ is "__main__":
     test = LEDStripConnector()

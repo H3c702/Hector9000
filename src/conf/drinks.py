@@ -143,8 +143,14 @@ actions = {
     "umb": ("Add Umbrella", False),
 }
 
-# To DB -> replace
-available_ingredients = ["gren", "rum", "vodka", "gin", "tequila", "gibe", "lime", "tonic", "mate", "gga", "pine", "oj"]
+import conf.database as DB
+
+myDB = DB.Database()
+
+# To DB -> replace available_ingredients = ["gren", "rum", "vodka", "gin", "tequila", "gibe", "lime", "tonic",
+# "mate", "gga", "pine", "oj"]
+
+available_ingredients = myDB.get_Servos()
 
 
 def doable(drink, available):
@@ -156,4 +162,3 @@ def alcoholic(drink):
 
 
 available_drinks = [drink for drink in drink_list if doable(drink, available_ingredients)]
-

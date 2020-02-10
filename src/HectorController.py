@@ -44,11 +44,11 @@ class HectorController:
         self.client = mqtt.Client()
         self.hector = Hector()
         self.LED = True
-        #self.db = db.Database('h9k')
-        #self.db.createIfNotExists()
-        #self.db.setDefaultValues()
+        self.db = db.Database('h9k')
+        self.db.createIfNotExists()
+        self.db.setDefaultValues()
 
-
+    #todo: When drinks are impl in DB this has to be refactored
     def available_drinks_as_JSON(self):
         datalist = []
         idOfDrink = 1
