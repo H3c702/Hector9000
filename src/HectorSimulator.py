@@ -99,12 +99,12 @@ class HectorSimulator(HectorAPI):
 
     def arm_isInOutPos(self):
         pos = (self.simulatedArmPos >= self.armNumSteps)
-        print("arm_isInOutPos: %d" % pos)
+        #print("arm_isInOutPos: %d" % pos)
         pos = (pos != 0)
-        if pos:
-            print("arm_isInOutPos = True")
-        else:
-            print("arm_isInOutPos = False")
+        #if pos:
+        #    print("arm_isInOutPos = True")
+        #else:
+        #    print("arm_isInOutPos = False")
         return pos
 
     def scale_readout(self):

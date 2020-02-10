@@ -5,10 +5,6 @@ import os
 class Test_database:
     dbname = "temph9k"
 
-
-    def test_os(self):
-        print(os.path)
-
     def test_GetServos(self):
         self.prepareDB()
         servos = self.database.get_Servos()

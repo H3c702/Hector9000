@@ -8,4 +8,5 @@ install:
 
 # command to run tests
 script:
-  - pytest
+  - cd $TRAVIS_BUILD_DIR
+  - pytest src/tests
