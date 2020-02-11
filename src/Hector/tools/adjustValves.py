@@ -2,7 +2,7 @@
 
 import sys
 from src import config
-from HectorHardware import HectorHardware
+from Hector9000.HectorHardware import HectorHardware
 
 h = HectorHardware(config)
 

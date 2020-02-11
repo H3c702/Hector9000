@@ -2,16 +2,16 @@
 
 import time
 from src import config
-from HectorHardware import HectorHardware
+from Hector9000.HectorHardware import HectorHardware
 
 
-def openValve():
+def closeValve():
     hardware = True
 
     if hardware:
         h = HectorHardware(config)
 
-    print("VENTILE OEFFNEN")
+    print("VENTILE SCHLIESSEN")
     print("")
 
     if hardware:
@@ -21,9 +21,9 @@ def openValve():
 
         h.pump_stop()
         for vnum in range(12):
-            print("Ventil %d wird geoeffnet" % (vnum,))
+            print("Ventil %d wird geschlossen" % (vnum,))
             time.sleep(1)
-            h.valve_open(vnum)
+            h.valve_close(vnum)
 
     h.light_off()
 
@@ -31,4 +31,4 @@ def openValve():
 
 
 if __name__ == "__main__":
-    openValve()
+    closeValve()

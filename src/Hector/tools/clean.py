@@ -2,7 +2,7 @@
 
 import sys, time
 from src import config
-from HectorHardware import HectorHardware
+from Hector9000.HectorHardware import HectorHardware
 
 hardware = True
 

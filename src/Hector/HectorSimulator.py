@@ -12,8 +12,8 @@ from __future__ import division
 from time import sleep, time
 import sys
 
-from HectorAPI import HectorAPI
-from src.conf import HectorConfig as config
+from .HectorAPI import HectorAPI
+from .conf.HectorConfig import config
 
 ## settings
 

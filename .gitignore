@@ -89,7 +89,7 @@ src/nohup\.out
 *.py-pyside2
 
 
-src/log
+src/Hector9000/log
 
 *.out
 

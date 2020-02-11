@@ -9,15 +9,15 @@
 from __future__ import division
 
 from time import sleep, time
-import sys, Enum
+import sys
 
-from HectorAPI import HectorAPI
-from src import config
+from .HectorAPI import HectorAPI
+from .conf.HectorConfig import config
 
 # hardware modules
 import Adafruit_PCA9685
 import RPi.GPIO as GPIO
-from hx711 import HX711
+from .hx711 import HX711
 
 
 ## settings
@@ -30,14 +30,8 @@ import logging
 logging.basicConfig(level=logging.CRITICAL)
 
 
-class Verbose_Level(Enum):
-    DEGUB = 0
-    WARNING = 1
-    ERROR = 2
-    SILENT = 3
 
-
-VERBOSE_LEVEL = Verbose_Level.DEGUB
+VERBOSE_LEVEL = 0
 
 
 def log(message):

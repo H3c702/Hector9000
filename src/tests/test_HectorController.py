@@ -1,4 +1,4 @@
-import src.HectorController as HectorController
+import Hector.HectorController as HectorController
 
 Controller = HectorController.HectorController()
 

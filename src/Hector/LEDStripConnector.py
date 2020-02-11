@@ -1,5 +1,5 @@
-from LEDStripAPI import LEDStripAPI
-import time, board, neopixel, sys, random
+from .LEDStripAPI import LEDStripAPI
+import time, board, neopixel, random
 
 
 class LEDStripConnector(LEDStripAPI):

@@ -1,4 +1,4 @@
-from src.conf.database import Database
+import Hector.conf.database
 import os
 
 
@@ -42,7 +42,7 @@ class Test_database:
 
     def prepareDB(self):
         self.removeDB()
-        self.database = Database(self.dbname)
+        self.database = Hector.conf.database.Database(self.dbname)
         self.database.createIfNotExists()
         self.database.setDefaultValues()
 
