@@ -1,7 +1,13 @@
 language: python
 python:
    - "3.6"
-
+   -
+before_install:
+  - sudo apt-get -y install mosquitto
+addons:
+  apt:
+    update: true
+    
 # command to install dependencies
 install:
  - pip install -r requirements.txt
