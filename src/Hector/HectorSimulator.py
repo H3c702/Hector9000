@@ -30,7 +30,7 @@ def debugOut(name, value):
 
 class HectorSimulator(HectorAPI):
 
-    def __init__(self, cfg):
+    def __init__(self, cfg = config):
 
         print("HectorSimulator")
 

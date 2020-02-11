@@ -1,5 +1,5 @@
-from .HectorRemote import HectorRemote as Hector
-# from HectorHardware import HectorHardware as Hector
+# from .HectorRemote import HectorRemote as Hector
+from .HectorSimulator import HectorSimulator as Hector
 import json
 import Hector.conf.drinks as drinks
 import Hector.conf.database as db
@@ -48,7 +48,7 @@ class HectorController:
         self.db.createIfNotExists()
         self.db.setDefaultValues()
 
-    #todo: When drinks are impl in DB this has to be refactored
+    # todo: When drinks are impl in DB this has to be refactored
     def available_drinks_as_JSON(self):
         datalist = []
         idOfDrink = 1

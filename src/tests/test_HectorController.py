@@ -1,6 +1,6 @@
-import Hector.HectorController as HectorController
+from Hector.HectorController import HectorController
 
-Controller = HectorController.HectorController()
+Controller = HectorController()
 
 
 class Test_Controller:
