@@ -9,8 +9,10 @@ class Database:
     cur = None
 
     def __init__(self, dbname="h9k"):
-        self.con = lite.connect(dbname + ".db")
+        self.con = lite.connect("./h9k.db")
         self.cur = self.con.cursor()
+        self.createIfNotExists()
+        self.setDefaultValues()
 
     def createIfNotExists(self):
         self.cur.execute("CREATE TABLE if not exists DrinksLog(ID Integer primary key, drink TEXT, date timestamp)")
@@ -73,8 +75,7 @@ class Database:
             self.con.commit()
 
     def _import_servos(self):
-        table = 'servos'
-        if not self._check_Table_is_Filled(table):
+        if not self._check_Table_is_Filled('servos'):
             self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (1, 'gren');""")
             self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (2, 'rum');""")
             self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (3, 'vodka');""")
@@ -134,9 +135,9 @@ class Database:
         self.cur.execute("SELECT ID, drink, date FROM DrinksLog")
         return self.cur.fetchall()
 
-    def __del__(self):
-        self.con.commit()
-        self.con.close()
+   # def __del__(self):
+     #   self.con.commit()
+      #  self.con.close()
 
 
 # when called directly, read out database and generate a log
