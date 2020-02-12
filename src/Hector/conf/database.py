@@ -75,18 +75,18 @@ class Database:
     def _import_servos(self):
         table = 'servos'
         if not self._check_Table_is_Filled(table):
-            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (1, 'oj');""")
-            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (2, 'tequila');""")
-            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (3, 'gren');""")
-            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (4, 'vodka');""")
-            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (5, 'mmix');""")
-            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (6, 'rum');""")
-            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (7, 'coke');""")
-            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (8, 'gin');""")
-            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (9, 'tonic');""")
-            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (10, 'mate');""")
-            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (11, 'rum');""")
-            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (12, 'pine');""")
+            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (1, 'gren');""")
+            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (2, 'rum');""")
+            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (3, 'vodka');""")
+            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (4, 'gin');""")
+            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (5, 'tequila');""")
+            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (6, 'gibe');""")
+            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (7, 'lime');""")
+            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (8, 'tonic');""")
+            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (9, 'mate');""")
+            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (10, 'gga');""")
+            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (11, 'pine');""")
+            self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (12, 'oj');""")
             self.con.commit()
 
     def _check_Table_is_Filled(self, table):

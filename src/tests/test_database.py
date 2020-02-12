@@ -5,11 +5,9 @@ from .helper import h9kTestHelper
 
 
 class Test_database:
-    dbname = "temph9k"
-    dbhelper = h9kTestHelper.dbHelper(dbname)
+    dbhelper = h9kTestHelper.dbHelper()
 
     def test_GetServos(self):
-
         self.dbhelper.prepareDB()
         servos = self.dbhelper.database.get_Servos()
 
@@ -18,8 +16,8 @@ class Test_database:
     def test_GetServosAsList(self):
         self.dbhelper.prepareDB()
         servos = self.dbhelper.database.get_Servos_asList()
-        assert "['oj', 'tequila', 'gren', 'vodka', 'mmix', 'rum', 'coke', 'gin', 'tonic', 'mate', 'rum'," \
-               " 'pine']" == str(servos)
+        assert "['gren', 'rum', 'vodka', 'gin', 'tequila', 'gibe', 'lime', 'tonic', 'mate', " \
+               "'gga', 'pine', 'oj']" == str(servos)
 
     def test_GetIngredients(self):
         self.dbhelper.prepareDB()
@@ -45,5 +43,4 @@ class Test_database:
     # ---------------------------------------------------------------------
 
     def __exit__(self):
-        dbhelper.dbHelper.removeDB()
-
+        self.dbhelper.removeDB()

@@ -148,11 +148,11 @@ import Hector.conf.database as DB
 myDB = DB.Database()
 
 # To DB -> replace
-available_ingredients = ["gren", "rum", "vodka", "gin", "tequila", "gibe", "lime", "tonic",
-                         "mate", "gga", "pine", "oj"]
+#available_ingredients = ["gren", "rum", "vodka", "gin", "tequila", "gibe", "lime", "tonic",
+#                        "mate", "gga", "pine", "oj"]
 
 
-# available_ingredients = myDB.get_Servos()
+available_ingredients = myDB.get_Servos_asList()
 
 
 def doable(drink, available):

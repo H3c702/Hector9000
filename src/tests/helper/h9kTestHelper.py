@@ -4,15 +4,13 @@ import Hector
 
 
 class dbHelper:
-    def __init__(self, dbname):
-        self.dbname = dbname
 
     def prepareDB(self):
         self.removeDB()
-        self.database = Hector.conf.database.Database(self.dbname)
+        self.database = Hector.conf.database.Database()
         self.database.createIfNotExists()
         self.database.setDefaultValues()
 
     def removeDB(self):
-        if os.path.exists(self.dbname + ".db"):
-            os.remove(self.dbname + ".db")
+        if os.path.exists("h9k.db"):
+            os.remove("h9k.db")
