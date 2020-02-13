@@ -26,6 +26,17 @@ class Test_database:
 
         assert ing[0][1] == "Gin"
 
+    def test_get_AllIngredientsAsDict(self):
+        self.dbhelper.prepareDB()
+        ing = self.dbhelper.database.get_AllIngredientsAsDict()
+        print(ing)
+        assert "{'gin': ('Gin', True), 'rum': ('Rum', True), 'vodka': ('Vodka', True), 'tequila': ('Tequila', True), " \
+               "'tonic': ('Tonic Water', False), 'coke': ('Cola', False), 'oj': ('Orange Juice', False), " \
+               "'gren': ('Grenadine', False), 'mmix': ('Margarita Mix', True), 'mate': ('Mate', False), " \
+               "'pine': ('Pineapple Juice', False), 'raspberry': ('Raspberry', False), 'gga': ('Ginger Ale', False), " \
+               "'cocos': ('Cocos', False), 'mango': ('Mango Juice', False), 'lms': ('Limettensaft', False), " \
+               "'coin': ('Cointreau', True), 'lime': ('Lime', False), 'gibe': ('Ginger Beer', False)}" == str(ing)
+
     def test_count_up_ingredient(self):
         self.dbhelper.prepareDB()
         self.dbhelper.database.countUpIngredient("Gin", 200)

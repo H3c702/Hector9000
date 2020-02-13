@@ -110,28 +110,28 @@ drink_list = [
 ]
 
 # -> Read out of DB
-ingredients = {
-    # code				text		is_alcoholic?
-    "gin": ("Gin", True),
-    "rum": ("Rum", True),
-    "vodka": ("Vodka", True),
-    "tequila": ("Tequila", True),
-    "tonic": ("Tonic Water", False),
-    "coke": ("Coke", False),
-    "oj": ("Orange Juice", False),
-    "gren": ("Grenadine", False),
-    "mmix": ("Margarita Mix", True),
-    "mate": ("Mate", False),
-    "pine": ("Pineapple Juice", False),
-    "raspberry": ("Raspberry", False),
-    "gga": ("Ginger Ale", False),
-    "cocos": ("Cocos", False),
-    "mango": ("Mango Juice", False),
-    "lms": ("Limettensaft", False),
-    "coin": ("Cointreau", True),
-    "lime": ("Lime", False),
-    "gibe": ("Ginger Beer", False)
-}
+# ingredients = {
+#    # code				text		is_alcoholic?
+#    "gin": ("Gin", True),
+#    "rum": ("Rum", True),
+#    "vodka": ("Vodka", True),
+#    "tequila": ("Tequila", True),
+#    "tonic": ("Tonic Water", False),
+#    "coke": ("Coke", False),
+#    "oj": ("Orange Juice", False),
+#    "gren": ("Grenadine", False),
+#    "mmix": ("Margarita Mix", True),
+#    "mate": ("Mate", False),
+#    "pine": ("Pineapple Juice", False),
+#    "raspberry": ("Raspberry", False),
+#    "gga": ("Ginger Ale", False),
+#    "cocos": ("Cocos", False),
+#    "mango": ("Mango Juice", False),
+#    "lms": ("Limettensaft", False),
+#    "coin": ("Cointreau", True),
+#    "lime": ("Lime", False),
+#    "gibe": ("Ginger Beer", False)
+# }
 
 actions = {
     # code      text     is_automatic?
@@ -148,11 +148,12 @@ import Hector.conf.database as DB
 myDB = DB.Database()
 
 # To DB -> replace
-#available_ingredients = ["gren", "rum", "vodka", "gin", "tequila", "gibe", "lime", "tonic",
+# available_ingredients = ["gren", "rum", "vodka", "gin", "tequila", "gibe", "lime", "tonic",
 #                        "mate", "gga", "pine", "oj"]
 
 
 available_ingredients = myDB.get_Servos_asList()
+ingredients = myDB.get_AllIngredientsAsDict()
 
 
 def doable(drink, available):

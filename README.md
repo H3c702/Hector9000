@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/H3c702/Hector9000.svg?branch=master)](https://travis-ci.org/H3c702/Hector9000)
+
 HECTOR 9000
 ======================
 

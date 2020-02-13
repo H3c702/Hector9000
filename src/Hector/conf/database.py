@@ -44,12 +44,15 @@ class Database:
 
     def _import_Actions(self):
         if not self._check_Table_is_Filled("Actions"):
-            self.cur.execute("""INSERT INTO "Actions" ("Code", "Text", "is_automatic") VALUES ('ingr', 'Add Ingredient', 1);""")
-            self.cur.execute("""INSERT INTO "Actions" ("Code", "Text", "is_automatic") VALUES ('ping', 'Ring Bell', 1);""")
+            self.cur.execute(
+                """INSERT INTO "Actions" ("Code", "Text", "is_automatic") VALUES ('ingr', 'Add Ingredient', 1);""")
+            self.cur.execute(
+                """INSERT INTO "Actions" ("Code", "Text", "is_automatic") VALUES ('ping', 'Ring Bell', 1);""")
             self.cur.execute("""INSERT INTO "Actions" ("Code", "Text", "is_automatic") VALUES ('shake', 'Shake', 0);""")
             self.cur.execute("""INSERT INTO "Actions" ("Code", "Text", "is_automatic") VALUES ('stir', 'Stir', 0);""")
             self.cur.execute("""INSERT INTO "Actions" ("Code", "Text", "is_automatic") VALUES ('ice', 'Add Ice', 0);""")
-            self.cur.execute("""INSERT INTO "Actions" ("Code", "Text", "is_automatic") VALUES ('umb', 'Add Umbrella', 0);""")
+            self.cur.execute(
+                """INSERT INTO "Actions" ("Code", "Text", "is_automatic") VALUES ('umb', 'Add Umbrella', 0);""")
             self.con.commit()
 
     def _import_Ingredients(self):
@@ -72,6 +75,11 @@ class Database:
             self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('gga', 'Ginger Ale');""")
             self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('cocos', 'Cocos');""")
             self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('mango', 'Mango Juice');""")
+            self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('lms', 'Limettensaft');""")
+            self.cur.execute(
+                """INSERT INTO "Ingredients" ("Code", "Name", "IsAlcoholic") VALUES ('coin', 'Cointreau', 1);""")
+            self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('lime', 'Lime');""")
+            self.cur.execute("""INSERT INTO "Ingredients" ("Code", "Name") VALUES ('gibe', 'Ginger Beer');""")
             self.con.commit()
 
     def _import_servos(self):
@@ -104,16 +112,21 @@ class Database:
         array = []
         for item in self.get_Servos():
             array.append(item[1])
-
         return array
 
     def get_Servos_asJson(self):
         return json.dumps(self.get_Servos())
 
     def get_AllIngredients(self):
-        self.cur.execute("SELECT Code, Name FROM Ingredients")
+        self.cur.execute("SELECT Code, Name, IsAlcoholic FROM Ingredients")
         items = self.cur.fetchall()
         return items
+
+    def get_AllIngredientsAsDict(self):
+        Ingdict = {}
+        for item in self.get_AllIngredients():
+            Ingdict.update({item[0]: (item[1], item[2] == 1)})
+        return Ingdict
 
     def get_AllIngredients_asJson(self):
         return json.dumps(self.get_AllIngredients())
@@ -135,9 +148,10 @@ class Database:
         self.cur.execute("SELECT ID, drink, date FROM DrinksLog")
         return self.cur.fetchall()
 
-   # def __del__(self):
-     #   self.con.commit()
-      #  self.con.close()
+
+# def __del__(self):
+#   self.con.commit()
+#  self.con.close()
 
 
 # when called directly, read out database and generate a log
