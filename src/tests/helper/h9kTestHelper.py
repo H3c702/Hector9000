@@ -11,3 +11,6 @@ class dbHelper:
     def prepareDB(self):
         self.database.createIfNotExists()
         self.database.setDefaultValues()
+
+    def removeDB(self):
+        os.remove("./h9k.db")
