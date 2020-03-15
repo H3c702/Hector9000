@@ -106,7 +106,6 @@ class Database:
 			self.cur.execute("""INSERT INTO "Servos" ("ServoNr", "Code") VALUES (12, 'oj');""")
 			self.con.commit()
 
-
 	def _import_settings(self):
 		if not self._check_Table_is_Filled('Settings'):
 			self.cur.execute("""INSERT INTO "Settings" ("setting", "value") VALUES ('cupsize', '400');""")

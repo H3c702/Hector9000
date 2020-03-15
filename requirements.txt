@@ -8,7 +8,6 @@ certifi==2018.11.29
 chardet==3.0.4
 docutils==0.14
 idna==2.8
-
 more-itertools==7.0.0
 packaging==19.0
 paho-mqtt==1.5.0
