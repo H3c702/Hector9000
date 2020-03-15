@@ -6,7 +6,6 @@ from time import *
 
 # ToDo:
 # - Update Servos
-# - Create DynSettings Table (Name Value)
 # - Drinks to DB (or sep File ?!)
 
 class Database:
@@ -49,6 +48,7 @@ class Database:
 		self._import_Ingredients()
 		self._import_servos()
 		self._import_Actions()
+		self._import_settings()
 
 	def _import_Actions(self):
 		if not self._check_Table_is_Filled("Actions"):
@@ -109,6 +109,7 @@ class Database:
 	def _import_settings(self):
 		if not self._check_Table_is_Filled('Settings'):
 			self.cur.execute("""INSERT INTO "Settings" ("setting", "value") VALUES ('cupsize', '400');""")
+			self.con.commit()
 
 	def _check_Table_is_Filled(self, table):
 		self.cur.execute("SELECT * FROM " + table)
@@ -116,9 +117,24 @@ class Database:
 		return len(items) > 0
 
 	def get_Setting(self, setting):
-		self.cur.execute("SELECT value from Settings where setting = ?", (setting))
+		self.cur.execute("SELECT value from Settings where setting = ? ;", (setting,))
 		items = self.cur.fetchone()
 		return items[0]
+
+	def set_Setting(self, setting, value):
+		self.cur.execute("UPDATE Settings set value = ? where setting = ? ;", (value, setting))
+		self.con.commit()
+		return self.get_Setting(setting)
+
+	def get_Servo(self, servo):
+		self.cur.execute("SELECT Code FROM Servos WHERE ServoNr = ? ;", (servo,))
+		items = self.cur.fetchone()
+		return items[0]
+
+	def set_Servo(self, servo, code):
+		self.cur.execute("UPDATE Servos set Code = ? where ServoNr = ? ;", (code, servo))
+		self.con.commit()
+		return self.get_Servo(servo)
 
 	def get_Servos(self):
 		self.cur.execute("SELECT ServoNr, Code, Volume FROM Servos ORDER BY ServoNr")
@@ -164,11 +180,6 @@ class Database:
 	def get_Drinks_Log(self):
 		self.cur.execute("SELECT ID, drink, date FROM DrinksLog")
 		return self.cur.fetchall()
-
-
-# def __del__(self):
-#   self.con.commit()
-#  self.con.close()
 
 
 # when called directly, read out database and generate a log

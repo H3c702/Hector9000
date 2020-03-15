@@ -16,8 +16,8 @@ class dbHelper:
 
 	def resetDB(self):
 		#self.database.cur.execute("DELETE FROM Drinks;")
-		#self.database.cur.execute("DELETE FROM settings;")
-		#self.database.cur.execute("DELETE FROM Servos;")
+		self.database.cur.execute("DELETE FROM settings;")
+		self.database.cur.execute("DELETE FROM Servos;")
 		#self.database.cur.execute("DELETE FROM Ingredients;")
 		#self.database.cur.execute("DELETE FROM Actions;")
 		self.database.cur.execute("DELETE FROM DrinksLog;")
