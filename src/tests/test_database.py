@@ -67,11 +67,11 @@ class Test_database:
 		drinkCount = self.dbhelper.database.get_Drinks_Log()
 		assert len(drinkCount) == 1
 
-	@pytest.mark.parametrize("setting, value", [("cupsize", "400")])
+	@pytest.mark.parametrize("setting, value", [("cupsize", 400)])
 	def test_get_settings(self, setting, value):
 		self.dbhelper.prepareDB()
 
-		item = self.dbhelper.database.get_Setting(setting)
+		item = int(self.dbhelper.database.get_Setting(setting))
 
 		assert item == value
 

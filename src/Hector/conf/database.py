@@ -5,7 +5,6 @@ from time import *
 
 
 # ToDo:
-# - Update Servos
 # - Drinks to DB (or sep File ?!)
 
 class Database:
