@@ -173,19 +173,16 @@ def on_message(self, client, userdata, msg):
             self._do_get_drink(msg)
         elif currentTopic == self.TopicPrefix + "get_ingredientsList":
             self._do_get_ingredients(msg)
-        # DO i need the ING here or do i need the Servo ?
         elif currentTopic == self.TopicPrefix + "get_servo":
             self._do_get_servo(msg)
         elif currentTopic == self.TopicPrefix + "set_servo":
             self._do_set_servo(msg)
-            # Setzt die Ing in der DB
         elif currentTopic == self.TopicPrefix + "light_on":
             self.hector.do_light_on()
         elif currentTopic == self.TopicPrefix + "light_off":
             self.hector.do_light_off()
         elif currentTopic == self.TopicPrefix + "ring":
             self.hector.do_ping(2, 1)
-            pass
         elif currentTopic == self.TopicPrefix + "doseDrink":
             self._do_dose_drink(msg)
             pass

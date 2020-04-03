@@ -70,7 +70,6 @@ class Test_database:
 	@pytest.mark.parametrize("setting, value", [("cupsize", 400)])
 	def test_get_settings(self, setting, value):
 		self.dbhelper.prepareDB()
-
 		item = int(self.dbhelper.database.get_Setting(setting))
 
 		assert item == value
