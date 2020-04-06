@@ -12,12 +12,10 @@ import paho.mqtt.client as mqtt
 
 from .conf.HectorConfig import config
 
-# from .HectorHardware import HectorHardware as Hector
-from .HectorSimulator import HectorSimulator as Hector
+from .HectorHardware import HectorHardware as Hector
+# from .HectorSimulator import HectorSimulator as Hector
 
 # global vars
-
-
 MainTopic = "Hector9000/Hardware/"
 MQTTIP = "localhost"
 MQTTPORT = 1883
@@ -43,7 +41,6 @@ def warning(message):
 
 
 # low-level functions
-
 
 def do_get_config():
 	log("get configuration")

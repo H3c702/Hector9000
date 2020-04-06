@@ -1,5 +1,5 @@
 from .HectorRemote import HectorRemote as Hector
-# from .HectorSimulator import HectorSimulator as Hector
+
 import json
 import Hector.conf.drinks as drinks
 import Hector.conf.database as db
