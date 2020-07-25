@@ -3,6 +3,7 @@
 ##
 #   HectorAPI.py       API interface class for Hector9000 hardware
 #
+#
 
 import abc
 
