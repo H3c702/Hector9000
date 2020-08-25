@@ -12,7 +12,7 @@ class Database:
 	cur = None
 
 	def __init__(self, dbname="h9k"):
-		self.con = lite.connect("./h9k.db")
+		self.con = lite.connect("./" + dbname + ".db")
 		self.cur = self.con.cursor()
 		self.createIfNotExists()
 		self.setDefaultValues()
@@ -183,7 +183,7 @@ class Database:
 
 # when called directly, read out database and generate a log
 if __name__ == "__main__":
-	db = Database("h9k")
+	db = Database()
 	db.cur.execute("SELECT * FROM DrinksLog WHERE date > '2018-12-11' ORDER BY date ASC")
 	# db.cur.execute("SELECT * FROM DrinksLog ORDER BY date ASC")
 	res = db.cur.fetchall()
