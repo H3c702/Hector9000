@@ -10,10 +10,10 @@ import time
 import re
 import paho.mqtt.client as mqtt
 
-from .conf.HectorConfig import config
+from conf.HectorConfig import config
 
-from .HectorHardware import HectorHardware as Hector
-# from .HectorSimulator import HectorSimulator as Hector
+#from .HectorHardware import HectorHardware as Hector
+from HectorSimulator import HectorSimulator as Hector
 
 # global vars
 MainTopic = "Hector9000/Hardware/"

@@ -12,8 +12,8 @@ from __future__ import division
 from time import sleep, time
 import sys
 
-from .HectorAPI import HectorAPI
-from .conf.HectorConfig import config
+from HectorAPI import HectorAPI
+from conf.HectorConfig import config
 
 ## settings
 
@@ -180,24 +180,24 @@ class HectorSimulator(HectorAPI):
 
 # end class HectorHardware
 
-
-## main (for testing only)
-if __name__ == "__main__":
-	hector = HectorSimulator(config)
-	hector.finger(0)
-	hector.arm_in()
-	for i in range(hector.numValves):
-		print("close valve %d = channel %d" % (i, hector.valveChannels[i]))
-		hector.valve_close(hector.valveChannels[i])
-	input("Bitte Glas auf die Markierung stellen")
-	# hector.ping(1)
-	hector.arm_out()
-	hector.valve_dose(1, 100)
-	hector.valve_dose(3, 20)
-	hector.finger(1)
-	hector.valve_dose(11, 100)
-	hector.arm_in()
-	hector.ping(3)
-	hector.finger(0)
-	hector.cleanAndExit()
-	print("done.")
+#
+# ## main (for testing only)
+# if __name__ == "__main__":
+# 	hector = HectorSimulator(config)
+# 	hector.finger(0)
+# 	hector.arm_in()
+# 	for i in range(hector.numValves):
+# 		print("close valve %d = channel %d" % (i, hector.valveChannels[i]))
+# 		hector.valve_close(hector.valveChannels[i])
+# 	input("Bitte Glas auf die Markierung stellen")
+# 	# hector.ping(1)
+# 	hector.arm_out()
+# 	hector.valve_dose(1, 100)
+# 	hector.valve_dose(3, 20)
+# 	hector.finger(1)
+# 	hector.valve_dose(11, 100)
+# 	hector.arm_in()
+# 	hector.ping(3)
+# 	hector.finger(0)
+# 	hector.cleanAndExit()
+# 	print("done.")

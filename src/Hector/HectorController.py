@@ -1,4 +1,4 @@
-from .HectorRemote import HectorRemote as Hector
+from Hector.HectorRemote import HectorRemote as Hector
 
 import json
 import Hector.conf.drinks as drinks
@@ -148,78 +148,77 @@ class HectorController:
         self.client.loop_write()
 
 
-def dose_callback(self, progress):
-    self.client.publish(self.TopicPrefix + "doseDrink/progress", progress)
+    def dose_callback(self, progress):
+        self.client.publish(self.TopicPrefix + "doseDrink/progress", progress)
 
 
-def on_message(self, client, userdata, msg):
-    debug("on_message: topic " + str(msg.topic) + ", msg: " + str(msg.payload))
-    try:
-        currentTopic = msg.topic
-        if "/Hardware/" in currentTopic:
-            return  # ignore own Hardware calls
-        elif currentTopic.endswith("/progress"):
-            return  # ignore our own progress messages
-        elif currentTopic.endswith("/return"):
-            return  # ignore our own return messages
-        elif currentTopic == self.TopicPrefix + "standby":
-            self.hector.standby()
-        elif currentTopic == self.TopicPrefix + "standart":
-            color = tuple(msg.payload.decode("utf-8").split(","))
-            self.hector.standart(color=color)
-        elif currentTopic == self.TopicPrefix + "get_drinks":
-            self._do_get_drinks(msg)
-        elif currentTopic == self.TopicPrefix + "get_ingredientsForDrink":
-            self._do_get_drink(msg)
-        elif currentTopic == self.TopicPrefix + "get_ingredientsList":
-            self._do_get_ingredients(msg)
-        elif currentTopic == self.TopicPrefix + "get_servo":
-            self._do_get_servo(msg)
-        elif currentTopic == self.TopicPrefix + "set_servo":
-            self._do_set_servo(msg)
-        elif currentTopic == self.TopicPrefix + "light_on":
-            self.hector.do_light_on()
-        elif currentTopic == self.TopicPrefix + "light_off":
-            self.hector.do_light_off()
-        elif currentTopic == self.TopicPrefix + "ring":
-            self.hector.do_ping(2, 1)
-        elif currentTopic == self.TopicPrefix + "doseDrink":
-            self._do_dose_drink(msg)
-            pass
-        elif currentTopic == self.TopicPrefix + "cleanMe":
-            # ToDo: Develop proper methode in Server
-            for i in range(12):
-                self.hector.clean(1)
-            pass
-        # clean(msg)
-        elif currentTopic == self.TopicPrefix + "dryMe":
-            pass
-        elif currentTopic == self.TopicPrefix + "openAllValves":
-            self.hector.all_valve_open()
-            pass
-        elif currentTopic == self.TopicPrefix + "closeAllValves":
-            self.hector.all_valve_close()
-            pass
-        else:
-            warning("unknown topic: " + currentTopic + ", msg " + str(msg.payload))
+    def on_message(self, client, userdata, msg):
+        debug("on_message: topic " + str(msg.topic) + ", msg: " + str(msg.payload))
+        try:
+            currentTopic = msg.topic
+            if "/Hardware/" in currentTopic:
+                return  # ignore own Hardware calls
+            elif currentTopic.endswith("/progress"):
+                return  # ignore our own progress messages
+            elif currentTopic.endswith("/return"):
+                return  # ignore our own return messages
+            elif currentTopic == self.TopicPrefix + "standby":
+                self.hector.standby()
+            elif currentTopic == self.TopicPrefix + "standart":
+                color = tuple(msg.payload.decode("utf-8").split(","))
+                self.hector.standart(color=color)
+            elif currentTopic == self.TopicPrefix + "get_drinks":
+                self._do_get_drinks(msg)
+            elif currentTopic == self.TopicPrefix + "get_ingredientsForDrink":
+                self._do_get_drink(msg)
+            elif currentTopic == self.TopicPrefix + "get_ingredientsList":
+                self._do_get_ingredients(msg)
+            elif currentTopic == self.TopicPrefix + "get_servo":
+                self._do_get_servo(msg)
+            elif currentTopic == self.TopicPrefix + "set_servo":
+                self._do_set_servo(msg)
+            elif currentTopic == self.TopicPrefix + "light_on":
+                self.hector.do_light_on()
+            elif currentTopic == self.TopicPrefix + "light_off":
+                self.hector.do_light_off()
+            elif currentTopic == self.TopicPrefix + "ring":
+                self.hector.do_ping(2, 1)
+            elif currentTopic == self.TopicPrefix + "doseDrink":
+                self._do_dose_drink(msg)
+                pass
+            elif currentTopic == self.TopicPrefix + "cleanMe":
+                # ToDo: Develop proper methode in Server
+                for i in range(12):
+                    self.hector.clean(1)
+                pass
+            elif currentTopic == self.TopicPrefix + "dryMe":
+                pass
+            elif currentTopic == self.TopicPrefix + "openAllValves":
+                self.hector.all_valve_open()
+                pass
+            elif currentTopic == self.TopicPrefix + "closeAllValves":
+                self.hector.all_valve_close()
+                pass
+            else:
+                warning("unknown topic: " + currentTopic + ", msg " + str(msg.payload))
 
-        debug("handled message " + currentTopic + " / " + str(msg.payload))
-        while self.client.want_write():
-            self.client.loop_write()
+            debug("handled message " + currentTopic + " / " + str(msg.payload))
+            while self.client.want_write():
+                self.client.loop_write()
 
-    except Exception as e:
-        error(str(e) + "\n" + traceback.format_exc())
+        except Exception as e:
+            error(str(e) + "\n" + traceback.format_exc())
 
 
-def connect(self):
-    debug("starting")
-    self.client.on_connect = self.on_connect
-    self.client.on_message = self.on_message
-    self.client.on_log = self.on_log
-    self.client.connect(self.MQTTServer, 1883, 60)
-    debug("started")
-    while True:
-        self.client.loop()
+    def connect(self):
+        debug("starting")
+        self.client.on_connect = self.on_connect
+        self.client.on_message = self.on_message
+        self.client.on_log = self.on_log
+        self.client.connect(self.MQTTServer, 1883, 60)
+        debug("started")
+        while True:
+            self.client.loop()
 
 
 if __name__ == "__main__":
