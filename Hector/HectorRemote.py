@@ -1,5 +1,5 @@
-from .HectorAPI import HectorAPI
-from .LEDStripAPI import LEDStripAPI
+from HectorAPI import HectorAPI
+from LEDStripAPI import LEDStripAPI
 import paho.mqtt.client as mqtt
 
 

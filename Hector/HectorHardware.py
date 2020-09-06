@@ -17,7 +17,7 @@ from conf.HectorConfig import config
 # hardware modules
 import Adafruit_PCA9685
 import RPi.GPIO as GPIO
-from hx711 import HX711
+from conf.hx711 import HX711
 
 ## settings
 

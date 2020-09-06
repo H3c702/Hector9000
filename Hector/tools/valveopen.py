@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import time
-from src import config
-from Hector9000.HectorHardware import HectorHardware
+from Hector.conf import config
+from Hector.HectorHardware import HectorHardware
 
 
 def openValve():

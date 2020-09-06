@@ -1,8 +1,5 @@
 import pytest
 
-import Hector.conf.database
-import os
-
 from .helper import h9kTestHelper
 
 

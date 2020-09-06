@@ -1,4 +1,4 @@
-from .LEDStripAPI import LEDStripAPI
+from LEDStripAPI import LEDStripAPI
 import time, board, neopixel, threading
 
 

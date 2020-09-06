@@ -1,8 +1,8 @@
-from Hector.HectorRemote import HectorRemote as Hector
+from HectorRemote import HectorRemote as remote
 
 import json
-import Hector.conf.drinks as drinks
-import Hector.conf.database as db
+import conf.drinks as drinks
+import conf.database as db
 import webcolors
 import paho.mqtt.client as mqtt
 import time
@@ -42,7 +42,7 @@ class HectorController:
         self.TopicPrefix = "Hector9000/"
         self.initDone = False
         self.client = mqtt.Client()
-        self.hector = Hector()
+        self.hector = remote
         self.LED = True
         self.db = db.Database()
 

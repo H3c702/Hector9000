@@ -1,6 +1,6 @@
 import paho.mqtt.client as mqtt
 
-from .Simple_LED_Connector import Simple_LED_Connector as LEDStrip
+from Simple_LED_Connector import Simple_LED_Connector as LEDStrip
 
 MQTT_Server = "localhost"
 port = 1883

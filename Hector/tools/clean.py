@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import sys, time
-from src.Hector.conf import HectorConfig as config
-from Hector9000.HectorHardware import HectorHardware
+from Hector.conf import HectorConfig as config
+from Hector.HectorHardware import HectorHardware
 
 hardware = True
 

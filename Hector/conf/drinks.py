@@ -119,7 +119,7 @@ actions = {
 	"umb": ("Add Umbrella", False),
 }
 
-import Hector.conf.database as DB
+import conf.database as DB
 
 myDB = DB.Database()
 
