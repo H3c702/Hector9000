@@ -16,5 +16,5 @@ install:
 
 # command to run tests
 script:
-  - cd $TRAVIS_BUILD_DIR/src
+  - cd TRAVIS_BUILD_DIR/src
   - python -m pytest
