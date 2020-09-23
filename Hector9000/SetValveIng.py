@@ -1,6 +1,7 @@
-from conf.database import Database as hdb
+from Hector9000.conf.database import Database as hdb
 
 db = hdb()
+
 
 def get_IngLists():
     inglist = db.get_AllIngredients()
@@ -23,4 +24,4 @@ while True:
     ing = get_IngLists()
     valve: int = int(input("Chose a valve (1-12):"))
 
-    print(ing[1] +" goes into " + str(valve))
+    print(ing[1] + " goes into " + str(valve))

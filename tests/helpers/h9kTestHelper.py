@@ -1,6 +1,6 @@
 import os
 
-import Hector
+import Hector9000 as Hector
 
 
 class dbHelper:

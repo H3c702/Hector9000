@@ -14,4 +14,4 @@ apt upgrade -y
 
 apt install python3 pip3 python3-setuptools mosquitto nohup -y
 
-pip3 install -r requirements.txt
+python setup.py install

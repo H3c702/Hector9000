@@ -1,6 +1,6 @@
 import pytest
 
-from .helper import h9kTestHelper
+from tests.helpers import h9kTestHelper
 
 
 class Test_database:

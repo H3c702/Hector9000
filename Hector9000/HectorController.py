@@ -1,8 +1,8 @@
-from HectorRemote import HectorRemote as remote
+from Hector9000 import HectorRemote as remote
 
 import json
-import conf.drinks as drinks
-import conf.database as db
+from Hector9000.conf import drinks as drinks
+from Hector9000.conf import database as db
 import webcolors
 import paho.mqtt.client as mqtt
 import time
@@ -51,7 +51,10 @@ class HectorController:
         datalist = []
         idOfDrink = 1
         for drinkitem in drinks.available_drinks:
-            data = {"name": drinkitem["name"], "id": idOfDrink, "alcohol": drinks.alcoholic(drinkitem)}
+            data = {
+                "name": drinkitem["name"],
+                "id": idOfDrink,
+                "alcohol": drinks.alcoholic(drinkitem)}
             datalist.append(data)
             idOfDrink = idOfDrink + 1
         return json.dumps({"drinks": datalist})
@@ -59,8 +62,8 @@ class HectorController:
     def _get_drink_as_JSON(self, msg):
         id = int(msg.payload)
         drink = drinks.available_drinks[id - 1]
-        inglist = [{"name": drinks.ingredients[step[1]][0], "ammount": step[2]} for step in drink["recipe"] if
-                   step[0] == "ingr"]
+        inglist = [{"name": drinks.ingredients[step[1]][0], "ammount": step[2]}
+                   for step in drink["recipe"] if step[0] == "ingr"]
         data = {"id": id, "name": drink["name"], "ingredients": inglist}
         debug(data)
         return json.dumps(data)
@@ -84,25 +87,41 @@ class HectorController:
     def on_connect(self, client, userdata, flags, rc):
         debug("Connected with result code " + str(rc))
         self.client.subscribe(self.TopicPrefix + "#")
-        if self.LED: self.hector.standart(type=3)
+        if self.LED:
+            self.hector.standart(type=3)
 
     def on_log(self, client, userdata, level, buf):
         pass  # log("LOG " + str(level) + ": " + str(userdata) + " -- " + str(buf))
 
     def _do_get_drinks(self, msg):
-        self.client.publish(self.get_returnTopic(msg.topic), self.available_drinks_as_JSON())
+        self.client.publish(
+            self.get_returnTopic(
+                msg.topic),
+            self.available_drinks_as_JSON())
 
     def _do_get_drink(self, msg):
-        self.client.publish(self.get_returnTopic(msg.topic), self._get_drink_as_JSON(msg))
+        self.client.publish(
+            self.get_returnTopic(
+                msg.topic),
+            self._get_drink_as_JSON(msg))
 
     def _do_get_ingredients(self, msg):
-        self.client.publish(self.get_returnTopic(msg.topic), self._get_ingredients(msg))
+        self.client.publish(
+            self.get_returnTopic(
+                msg.topic),
+            self._get_ingredients(msg))
 
     def _do_get_servo(self, msg):
-        self.client.publish(self.get_returnTopic(msg.topic), self._get_servo(msg))
+        self.client.publish(
+            self.get_returnTopic(
+                msg.topic),
+            self._get_servo(msg))
 
     def _do_set_servo(self, msg):
-        self.client.publish(self.get_returnTopic(msg.topic), self._set_servo(msg))
+        self.client.publish(
+            self.get_returnTopic(
+                msg.topic),
+            self._set_servo(msg))
 
     def _do_dose_drink(self, msg):
         debug("start dosing drink")
@@ -115,7 +134,9 @@ class HectorController:
         steps = 100 / len(drink["recipe"])
         if self.LED:
             if "color" in drink.keys():
-                self.hector.dosedrink(color=webcolors.name_to_rgb(drink["color"]))
+                self.hector.dosedrink(
+                    color=webcolors.name_to_rgb(
+                        drink["color"]))
             else:
                 self.hector.dosedrink()
         if self.client.want_write():
@@ -130,30 +151,39 @@ class HectorController:
                 # todo: cash value
                 cupsize = int(self.db.get_Setting("cupsize"))
                 ingamount = int((int(step[2]) / 400) * cupsize)
-                self.hector.valve_dose(index=int(pump), amount=ingamount, cback=self.dose_callback,
-                                       progress=(progress, steps), topic="Hector9000/doseDrink/progress")
-                self.client.publish(self.get_progressTopic(msg.topic), progress + steps)
+                self.hector.valve_dose(
+                    index=int(pump),
+                    amount=ingamount,
+                    cback=self.dose_callback,
+                    progress=(
+                        progress,
+                        steps),
+                    topic="Hector9000/doseDrink/progress")
+                self.client.publish(
+                    self.get_progressTopic(
+                        msg.topic), progress + steps)
                 if self.client.want_write():
                     self.client.loop_write()
             progress = progress + steps
         debug("dosing drink finished")
-        if self.LED: self.hector.drinkfinish()
+        if self.LED:
+            self.hector.drinkfinish()
         time.sleep(1)
         self.hector.arm_in()
         self.hector.light_off()
         self.hector.ping(3, 0)
         debug("reset hardware")
         self.client.publish(self.get_progressTopic(msg.topic), "end", qos=1)
-        while not self.client.want_write(): pass
+        while not self.client.want_write():
+            pass
         self.client.loop_write()
-
 
     def dose_callback(self, progress):
         self.client.publish(self.TopicPrefix + "doseDrink/progress", progress)
 
-
     def on_message(self, client, userdata, msg):
-        debug("on_message: topic " + str(msg.topic) + ", msg: " + str(msg.payload))
+        debug("on_message: topic " + str(msg.topic) +
+              ", msg: " + str(msg.payload))
         try:
             currentTopic = msg.topic
             if "/Hardware/" in currentTopic:
@@ -200,7 +230,8 @@ class HectorController:
                 self.hector.all_valve_close()
                 pass
             else:
-                warning("unknown topic: " + currentTopic + ", msg " + str(msg.payload))
+                warning("unknown topic: " + currentTopic +
+                        ", msg " + str(msg.payload))
 
             debug("handled message " + currentTopic + " / " + str(msg.payload))
             while self.client.want_write():
@@ -208,7 +239,6 @@ class HectorController:
 
         except Exception as e:
             error(str(e) + "\n" + traceback.format_exc())
-
 
     def connect(self):
         debug("starting")
@@ -221,6 +251,10 @@ class HectorController:
             self.client.loop()
 
 
-if __name__ == "__main__":
+def main():
     controller = HectorController()
     controller.connect()
+
+
+if __name__ == "__main__":
+    main()

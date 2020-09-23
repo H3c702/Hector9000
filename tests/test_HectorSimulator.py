@@ -1,5 +1,5 @@
-from Hector.HectorSimulator import HectorSimulator as Hector
-from Hector.conf import HectorConfig as config
+from Hector9000.HectorSimulator import HectorSimulator as Hector
+from Hector9000.conf import HectorConfig as config
 
 hector = Hector(config.config)
 

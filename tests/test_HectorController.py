@@ -1,8 +1,9 @@
-from Hector.HectorController import HectorController
+from Hector9000 import HectorController as HC
 
-from .helper import h9kTestHelper
 
-Controller = HectorController()
+from tests.helpers import h9kTestHelper
+
+Controller = HC.HectorController()
 
 
 class Test_Controller:
