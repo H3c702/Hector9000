@@ -1,5 +1,8 @@
-from LEDStripAPI import LEDStripAPI
-import time, board, neopixel, threading
+from Hector9000.LEDStripAPI import LEDStripAPI
+import time
+import board
+import neopixel
+import threading
 
 
 class Simple_LED_Connector(LEDStripAPI):
@@ -24,44 +27,44 @@ class Simple_LED_Connector(LEDStripAPI):
         self.ORDER = neopixel.GRB
         self.num_pixels = self.NUM
         self.pixels.fill(self.col_neutral)
-        self.drinkcolor = (0,0,0)
+        self.drinkcolor = (0, 0, 0)
         self.thr = threading.Thread(target=self.mode3, args=())
         self.thr.start()
 
-    def standart(self, color=(80,80,30), type=0):
+    def standart(self, color=(80, 80, 30), type=0):
         return
 
-    def standby(self, color=(80,80,30), type=0):
+    def standby(self, color=(80, 80, 30), type=0):
         return
 
-    def dosedrink(self, color=(0,0,255), type=0):
+    def dosedrink(self, color=(0, 0, 255), type=0):
         return
 
-    def drinkfinish(self, color=(255,255,255), type=0):
+    def drinkfinish(self, color=(255, 255, 255), type=0):
         print("drinkfinish in connector")
         self.mode = 2
         self.finish(color, type)
         self.mode = 1
         print("finished animation")
 
-    def finish(self, color=(255,255,255), type=0):
+    def finish(self, color=(255, 255, 255), type=0):
         print("in finish")
         time.sleep(0.1)
-        self.pixels.fill((0,0,0))
-        #self.pixels.show()
+        self.pixels.fill((0, 0, 0))
+        # self.pixels.show()
         print("filled")
         for i in range(10):
             time.sleep(0.08)
             self.pixels[14 - i] = color
-            #self.pixels.show()
+        # self.pixels.show()
         for i in range(3):
             for j in range(self.NUMBASE):
                 self.pixels[j] = color
-            #self.pixels.show()
+            # self.pixels.show()
             time.sleep(0.02)
             for j in range(self.NUMBASE):
-                self.pixels[j] = (0,0,0)
-            #self.pixels.show()
+                self.pixels[j] = (0, 0, 0)
+            # self.pixels.show()
             time.sleep(0.1)
         print("after finish")
 
@@ -86,7 +89,6 @@ class Simple_LED_Connector(LEDStripAPI):
                             pass
                         print("continued animation")
                         for i in range(self.NUMBASE):
-                            self.pixels[i] = (0,0,255)
+                            self.pixels[i] = (0, 0, 255)
                         break
-                            #self.pixels.show()
-                    
+                    # self.pixels.show()

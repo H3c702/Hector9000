@@ -1,0 +1,20 @@
+language: python
+python:
+   - "3.6"
+   - "3.7"
+   - "3.8"
+
+before_install:
+  - sudo apt-get -y install mosquitto
+addons:
+  apt:
+    update: true
+
+# command to install dependencies
+install:
+ - python setup.py develop
+
+# command to run tests
+script:
+# - cd $TRAVIS_BUILD_DIR/src
+  - python -m pytest

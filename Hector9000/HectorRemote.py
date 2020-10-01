@@ -1,12 +1,16 @@
-from HectorAPI import HectorAPI
-from LEDStripAPI import LEDStripAPI
+from Hector9000.utils import HectorAPI as api
+from Hector9000.LEDStripAPI import LEDStripAPI
 import paho.mqtt.client as mqtt
 
 
-class HectorRemote(HectorAPI, LEDStripAPI):
+class HectorRemote(api.HectorAPI, LEDStripAPI):
 
     def on_message(self, client, userdata, msg):
-        print("REMOTE: on_message: " + msg.topic + ", " + msg.payload.decode("utf-8"))
+        print(
+            "REMOTE: on_message: " +
+            msg.topic +
+            ", " +
+            msg.payload.decode("utf-8"))
         topic = msg.topic.replace(self.MainTopic, "")
         if topic == "scale_readout/return":
             self.scale_read = int(msg.payload.decode("utf-8"))
@@ -88,10 +92,25 @@ class HectorRemote(HectorAPI, LEDStripAPI):
     def valve_close(self, index):
         self.pub_with_subtopic("valve_close")
 
-    def valve_dose(self, index, amount, timeout=30, cback=None, progress=(0,100), topic=""):
+    def valve_dose(
+            self,
+            index,
+            amount,
+            timeout=30,
+            cback=None,
+            progress=(
+                0,
+                100),
+            topic=""):
         self.waiting_dose = True
         self.dose_sucessfull = False
-        self.pub_with_subtopic("valve_dose", str(index) + "," + str(amount) + "," + str(timeout))
+        self.pub_with_subtopic(
+            "valve_dose",
+            str(index) +
+            "," +
+            str(amount) +
+            "," +
+            str(timeout))
         while self.waiting_dose:
             if self.client.want_write():
                 self.client.loop_write()
@@ -100,7 +119,7 @@ class HectorRemote(HectorAPI, LEDStripAPI):
         if not topic == "" and self.dose_sucessfull:
             full_process = progress[0] + progress[1]
             self.client.publish(topic, full_process)
-            if full_process > 99: # use 99% for rounding error
+            if full_process > 99:  # use 99% for rounding error
                 self.client.publish(topic, "end")
         else:
             if cback:
@@ -116,8 +135,9 @@ class HectorRemote(HectorAPI, LEDStripAPI):
     def cleanAndExit(self):
         self.pub_with_subtopic("clean_and_exit")
 
-    def ledstripmessage(self,topic, color, type):
-        message = str(color[0]) + "," + str(color[1]) + "," + str(color[2]) + "," + str(type)
+    def ledstripmessage(self, topic, color, type):
+        message = str(color[0]) + "," + str(color[1]) + \
+            "," + str(color[2]) + "," + str(type)
         self.client.publish(self.LEDTopic + topic, message)
 
     def standart(self, color=(80, 80, 30), type=0):
@@ -126,8 +146,14 @@ class HectorRemote(HectorAPI, LEDStripAPI):
     def dosedrink(self, color=(20, 20, 255), type=0):
         self.ledstripmessage("dosedrink", color, type)
 
-    def drinkfinish(self, color=(80, 80, 30), type=0):
+    def drinkfinish(
+            self,
+            color: object = (
+                80,
+                80,
+                30),
+            type: object = 0) -> object:
         self.client.publish(self.LEDTopic + "drinkfinish", "true")
 
-    def standby(self, color=(80,80,30), type=0):
+    def standby(self, color=(80, 80, 30), type=0):
         self.ledstripmessage("standby", color, type)
