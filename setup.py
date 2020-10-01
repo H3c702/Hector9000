@@ -22,7 +22,7 @@ setuptools.setup(
     install_requires=[
     'Adafruit-GPIO==1.0.3',
     'Adafruit-PCA9685==1.0.1',
-    'Adafruit-PureIO==1.1.5',
+    'Adafruit-PureIO>=1.1.5',
     'atomicwrites==1.3.0',
     'adafruit-circuitpython-neopixel==6.0.0',
     'attrs==19.1.0',
