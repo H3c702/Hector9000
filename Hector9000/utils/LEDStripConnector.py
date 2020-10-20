@@ -1,4 +1,4 @@
-from Hector9000.LEDStripAPI import LEDStripAPI
+from Hector9000.utils.LEDStripAPI import LEDStripAPI
 import time
 import board
 import neopixel

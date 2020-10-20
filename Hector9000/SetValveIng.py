@@ -9,13 +9,13 @@ def get_IngLists():
     print("Select a ing")
 
     for x in inglist:
-        print(str(counter) + ": " + x[0])
+        print(str(counter) + ": " + x[0] + " | " + x[1])
         counter = counter + 1
 
     ing: int = int(input("Chose a ingredient(exit with -1):"))
 
     if ing == -1:
-        return ""
+        quit()
 
     return inglist[ing]
 
@@ -25,3 +25,4 @@ while True:
     valve: int = int(input("Chose a valve (1-12):"))
 
     print(ing[1] + " goes into " + str(valve))
+    db.set_Servo(valve, ing[0])

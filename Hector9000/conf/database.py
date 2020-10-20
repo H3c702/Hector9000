@@ -229,6 +229,7 @@ class Database:
 
 
 # when called directly, read out database and generate a log
+# Has to move to a better Place or a Func
 if __name__ == "__main__":
     db = Database()
     db.cur.execute(

@@ -1,6 +1,6 @@
 import paho.mqtt.client as mqtt
 
-from Hector9000.Simple_LED_Connector import Simple_LED_Connector as LEDStrip
+from Hector9000.utils.Simple_LED_Connector import Simple_LED_Connector as LEDStrip
 
 MQTT_Server = "localhost"
 port = 1883
