@@ -11,4 +11,3 @@ echo"-----------------------------------------------------------------------"
 nohup python3 src/HectorController.py > Controller.out 2>&1 &
 nohup python3 src/HectorServer.py > Server.out 2>&1 &
 nohup sudo python3 src/LEDStripServer.py > /dev/null 2>&1 &
-mosquitto_sub -v -t "Hector9000/#"
