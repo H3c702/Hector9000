@@ -12,6 +12,6 @@ echo"-----------------------------------------------------------------------"
 apt update
 apt upgrade -y
 
-apt install python3 pip3 python3-setuptools mosquitto -y
+apt install python3 pip3 python3-pip python3-setuptools mosquitto -y
 
 pip3 install -r requirements.txt
