@@ -14,4 +14,4 @@ apt upgrade -y
 
 apt install python3 pip3 python3-pip python3-setuptools mosquitto nohup -y
 
-python setup.py install
+python3 setup.py install
