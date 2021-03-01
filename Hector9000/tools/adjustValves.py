@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import sys
-from Hector.conf.HectorConfig import config
-from Hector.HectorHardware import HectorHardware
+from Hector9000.conf.HectorConfig import config
+from Hector9000.HectorHardware import HectorHardware
 
 h = HectorHardware(config)
 
