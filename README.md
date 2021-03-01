@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/H3c702/Hector9000.svg?branch=master)](https://travis-ci.org/H3c702/Hector9000)
+Master: [![Build Status](https://travis-ci.com/H3c702/Hector9000.svg?branch=master)](https://travis-ci.com/H3c702/Hector9000/branches)
+Development: [![Build Status](https://travis-ci.com/H3c702/Hector9000.svg?branch=development)](https://travis-ci.com/H3c702/Hector9000/branches)
 
 HECTOR 9000
 ======================
@@ -31,11 +32,6 @@ To start the software run:
 
 	./start.sh
 
-
-Start Hector :
-
-	cd Hector9000
-	python3 start.sh
 
 Add Drinks
 ---
