@@ -53,11 +53,16 @@ Or you can use the WebUI when it is implemented.
 
 A future extension might allow multi-language UIs.
 
+
 Assigning valves
 ---
 
 The available ingreduents are also moved to the db and can initial be edited in the databas.py 
 or over the WEB UI in the future.
+
+For teh meantime you can use the script "SetValveIng.py".
+
+    python3 Hector9000/tools/SetValveIng.py
 
 
 Development on non-Hector hardware :
@@ -71,6 +76,12 @@ and uncomment:
 
 	from HectorSimulator import HectorSimulator as Hector
 
+
+
+## Info 
+
+If you have some ideas or a fix or something else to make 
+Hector better, don't be afraid to send us a pullrequest ;-)
 
 ---
 Special thanks to
