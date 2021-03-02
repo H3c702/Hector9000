@@ -42,7 +42,7 @@ class HectorController:
         self.TopicPrefix = "Hector9000/"
         self.initDone = False
         self.client = mqtt.Client()
-        self.hector = remote
+        self.hector = remote.HectorRemote()
         self.LED = True
         self.db = db.Database()
 
@@ -208,11 +208,11 @@ class HectorController:
             elif currentTopic == self.TopicPrefix + "set_servo":
                 self._do_set_servo(msg)
             elif currentTopic == self.TopicPrefix + "light_on":
-                self.hector.do_light_on()
+                self.hector.light_on()
             elif currentTopic == self.TopicPrefix + "light_off":
-                self.hector.do_light_off()
+                self.hector.light_off()
             elif currentTopic == self.TopicPrefix + "ring":
-                self.hector.do_ping(2, 1)
+                self.hector.ping(2, 1)
             elif currentTopic == self.TopicPrefix + "doseDrink":
                 self._do_dose_drink(msg)
                 pass
@@ -222,6 +222,8 @@ class HectorController:
                     self.hector.clean(1)
                 pass
             elif currentTopic == self.TopicPrefix + "dryMe":
+                for i in range(12):
+                    self.hector.dry(1)
                 pass
             elif currentTopic == self.TopicPrefix + "openAllValves":
                 self.hector.all_valve_open()
