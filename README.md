@@ -1,5 +1,9 @@
-Master: [![Build Status](https://travis-ci.com/H3c702/Hector9000.svg?branch=master)](https://travis-ci.com/H3c702/Hector9000/branches)
+[![Join the Chat at https://gitter.im/Hector9k/Hector9000](https://img.shields.io/gitter/room/Hector9k/Hector9000?style=plastic)](https://gitter.im/Hector9k/Hector9000?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+Master: [![Build Status(Master)](https://travis-ci.com/H3c702/Hector9000.svg?branch=master&label=master)](https://travis-ci.com/H3c702/Hector9000/branches)
 Development: [![Build Status](https://travis-ci.com/H3c702/Hector9000.svg?branch=development)](https://travis-ci.com/H3c702/Hector9000/branches)
+
+
 
 HECTOR 9000
 ======================
