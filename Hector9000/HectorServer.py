@@ -11,8 +11,8 @@ import re
 import paho.mqtt.client as mqtt
 from Hector9000.conf import HectorConfig as HC
 
-#from Hector9000.HectorHardware import HectorHardware as Hector
-from Hector9000.HectorSimulator import HectorSimulator as Hector
+from Hector9000.HectorHardware import HectorHardware as Hector
+#from Hector9000.HectorSimulator import HectorSimulator as Hector
 
 
 # global vars
