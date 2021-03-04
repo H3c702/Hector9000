@@ -14,7 +14,12 @@ apt update
 apt upgrade -y
 
 echo "Install needed packages"
-apt install python3 pip3 python3-pip python3-setuptools mosquitto nohup -y
+apt install python3 -y
+apt install pip3 -y
+apt install python3-pip -y
+apt install python3-setuptools -y
+apt install mosquitto -y
+apt install nohup -y
 
 echo "install Hector9000"
 python3 setup.py install
