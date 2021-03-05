@@ -8,31 +8,23 @@
 
 import time
 import re
-import Enum
 import paho.mqtt.client as mqtt
+from Hector9000.conf import HectorConfig as HC
 
-from conf.HectorConfig import config
-
-#from HectorHardware import HectorHardware as Hector
-from HectorSimulator import HectorSimulator as Hector
+from Hector9000.HectorHardware import HectorHardware as Hector
+#from Hector9000.HectorSimulator import HectorSimulator as Hector
 
 
 # global vars
-
-
 MainTopic = "Hector9000/Hardware/"
 MQTTIP = "localhost"
 MQTTPORT = 1883
-hector = Hector(config)
-valve_pattern = re.compile("[0-9]+\,[0-9]+\,[0-9]+")
+co = HC.config
+hector = Hector(co)
+valve_pattern = re.compile(r"[0-9]+\,[0-9]+\,[0-9]+")
 
-class Verbose_Level(Enum):
-    DEGUB = 0
-    WARNING = 1
-    ERROR = 2
-    SILENT = 3
+VERBOSE_LEVEL = 0
 
-VERBOSE_LEVEL = Verbose_Level.DEGUB
 
 def log(message):
     if VERBOSE_LEVEL == 0:
@@ -48,8 +40,8 @@ def warning(message):
     if VERBOSE_LEVEL < 2:
         print("Server WARNING: " + str(message))
 
-# low-level functions
 
+# low-level functions
 
 def do_get_config():
     log("get configuration")
@@ -95,6 +87,7 @@ def do_pump_start():
     log("start pump")
     hector.pump_start()
 
+
 def do_reset():
     log("reseting")
     do_pump_stop()
@@ -116,7 +109,7 @@ def do_all_valve_open():
     hector.arm_in()
     hector.pump_stop()
     for vnum in range(12):
-        #log("Ventil %d wird geöffnet" % (vnum,))
+        # log("Ventil %d wird geöffnet" % (vnum,))
         time.sleep(0.5)
         hector.valve_open(vnum)
     hector.light_off()
@@ -129,7 +122,7 @@ def do_all_valve_close():
     hector.arm_in()
     hector.pump_stop()
     for vnum in range(12):
-        #log("Ventil %d wird geschlossen" % (vnum,))
+        # log("Ventil %d wird geschlossen" % (vnum,))
         time.sleep(0.5)
         hector.valve_close(vnum)
     hector.light_off()
@@ -180,6 +173,7 @@ def clean(pump):
     time.sleep(10)
     hector.pump_stop()
     time.sleep(1)
+
 
 def on_message(client, userdata, msg):
     log("on_message: " + str(msg.topic) + "," + str(msg.payload))
@@ -242,7 +236,9 @@ def on_message(client, userdata, msg):
         res = 1 if ret else -1
         log("Sending return")
         client.publish(MainTopic + topic + "/return", res)
-        # ToDo: this line ^ causes trouble. Sometimes it just doesnt send the publish causing errors. Some tests need to be written to test the most reliable way to fix this
+        # ToDo: this line ^ causes trouble. Sometimes it just doesnt send the
+        # publish causing errors. Some tests need to be written to test the
+        # most reliable way to fix this
         while not client.want_write():
             pass
         client.loop_write()
@@ -255,10 +251,12 @@ def on_connect(client, userdata, flags, rc):
     log("Connected to Server")
     client.subscribe(MainTopic + "#")
 
+
 def on_subscribe(client, userdata, mid, granted_qos):
     log("Subscribed to Topic")
 
-if __name__ == "__main__":
+
+def main():
     do_reset()
     log("starting")
     client = mqtt.Client()
@@ -269,3 +267,7 @@ if __name__ == "__main__":
     log("started")
     while True:
         client.loop()
+
+
+if __name__ == "__main__":
+    main()

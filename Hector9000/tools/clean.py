@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-import sys, time
-from conf.HectorConfig import config
-from HectorHardware import HectorHardware
+import sys
+import time
+from Hector.conf import HectorConfig as config
+from Hector.HectorHardware import HectorHardware
 
 hardware = True
 
@@ -37,6 +38,3 @@ if hardware:
             time.sleep(10)
             h.valve_close(vnum)
     h.pump_stop()
-
-
-

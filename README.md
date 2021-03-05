@@ -1,3 +1,11 @@
+ Chat:  [![Join the Chat at https://gitter.im/Hector9k/Hector9000](https://img.shields.io/gitter/room/Hector9k/Hector9000?style=plastic)](https://gitter.im/Hector9k/Hector9000?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
+ 
+| Branch  | Status |
+| ------------- | ------------- |
+| Master | [![Build Status(Master)](https://travis-ci.com/H3c702/Hector9000.svg?branch=master&label=master)](https://travis-ci.com/H3c702/Hector9000/branches) |
+| Development  | [![Build Status](https://travis-ci.com/H3c702/Hector9000.svg?branch=development)](https://travis-ci.com/H3c702/Hector9000/branches)  |
+
+
 HECTOR 9000
 ======================
 
@@ -30,12 +38,6 @@ To start the software run:
 	./start.sh
 
 
-Start Hector :
-
-	cd Hector9000
-	cd srv
-	python3 main.py
-
 Add Drinks
 ---
 
@@ -51,36 +53,21 @@ To add a new Drink you have to modify the `drinks.py` file and add a new item in
 
 All strings in `UPPERCASE` are placeholders, all lowercase strings have to be used literally in the definition. The `INGREDIENTx` names are not cleartext but are identifiers referencing into the `ingredients` list below in the same file. The `AMOUNTx` values are numerical values of the corresponding ingredient's amount in grams.
 
-At the moment there are only some ingredients but feel free to put in some new. You can add them freely to the dictionary.
+At the moment there are only some ingredients but feel free to put in some new. You can add them in src/Hector/conf/database.py .
+Or you can use the WebUI when it is implemented.
 
-	# "ID":("NAME", ISALCOHOLIC)
-	ingredients = {
-		"gin": ("Gin", True),
-		"rum": ("Rum", True),
-		"vodka": ("Vodka", True),
-		"tequila": ("Tequila", True),
-		"tonic": ("Tonic Water", False),
-		"coke": ("Coke", False),
-		"oj": ("Orange Juice", False),
-		"gren": ("Grenadine", False),
-		"mmix": ("Margarita Mix", True)
-		...
-
-Here each ingredient identifier is mapped into a tuple containing the NAME used in the UI and a flag that tells whether the ingredient contains alcohol.
 A future extension might allow multi-language UIs.
+
 
 Assigning valves
 ---
 
-Because Hector has twelve valve channels you have twelve valves each mapped to one ingredient (inside `drinks.py` the  `available_ingredients` array).
-Therefore you have to edit the `drinks.py` file and set the `available_ingredients` array. Each String inside the array represents the ingredientid from the `ingredients` dictionary at the valve corresponding to the index inside the array.
-Only drinks that have all the required ingredients set in the `available_ingredients` array will be shown in the menu.
+The available ingreduents are also moved to the db and can initial be edited in the databas.py 
+or over the WEB UI in the future.
 
+For teh meantime you can use the script "SetValveIng.py".
 
-Example:
-
-	available_ingredients = ["gren", "rum", "vodka", "gin", "tequila", "gibe", "lime", "tonic", "mate", "gga", "pine", "oj"]
-
+    python3 Hector9000/tools/SetValveIng.py
 
 
 Development on non-Hector hardware :
@@ -94,6 +81,12 @@ and uncomment:
 
 	from HectorSimulator import HectorSimulator as Hector
 
+
+
+## Info 
+
+If you have some ideas or a fix or something else to make 
+Hector better, don't be afraid to send us a pullrequest ;-)
 
 ---
 Special thanks to

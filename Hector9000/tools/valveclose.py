@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-import sys, time
-from conf.HectorConfig import config
-from HectorHardware import HectorHardware
+import time
+from Hector9000.conf import HectorConfig as config
+from Hector9000.HectorHardware import HectorHardware
 
 
 def closeValve():

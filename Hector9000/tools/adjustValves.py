@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import sys
-from conf.HectorConfig import config
-from HectorHardware import HectorHardware
+from Hector9000.conf.HectorConfig import config
+from Hector9000.HectorHardware import HectorHardware
 
 h = HectorHardware(config)
 
@@ -15,5 +15,3 @@ while True:
     while cpos != -1:
         h.pca.set_pwm(vnum, 0, cpos)
         cpos = int(input("Bitte neue Servoposition eingeben:"))
-
-

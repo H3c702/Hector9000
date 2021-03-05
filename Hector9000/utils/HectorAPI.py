@@ -3,6 +3,7 @@
 ##
 #   HectorAPI.py       API interface class for Hector9000 hardware
 #
+#
 
 import abc
 
@@ -62,7 +63,16 @@ class HectorAPI(object, metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def valve_dose(self, index, amount, timeout=30, cback=debugOut, progress=(0,100), topic=""):
+    def valve_dose(
+            self,
+            index,
+            amount,
+            timeout=30,
+            cback=debugOut,
+            progress=(
+                0,
+                100),
+            topic=""):
         return 0
 
     @abc.abstractmethod
