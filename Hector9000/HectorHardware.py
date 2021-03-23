@@ -32,7 +32,7 @@ VERBOSE_LEVEL = 0
 
 def log(message):
     if VERBOSE_LEVEL == 0:
-        log("" + str(message))
+        logging.log(VERBOSE_LEVEL, "" + str(message))
 
 
 def error(message):
