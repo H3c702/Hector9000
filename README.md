@@ -33,6 +33,10 @@ Then run this command to setup all necessary tools:
 
 	./setup.sh
 
+Or run it with the option "-c" to preset the mqtt preconfig for the WebUI
+
+	./setup.sh -c
+
 To start the software run:
 
 	./start.sh

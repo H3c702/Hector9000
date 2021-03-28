@@ -9,6 +9,7 @@ echo "| | | || |___ | \__/\  | |  \ \_/ /| |\ \  .___/ /\ |_/ /\ |_/ /\ |_/ /"
 echo "\_| |_/\____/  \____/  \_/   \___/ \_| \_| \____/  \___/  \___/  \___/"
 echo "-----------------------------------------------------------------------"
 
+
 echo "Start Hector-Server and Cntroller"
 nohup python3 Hector9000/HectorServer.py > Server.out 2>&1 &
 nohup python3 Hector9000/HectorController.py > Controller.out 2>&1 &
@@ -16,4 +17,3 @@ nohup python3 Hector9000/HectorController.py > Controller.out 2>&1 &
 echo "Start HectorLED-Server"
 nohup sudo python3 Hector9000/LEDStripServer.py > /dev/null 2>&1 &
 
-#mosquitto_sub -v -t "Hector9000/#"
