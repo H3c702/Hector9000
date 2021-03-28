@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="Hector9000",
-    version="0.0.1",
+    version="0.1.0",
     author="DevTown",
     author_email="Hector@dev-town.de",
     description="Fancy barbot with lots of needless features and ...of course... WiFi and a bunch of blinky LEDs",
