@@ -48,6 +48,7 @@ setuptools.setup(
     'zipp==3.1.0',
     ],
     tests_require=['pytest', 'flake8', 'autopep8'],
-    entry_points={"console_scripts": ["HectorServer = Hector.HectorServer:main",
-                                      "HectorController = Hector.HectorController:main"]},
+    entry_points={"console_scripts": ["HectorServer = Hector9000.HectorServer:main",
+                                      "HectorController = Hector9000.HectorController:main",
+                                      "LEDStripServer = Hector9000.LEDStripServer:main"]},
 )
