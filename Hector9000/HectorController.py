@@ -219,11 +219,11 @@ class HectorController:
             elif currentTopic == self.TopicPrefix + "cleanMe":
                 # ToDo: Develop proper methode in Server
                 for i in range(12):
-                    self.hector.clean(1)
+                    self.hector.clean(i)
                 pass
             elif currentTopic == self.TopicPrefix + "dryMe":
                 for i in range(12):
-                    self.hector.dry(1)
+                    self.hector.dry(i)
                 pass
             elif currentTopic == self.TopicPrefix + "openAllValves":
                 self.hector.all_valve_open()
