@@ -35,7 +35,7 @@ setuptools.setup(
     'packaging==19.0',
     'paho-mqtt==1.5.0',
     'pluggy==0.12.0',
-    'py==1.8.0',
+    'py==1.10.0',
     'Pygments==2.7.4',
     'pyparsing==2.4.0',
     'requests==2.21.0',
