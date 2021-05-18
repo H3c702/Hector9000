@@ -3,6 +3,7 @@ python:
    - "3.6"
    - "3.7"
    - "3.8"
+   - "3.9"
 
 before_install:
   - sudo apt-get -y install mosquitto
@@ -12,7 +13,8 @@ addons:
 
 # command to install dependencies
 install:
- - python setup.py develop[dev]
+ #- python setup.py develop
+  - pip install -e .[dev]
 
 # command to run tests
 script:
