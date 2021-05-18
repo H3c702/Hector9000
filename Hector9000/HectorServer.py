@@ -246,7 +246,7 @@ def on_message(client, userdata, msg):
     elif topic == "cleanMe":
         clean(int(msg.payload.decode("utf-8")))
     elif topic == "dryMe":
-        clean(int(msg.payload.decode("utf-8")))
+        dry(int(msg.payload.decode("utf-8")))
     else:
         warning("Unknown topic")
 
