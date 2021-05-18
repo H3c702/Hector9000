@@ -44,7 +44,7 @@ class Database:
             PRIMARY KEY(`code`));""")
 
         self.cur.execute("""
-		CREATE TABLE if not exists Settings ('setting' TEXT UNIQUE, 'value' TEXT, PRIMARY KEY('setting'));""")
+        CREATE TABLE if not exists Settings ('setting' TEXT UNIQUE, 'value' TEXT, PRIMARY KEY('setting'));""")
 
         self.con.commit()
 

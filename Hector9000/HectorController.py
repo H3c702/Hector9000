@@ -73,7 +73,7 @@ class HectorController:
         return self.db.get_AllIngredients_asJson()
 
     def _get_servo(self, msg):
-        debug("get_Ingredient")
+        debug("get_IngredientForServo")
         id = int(msg.payload)
         return self.db.get_Servo(id)
 
