@@ -13,12 +13,10 @@ addons:
 
 # command to install dependencies
 install:
- #- python setup.py develop
   - pip install -e .[dev]
 
 # command to run tests
 script:
 # - cd $TRAVIS_BUILD_DIR/src
-  - python -m pytest
-  - cd Hector9000
-  - flake8 . --count --select=E1,E2,E9,F63,F7,F82 --show-source --statistics
+  - make test
+  - make lint
