@@ -27,12 +27,12 @@ clean:
 
 ## lint - Lint the project
 lint:
-	venv/bin/flake8 Hector9000/*.py --count --select=E1,E2,E9,F63,F7,F82 --show-source --statistics
+	flake8 Hector9000/*.py --count --select=E1,E2,E9,F63,F7,F82 --show-source --statistics
 	#venv/bin/flake8 tests/*.py --count --select=E1,E2,E9,F63,F7,F82 --show-source --statistics
 
 ## test - Test the project
 test:
-	venv/bin/python -m pytest
+	python -m pytest
 
 
 .PHONY: help install clean lint test activate
