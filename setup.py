@@ -41,7 +41,7 @@ setuptools.setup(
     'requests==2.21.0',
     'six==1.12.0',
     'spidev==3.2',
-    'urllib3==1.24.2',
+    'urllib3==1.26.5',
     'wcwidth==0.1.7',
     'webcolors==1.3',
     'RPi.GPIO==0.7.0',
