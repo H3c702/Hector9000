@@ -15,6 +15,14 @@ Minimal Requirements
 	- RaspberryPi 3
 	- Debian bases Linux (to use installscript)
 
+Prepare Raspberry
+---
+Activate I2C:
+
+    sudo raspi-config 
+
+Here go to "Interfacing Options" and Activate/Enable I2C 
+
 Install on RaspberryPi
 ----
 First you have to clone the github repo of Hector
@@ -33,7 +41,7 @@ Then run this command to setup all necessary tools:
 
 	./setup.sh
 
-Or run it with the option "-c" to preset the mqtt preconfig for the WebUI
+Or run it with the option "-c" to preset the mqtt preconfigure for the WebUI
 
 	./setup.sh -c
 
@@ -66,7 +74,7 @@ A future extension might allow multi-language UIs.
 Assigning valves
 ---
 
-The available ingreduents are also moved to the db and can initial be edited in the databas.py 
+The available ingredients are also moved to the db and can initial be edited in the databas.py 
 or over the WEB UI in the future.
 
 For teh meantime you can use the script "SetValveIng.py".
