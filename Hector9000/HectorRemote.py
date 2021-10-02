@@ -135,12 +135,6 @@ class HectorRemote(api.HectorAPI, LEDStripAPI):
     def cleanAndExit(self):
         self.pub_with_subtopic("clean_and_exit")
 
-    def clean(self, valve):
-        self.pub_with_subtopic("cleanMe", valve)
-
-    def dry(self, valve):
-        self.pub_with_subtopic("dryMe", valve)
-
     def ledstripmessage(self, topic, color, type):
         message = str(color[0]) + "," + str(color[1]) + \
             "," + str(color[2]) + "," + str(type)

@@ -74,9 +74,8 @@ then
   echo 'listener 9001' >> /etc/mosquitto/mosquitto.conf
   echo 'protocol websockets' >> /etc/mosquitto/mosquitto.conf
   echo 'socket_domain ipv4' >> /etc/mosquitto/mosquitto.conf
-
-  systemctl start mosquitto
 fi
+
 
 echo "install Hector9000"
 python3 setup.py install
