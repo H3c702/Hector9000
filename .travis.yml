@@ -3,7 +3,6 @@ python:
    - "3.6"
    - "3.7"
    - "3.8"
-   - "3.9"
 
 before_install:
   - sudo apt-get -y install mosquitto
@@ -13,10 +12,9 @@ addons:
 
 # command to install dependencies
 install:
-  - pip install -e .[dev]
+ - python setup.py develop
 
 # command to run tests
 script:
 # - cd $TRAVIS_BUILD_DIR/src
-  - make test
-  - make lint
+  - python -m pytest

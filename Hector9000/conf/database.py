@@ -44,7 +44,7 @@ class Database:
             PRIMARY KEY(`code`));""")
 
         self.cur.execute("""
-        CREATE TABLE if not exists Settings ('setting' TEXT UNIQUE, 'value' TEXT, PRIMARY KEY('setting'));""")
+		CREATE TABLE if not exists Settings ('setting' TEXT UNIQUE, 'value' TEXT, PRIMARY KEY('setting'));""")
 
         self.con.commit()
 
@@ -188,16 +188,7 @@ class Database:
         return array
 
     def get_Servos_asJson(self):
-        datalist = []
-        for servo in self.get_Servos():
-            data = {
-               "servo": servo[0],
-                "ingri": servo[1],
-                "volume": servo[2],
-            }
-            datalist.append(data)
-
-        return json.dumps({"Servos": datalist})
+        return json.dumps(self.get_Servos())
 
     def get_AllIngredients(self):
         self.cur.execute("SELECT Code, Name, IsAlcoholic FROM Ingredients")
@@ -211,16 +202,7 @@ class Database:
         return Ingdict
 
     def get_AllIngredients_asJson(self):
-        datalist = []
-        for ingredient in self.get_AllIngredients():
-            data = {
-                "code": ingredient[0],
-                "name": ingredient[1],
-                "isAlcoholic": ingredient[2],
-            }
-            datalist.append(data)
-
-        return json.dumps({"Ingredients": datalist})
+        return json.dumps(self.get_AllIngredients())
 
     def countUpDrink(self, drink):
         self.cur.execute(
