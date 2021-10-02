@@ -30,23 +30,23 @@ class LEDStripConnector(LEDStripAPI):
         self.drinkcolor = (0, 0, 0)
 
     def standart(self, color=(80, 80, 30), type=0):
-        if type is 0:
+        if type == 0:
             self.pixels.fill(color)
             self.mode = 0
-        elif type is 1:
+        elif type == 1:
             self.mode = 1
-        elif type is 2:
+        elif type == 2:
             self.mode = 2
-        elif type is 3:
+        elif type == 3:
             self.mode = 3
-        elif type is 4:
+        elif type == 4:
             self.mode = 4
         else:
             self.pixels.fill(color)
             self.mode = 0
 
     def standby(self, color=(80, 80, 30), type=0):
-        if type is 0:
+        if type == 0:
             self.pixels.fill(color)
         else:
             self.pixels.fill((0, 0, 0))
@@ -103,15 +103,15 @@ class LEDStripConnector(LEDStripAPI):
     # mode 2: Strobo
     # mode 3:
     def led_loop(self):
-        if self.mode is 1:
+        if self.mode == 1:
             self.mode1()
-        elif self.mode is 2:
+        elif self.mode == 2:
             self.mode2()
-        elif self.mode is 3:
+        elif self.mode == 3:
             self.mode3()
-        elif self.mode is 4:
+        elif self.mode == 4:
             self.mode4()
-        elif self.mode is 99:
+        elif self.mode == 99:
             # dosedrink
             self.drinkloop()
 
@@ -184,7 +184,7 @@ class LEDStripConnector(LEDStripAPI):
             self.rainbow_cycle(0.001)  # rainbow cycle with 1ms delay per step
 
 
-if __name__ is "__main__":
+if __name__ == "__main__":
     test = LEDStripConnector()
     test.finish()
     test.dosedrink()

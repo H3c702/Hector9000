@@ -36,7 +36,7 @@ class HectorAPI(object, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def arm_isInOutPos(self):
-        return false
+        return False
 
     @abc.abstractmethod
     def scale_readout(self):

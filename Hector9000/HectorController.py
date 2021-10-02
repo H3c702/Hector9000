@@ -73,9 +73,13 @@ class HectorController:
         return self.db.get_AllIngredients_asJson()
 
     def _get_servo(self, msg):
-        debug("get_Ingredient")
+        debug("_get_servo: " + msg)
         id = int(msg.payload)
         return self.db.get_Servo(id)
+
+    def _get_all_servos(self, msg):
+        debug("get_all_servos")
+        return self.db.get_Servos_asJson()
 
     def _set_servo(self, msg):
         debug("set_Servo")
@@ -116,6 +120,12 @@ class HectorController:
             self.get_returnTopic(
                 msg.topic),
             self._get_servo(msg))
+
+    def _do_get_all_servos(self, msg):
+        self.client.publish(
+            self.get_returnTopic(
+                msg.topic),
+            self._get_all_servos(msg))
 
     def _do_set_servo(self, msg):
         self.client.publish(
@@ -205,6 +215,8 @@ class HectorController:
                 self._do_get_ingredients(msg)
             elif currentTopic == self.TopicPrefix + "get_servo":
                 self._do_get_servo(msg)
+            elif currentTopic == self.TopicPrefix + "get_allservos":
+                self._do_get_all_servos(msg)
             elif currentTopic == self.TopicPrefix + "set_servo":
                 self._do_set_servo(msg)
             elif currentTopic == self.TopicPrefix + "light_on":
@@ -219,11 +231,11 @@ class HectorController:
             elif currentTopic == self.TopicPrefix + "cleanMe":
                 # ToDo: Develop proper methode in Server
                 for i in range(12):
-                    self.hector.clean(1)
+                    self.hector.clean(i)
                 pass
             elif currentTopic == self.TopicPrefix + "dryMe":
                 for i in range(12):
-                    self.hector.dry(1)
+                    self.hector.dry(i)
                 pass
             elif currentTopic == self.TopicPrefix + "openAllValves":
                 self.hector.all_valve_open()
