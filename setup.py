@@ -38,7 +38,7 @@ setuptools.setup(
     'py==1.10.0',
     'Pygments==2.7.4',
     'pyparsing==2.4.0',
-    'requests==2.21.0',
+    'requests==2.26.0',
     'six==1.12.0',
     'spidev==3.2',
     'urllib3==1.25.9',
