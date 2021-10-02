@@ -25,7 +25,8 @@ jobs:
       run: sudo apt-get -y install mosquitto
     - name: Install dependencies
       run: |
-         python setup.py dev
+         python setup.py develop
+         pip install pytest flake8 autopep8
     - name: Lint with flake8
       run: |
          python -m pytest
