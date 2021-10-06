@@ -10,7 +10,7 @@ venv:
 	ln -snf ~/.venv/python_project/ venv
 	venv/bin/pip install -e ."[dev]"
 
-# activate - Activate venv
+## activate - Activate venv
 activate:
 	source venv/bin/activate
 
