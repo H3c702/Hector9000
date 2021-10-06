@@ -54,6 +54,15 @@ while True:
         if 0 < valve <= 12:
             print(ing[1] + " goes into " + str(valve))
             db.set_Servo(valve, ing[0])
+        if valve == 13:
+            print("------------------")
+            print(db.get_AllIngredients_asJson())
+            print("------------------")
+        if valve == 14:
+            print("------------------")
+            print(db.get_Servos_asJson())
+            print("------------------")
+
     except ValueError:
         print("Oops!  That was no valid number.  Try again...")
 

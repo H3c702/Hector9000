@@ -146,30 +146,30 @@ class Database:
                 """INSERT INTO "Settings" ("setting", "value") VALUES ('cupsize', '400');""")
             self.con.commit()
 
-    def _check_Table_is_Filled(self, table):
+    def _check_Table_is_Filled(self, table: str):
         self.cur.execute("SELECT * FROM " + table)
         items = self.cur.fetchall()
         return len(items) > 0
 
-    def get_Setting(self, setting):
+    def get_Setting(self, setting: str):
         self.cur.execute(
             "SELECT value from Settings where setting = ? ;", (setting,))
         items = self.cur.fetchone()
         return items[0]
 
-    def set_Setting(self, setting, value):
+    def set_Setting(self, setting: str, value: str):
         self.cur.execute(
             "UPDATE Settings set value = ? where setting = ? ;", (value, setting))
         self.con.commit()
         return self.get_Setting(setting)
 
-    def get_Servo(self, servo):
+    def get_Servo(self, servo: int):
         self.cur.execute(
             "SELECT Code FROM Servos WHERE ServoNr = ? ;", (servo,))
         items = self.cur.fetchone()
         return items[0]
 
-    def set_Servo(self, servo, code):
+    def set_Servo(self, servo: int, code: str):
         self.cur.execute(
             "UPDATE Servos set Code = ? where ServoNr = ? ;", (code, servo))
         self.con.commit()
@@ -222,7 +222,7 @@ class Database:
 
         return json.dumps({"Ingredients": datalist})
 
-    def countUpDrink(self, drink):
+    def countUpDrink(self, drink: str):
         self.cur.execute(
             "INSERT INTO DrinksLog (drink, date) VALUES (?, ?)",
             (drink,
