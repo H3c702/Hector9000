@@ -7,7 +7,7 @@
 import abc
 
 
-def debugOut(name, value):
+def debugOut(name: str, value: str):
     print("=> %s: %d" % (name, value))
 
 
@@ -18,17 +18,17 @@ class LEDStripAPI(object, metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def standart(self, color=(80, 80, 30), type=0):
+    def standart(self, color=(80, 80, 30), type = 0):
         pass
 
     @abc.abstractmethod
-    def dosedrink(self, color=(20, 20, 255), type=0):
+    def dosedrink(self, color=(20, 20, 255), type = 0):
         pass
 
     @abc.abstractmethod
-    def drinkfinish(self, color=(80, 80, 30), type=0):
+    def drinkfinish(self, color=(80, 80, 30), type = 0):
         pass
 
     @abc.abstractmethod
-    def standby(self, color=(80, 80, 30), type=0):
+    def standby(self, color=(80, 80, 30), type = 0):
         pass
