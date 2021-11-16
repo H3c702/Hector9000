@@ -191,7 +191,7 @@ class Database:
         datalist = []
         for servo in self.get_Servos():
             data = {
-               "servo": servo[0],
+                "servo": servo[0],
                 "ingri": servo[1],
                 "volume": servo[2],
             }
@@ -221,6 +221,17 @@ class Database:
             datalist.append(data)
 
         return json.dumps({"Ingredients": datalist})
+
+    def add_Ingredient(self, short: str, long: str, isAlcohol: int):
+        self.cur.execute(
+            "INSERT INTO Ingredients(Code, Name, IsAlcoholic) VALUES (?,?,?)",
+            (short, long, isAlcohol))
+        self.con.commit()
+
+    def delete_Ingredient(self, code: str):
+        self.cur.execute("DELETE FROM Ingredients WHERE Code = ?",
+                         code)
+        self.con.commit()
 
     def countUpDrink(self, drink: str):
         self.cur.execute(
@@ -264,4 +275,4 @@ if __name__ == "__main__":
             (strftime(
                 "%a %Y-%m-%d %H:%M:%S",
                 localtime(tstamp)),
-                name))
+             name))
