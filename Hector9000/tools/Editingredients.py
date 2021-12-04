@@ -12,6 +12,8 @@ def print_IngList():
     for x in inglist:
         print(str(counter) + ": " + x[0] + " | " + x[1])
         counter = counter + 1
+
+    print("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
     pass
 
 
