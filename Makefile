@@ -8,7 +8,7 @@ help:
 venv:
 	$(VIRTUALENV) ~/.venv/python_project/
 	ln -snf ~/.venv/python_project/ venv
-	venv/bin/pip install -e ."[dev]"
+	venv/bin/pip install -e '.[dev]'
 
 ## activate - Activate venv
 activate:
