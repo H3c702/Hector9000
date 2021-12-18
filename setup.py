@@ -40,15 +40,15 @@ setuptools.setup(
     'pyparsing==2.4.0',
     'requests==2.26.0',
     'six==1.12.0',
-    'spidev==3.2',
     'urllib3==1.26.5',
     'wcwidth==0.1.7',
     'webcolors==1.3',
-    'RPi.GPIO==0.7.0',
     'zipp==3.1.0',
     ],
     extras_require={
-        'dev': ['pytest', 'flake8', 'autopep8']}
+        'dev': ['pytest', 'flake8', 'autopep8'],
+        "pi": ['RPi.GPIO==0.7.0', 'spidev==3.5'],
+    }
     ,
     entry_points={"console_scripts": ["HectorServer = Hector9000.HectorServer:main",
                                       "HectorController = Hector9000.HectorController:main",
