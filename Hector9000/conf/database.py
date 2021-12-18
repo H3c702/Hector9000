@@ -230,7 +230,7 @@ class Database:
 
     def delete_Ingredient(self, code: str):
         self.cur.execute("DELETE FROM Ingredients WHERE Code = ?",
-                         code)
+                         (code,))
         self.con.commit()
 
     def countUpDrink(self, drink: str):
