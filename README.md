@@ -14,6 +14,7 @@ Minimal Requirements
 
 	- RaspberryPi 3
 	- Debian bases Linux (to use installscript)
+    - Python 3.8
 
 Prepare Raspberry
 ---
