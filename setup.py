@@ -33,7 +33,7 @@ setuptools.setup(
     'idna==2.8',
     'more-itertools==7.0.0',
     'packaging==19.0',
-    'paho-mqtt==1.5.1',
+    'paho-mqtt==1.6.0',
     'pluggy==0.12.0',
     'py==1.10.0',
     'Pygments==2.7.4',
