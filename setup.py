@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="Hector9000",
-    version="0.1.0",
+    version="0.1.0rc2",
     author="DevTown",
     author_email="Hector@dev-town.de",
     description="Fancy barbot with lots of needless features and ...of course... WiFi and a bunch of blinky LEDs",
@@ -16,7 +16,9 @@ setuptools.setup(
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Raspbian",
+         "Natural Language :: English",
+        "Natural Language :: German",
+        "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
     install_requires=[
@@ -38,7 +40,7 @@ setuptools.setup(
     'py==1.10.0',
     'Pygments==2.7.4',
     'pyparsing==2.4.0',
-    'requests==2.26.0',
+    'requests==2.27.1',
     'six==1.12.0',
     'urllib3==1.26.5',
     'wcwidth==0.1.7',

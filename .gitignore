@@ -100,3 +100,5 @@ src/Hector9000/log
 *.py-0
 
 *.py-1
+
+/dist
