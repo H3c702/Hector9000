@@ -74,6 +74,7 @@ then
   echo 'listener 9001' >> /etc/mosquitto/mosquitto.conf
   echo 'protocol websockets' >> /etc/mosquitto/mosquitto.conf
   echo 'socket_domain ipv4' >> /etc/mosquitto/mosquitto.conf
+  echo 'allow_anonymous true' >> /etc/mosquitto/mosquitto.conf
 
   systemctl start mosquitto
 fi
