@@ -80,4 +80,5 @@ then
 fi
 
 echo "install Hector9000"
-pip install -e '.[pi]'
+#pip install -e .
+python setup.py develop
