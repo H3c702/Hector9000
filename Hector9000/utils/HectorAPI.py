@@ -27,16 +27,16 @@ class HectorAPI(object, metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def arm_out(self, cback=debugOut):
+    def arm_out(self, cback = debugOut):
         pass
 
     @abc.abstractmethod
-    def arm_in(self, cback=debugOut):
+    def arm_in(self, cback = debugOut):
         pass
 
     @abc.abstractmethod
     def arm_isInOutPos(self):
-        return false
+        return False
 
     @abc.abstractmethod
     def scale_readout(self):
@@ -55,32 +55,32 @@ class HectorAPI(object, metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def valve_open(self, index, open=1):
+    def valve_open(self, index: int, open: int = 1):
         pass
 
     @abc.abstractmethod
-    def valve_close(self, index):
+    def valve_close(self, index: int):
         pass
 
     @abc.abstractmethod
     def valve_dose(
             self,
-            index,
+            index: int,
             amount,
-            timeout=30,
-            cback=debugOut,
+            timeout: int = 30,
+            cback = debugOut,
             progress=(
                 0,
                 100),
-            topic=""):
+            topic: str = ""):
         return 0
 
     @abc.abstractmethod
-    def finger(self, pos=0):
+    def finger(self, pos: int = 0):
         pass
 
     @abc.abstractmethod
-    def ping(self, num, retract=True, cback=None):
+    def ping(self, num: int, retract: bool = True, cback = None):
         pass
 
     @abc.abstractmethod

@@ -8,11 +8,20 @@
 
 import time
 import re
+import traceback
+import os
+
 import paho.mqtt.client as mqtt
 from Hector9000.conf import HectorConfig as HC
 
-from Hector9000.HectorHardware import HectorHardware as Hector
-#from Hector9000.HectorSimulator import HectorSimulator as Hector
+isSim = 0
+#isSim = os.environ.get('isHectorSim', 0)
+
+print(isSim)
+if isSim != 1:
+    from Hector9000.HectorHardware import HectorHardware as Hector
+else:
+    from Hector9000.HectorSimulator import HectorSimulator as Hector
 
 
 # global vars
@@ -235,14 +244,24 @@ def on_message(client, userdata, msg):
         ret = do_valve_dose(index=args[0], amount=args[1], timeout=args[2])
         res = 1 if ret else -1
         log("Sending return")
-        client.publish(MainTopic + topic + "/return", res)
-        # ToDo: this line ^ causes trouble. Sometimes it just doesnt send the
-        # publish causing errors. Some tests need to be written to test the
-        # most reliable way to fix this
-        while not client.want_write():
-            pass
-        client.loop_write()
+        try:
+            client.publish(MainTopic + topic + "/return", res)
+            # ToDo: this line ^ causes trouble. Sometimes it just doesnt send the
+            # publish causing errors. Some tests need to be written to test the
+            # most reliable way to fix this
+            while not client.want_write():
+                pass
+        except Exception as e:
+            # as first try if error try again :-(
+            log(traceback.format_exc())
+            client.publish(MainTopic + topic + "/return", res)
+            while not client.want_write():
+                pass
         log("Return Send - Dosing Complete")
+    elif topic == "cleanMe":
+        clean(int(msg.payload.decode("utf-8")))
+    elif topic == "dryMe":
+        dry(int(msg.payload.decode("utf-8")))
     else:
         warning("Unknown topic")
 

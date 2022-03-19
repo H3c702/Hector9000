@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="Hector9000",
-    version="0.0.1",
+    version="0.1.0rc2",
     author="DevTown",
     author_email="Hector@dev-town.de",
     description="Fancy barbot with lots of needless features and ...of course... WiFi and a bunch of blinky LEDs",
@@ -16,7 +16,9 @@ setuptools.setup(
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Raspbian",
+         "Natural Language :: English",
+        "Natural Language :: German",
+        "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
     install_requires=[
@@ -33,21 +35,24 @@ setuptools.setup(
     'idna==2.8',
     'more-itertools==7.0.0',
     'packaging==19.0',
-    'paho-mqtt==1.5.0',
+    'paho-mqtt==1.6.1',
     'pluggy==0.12.0',
     'py==1.10.0',
     'Pygments==2.7.4',
     'pyparsing==2.4.0',
-    'requests==2.26.0',
+    'requests==2.27.1',
     'six==1.12.0',
-    'spidev==3.2',
     'urllib3==1.26.5',
     'wcwidth==0.1.7',
     'webcolors==1.3',
-    'RPi.GPIO==0.7.0',
     'zipp==3.1.0',
     ],
-    tests_require=['pytest', 'flake8', 'autopep8'],
-    entry_points={"console_scripts": ["HectorServer = Hector.HectorServer:main",
-                                      "HectorController = Hector.HectorController:main"]},
+    extras_require={
+        'dev': ['pytest', 'flake8', 'autopep8'],
+        "pi": ['RPi.GPIO==0.7.0', 'spidev==3.5'],
+    }
+    ,
+    entry_points={"console_scripts": ["HectorServer = Hector9000.HectorServer:main",
+                                      "HectorController = Hector9000.HectorController:main",
+                                      "LEDStripServer = Hector9000.LEDStripServer:main"]},
 )

@@ -44,7 +44,7 @@ class Database:
             PRIMARY KEY(`code`));""")
 
         self.cur.execute("""
-		CREATE TABLE if not exists Settings ('setting' TEXT UNIQUE, 'value' TEXT, PRIMARY KEY('setting'));""")
+        CREATE TABLE if not exists Settings ('setting' TEXT UNIQUE, 'value' TEXT, PRIMARY KEY('setting'));""")
 
         self.con.commit()
 
@@ -146,30 +146,30 @@ class Database:
                 """INSERT INTO "Settings" ("setting", "value") VALUES ('cupsize', '400');""")
             self.con.commit()
 
-    def _check_Table_is_Filled(self, table):
+    def _check_Table_is_Filled(self, table: str):
         self.cur.execute("SELECT * FROM " + table)
         items = self.cur.fetchall()
         return len(items) > 0
 
-    def get_Setting(self, setting):
+    def get_Setting(self, setting: str):
         self.cur.execute(
             "SELECT value from Settings where setting = ? ;", (setting,))
         items = self.cur.fetchone()
         return items[0]
 
-    def set_Setting(self, setting, value):
+    def set_Setting(self, setting: str, value: str):
         self.cur.execute(
             "UPDATE Settings set value = ? where setting = ? ;", (value, setting))
         self.con.commit()
         return self.get_Setting(setting)
 
-    def get_Servo(self, servo):
+    def get_Servo(self, servo: int):
         self.cur.execute(
             "SELECT Code FROM Servos WHERE ServoNr = ? ;", (servo,))
         items = self.cur.fetchone()
         return items[0]
 
-    def set_Servo(self, servo, code):
+    def set_Servo(self, servo: int, code: str):
         self.cur.execute(
             "UPDATE Servos set Code = ? where ServoNr = ? ;", (code, servo))
         self.con.commit()
@@ -188,7 +188,16 @@ class Database:
         return array
 
     def get_Servos_asJson(self):
-        return json.dumps(self.get_Servos())
+        datalist = []
+        for servo in self.get_Servos():
+            data = {
+                "servo": servo[0],
+                "ingri": servo[1],
+                "volume": servo[2],
+            }
+            datalist.append(data)
+
+        return json.dumps({"Servos": datalist})
 
     def get_AllIngredients(self):
         self.cur.execute("SELECT Code, Name, IsAlcoholic FROM Ingredients")
@@ -202,9 +211,29 @@ class Database:
         return Ingdict
 
     def get_AllIngredients_asJson(self):
-        return json.dumps(self.get_AllIngredients())
+        datalist = []
+        for ingredient in self.get_AllIngredients():
+            data = {
+                "code": ingredient[0],
+                "name": ingredient[1],
+                "isAlcoholic": ingredient[2],
+            }
+            datalist.append(data)
 
-    def countUpDrink(self, drink):
+        return json.dumps({"Ingredients": datalist})
+
+    def add_Ingredient(self, short: str, long: str, isAlcohol: int):
+        self.cur.execute(
+            "INSERT INTO Ingredients(Code, Name, IsAlcoholic) VALUES (?,?,?)",
+            (short, long, isAlcohol))
+        self.con.commit()
+
+    def delete_Ingredient(self, code: str):
+        self.cur.execute("DELETE FROM Ingredients WHERE Code = ?",
+                         (code,))
+        self.con.commit()
+
+    def countUpDrink(self, drink: str):
         self.cur.execute(
             "INSERT INTO DrinksLog (drink, date) VALUES (?, ?)",
             (drink,
@@ -246,4 +275,4 @@ if __name__ == "__main__":
             (strftime(
                 "%a %Y-%m-%d %H:%M:%S",
                 localtime(tstamp)),
-                name))
+             name))

@@ -16,6 +16,8 @@
 .idea/dictionaries
 venv/
 .vscode/
+build/
+Hector9000.egg-info/
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/
@@ -98,3 +100,5 @@ src/Hector9000/log
 *.py-0
 
 *.py-1
+
+/dist

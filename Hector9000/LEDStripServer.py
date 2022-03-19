@@ -24,7 +24,7 @@ def on_message(client, userdata, msg):
     if topic == "standart":
         print("standart")
         args = tuple(msg.payload.decode("utf-8").split(","))
-        if msg.payload.decode("utf-8") is "":
+        if msg.payload.decode("utf-8") == "":
             pixels.standart()
         elif len(args) == 1:
             pixels.standart(type=args[0])
@@ -36,7 +36,7 @@ def on_message(client, userdata, msg):
     elif topic == "standby":
         print("standby")
         args = tuple(msg.payload.decode("utf-8").split(","))
-        if msg.payload.decode("utf-8") is "":
+        if msg.payload.decode("utf-8") == "":
             pixels.standby()
         elif len(args) == 1:
             pixels.standby(type=args[0])
@@ -48,7 +48,7 @@ def on_message(client, userdata, msg):
     elif topic == "dosedrink":
         print("dosedrink")
         args = list(msg.payload.decode("utf-8").split(","))
-        if msg.payload.decode("utf-8") is "":
+        if msg.payload.decode("utf-8") == "":
             print("no args")
             pixels.dosedrink()
         elif len(args) == 1:
