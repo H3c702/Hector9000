@@ -1,5 +1,5 @@
 from Hector9000 import HectorRemote as remote
-
+from Hector9000.conf import mqttTopics
 import json
 from Hector9000.conf import drinks as drinks
 from Hector9000.conf import database as db
@@ -59,6 +59,7 @@ class HectorController:
             idOfDrink = idOfDrink + 1
         return json.dumps({"drinks": datalist})
 
+    # todo: give all Infos for stearing or ....
     def _get_drink_as_JSON(self, msg):
         id = int(msg.payload)
         drink = drinks.available_drinks[id - 1]
@@ -161,6 +162,7 @@ class HectorController:
                 # todo: cash value
                 cupsize = int(self.db.get_Setting("cupsize"))
                 ingamount = int((int(step[2]) / 400) * cupsize)
+                # Return False to UI ?
                 self.hector.valve_dose(
                     index=int(pump),
                     amount=ingamount,
@@ -207,40 +209,40 @@ class HectorController:
             elif currentTopic == self.TopicPrefix + "standart":
                 color = tuple(msg.payload.decode("utf-8").split(","))
                 self.hector.standart(color=color)
-            elif currentTopic == self.TopicPrefix + "get_drinks":
+            elif currentTopic == self.TopicPrefix + mqttTopics.APITopics.get_drinks:
                 self._do_get_drinks(msg)
-            elif currentTopic == self.TopicPrefix + "get_ingredientsForDrink":
+            elif currentTopic == self.TopicPrefix + mqttTopics.APITopics.get_ingredientsForDrink:
                 self._do_get_drink(msg)
-            elif currentTopic == self.TopicPrefix + "get_ingredientsList":
+            elif currentTopic == self.TopicPrefix + mqttTopics.APITopics.get_ingredientsList:
                 self._do_get_ingredients(msg)
-            elif currentTopic == self.TopicPrefix + "get_servo":
+            elif currentTopic == self.TopicPrefix + mqttTopics.APITopics.get_servo:
                 self._do_get_servo(msg)
-            elif currentTopic == self.TopicPrefix + "get_allservos":
+            elif currentTopic == self.TopicPrefix + mqttTopics.APITopics.get_allservos:
                 self._do_get_all_servos(msg)
-            elif currentTopic == self.TopicPrefix + "set_servo":
+            elif currentTopic == self.TopicPrefix + mqttTopics.APITopics.set_servo:
                 self._do_set_servo(msg)
-            elif currentTopic == self.TopicPrefix + "light_on":
+            elif currentTopic == self.TopicPrefix + mqttTopics.APITopics.light_on:
                 self.hector.light_on()
-            elif currentTopic == self.TopicPrefix + "light_off":
+            elif currentTopic == self.TopicPrefix + mqttTopics.APITopics.light_off:
                 self.hector.light_off()
-            elif currentTopic == self.TopicPrefix + "ring":
+            elif currentTopic == self.TopicPrefix + mqttTopics.APITopics.ring:
                 self.hector.ping(2, 1)
-            elif currentTopic == self.TopicPrefix + "doseDrink":
+            elif currentTopic == self.TopicPrefix + mqttTopics.APITopics.doseDrink:
                 self._do_dose_drink(msg)
                 pass
-            elif currentTopic == self.TopicPrefix + "cleanMe":
+            elif currentTopic == self.TopicPrefix + mqttTopics.APITopics.cleanMe:
                 # ToDo: Develop proper methode in Server
                 for i in range(12):
                     self.hector.clean(i)
                 pass
-            elif currentTopic == self.TopicPrefix + "dryMe":
+            elif currentTopic == self.TopicPrefix + mqttTopics.APITopics.dryMe:
                 for i in range(12):
                     self.hector.dry(i)
                 pass
-            elif currentTopic == self.TopicPrefix + "openAllValves":
+            elif currentTopic == self.TopicPrefix + mqttTopics.APITopics.openAllValves:
                 self.hector.all_valve_open()
                 pass
-            elif currentTopic == self.TopicPrefix + "closeAllValves":
+            elif currentTopic == self.TopicPrefix + mqttTopics.APITopics.closeAllValves:
                 self.hector.all_valve_close()
                 pass
             else:

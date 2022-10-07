@@ -9,6 +9,7 @@
 import time
 import re
 import traceback
+from Hector9000.conf import mqttTopics
 import os
 
 import paho.mqtt.client as mqtt
@@ -193,49 +194,49 @@ def on_message(client, userdata, msg):
     if topic == "get_config":
         res = do_get_config()
         client.publish(MainTopic + topic + "/return", res)
-    elif topic == "light_on":
+    elif topic == mqttTopics.HardwareTopics.light_on:
         do_light_on()
-    elif topic == "light_off":
+    elif topic == mqttTopics.HardwareTopics.light_off:
         do_light_off()
-    elif topic == "reset":
+    elif topic == mqttTopics.HardwareTopics.reset:
         do_reset()
-    elif topic == "arm_out":
+    elif topic == mqttTopics.HardwareTopics.arm_out:
         do_arm_out()
-    elif topic == "arm_in":
+    elif topic == mqttTopics.HardwareTopics.arm_in:
         do_arm_in()
-    elif topic == "arm_position":
+    elif topic == mqttTopics.HardwareTopics.arm_position:
         res = do_arm_isInOutPos()
         client.publish(MainTopic + topic + "/return", res)
-    elif topic == "scale_readout":
+    elif topic == mqttTopics.HardwareTopics.scale_readout:
         res = do_scale_readout()
         client.publish(MainTopic + topic + "/return", res)
-    elif topic == "scale_tare":
+    elif topic == mqttTopics.HardwareTopics.scale_tare:
         do_scale_tare()
-    elif topic == "pump_stop":
+    elif topic == mqttTopics.HardwareTopics.pump_stop:
         do_pump_stop()
-    elif topic == "pump_start":
+    elif topic == mqttTopics.HardwareTopics.pump_start:
         do_pump_start()
-    elif topic == "all_valve_open":
+    elif topic == mqttTopics.HardwareTopics.all_valve_open:
         do_all_valve_open()
-    elif topic == "all_valve_close":
+    elif topic == mqttTopics.HardwareTopics.all_valve_close:
         do_all_valve_close()
-    elif topic == "valve_open":
+    elif topic == mqttTopics.HardwareTopics.valve_open:
         if not msg.payload.decode("utf-8").isnumeric():
             error("Wrong payload in valve open")
             return
         do_valve_open(int(msg.payload.decode("utf-8")))
-    elif topic == "valve_close":
+    elif topic == mqttTopics.HardwareTopics.valve_close:
         if not msg.payload.decode("utf-8").isnumeric():
             error("Wrong payload in valve close")
             return
         do_valve_close(int(msg.payload.decode("utf-8")))
-    elif topic == "ping":
+    elif topic == mqttTopics.HardwareTopics.ping:
         if not msg.payload.decode("utf-8").isnumeric():
             log("error in ping")
             error("Wrong payload in ping")
             return
         do_ping(int(msg.payload.decode("utf-8")), 0)
-    elif topic == "valve_dose":
+    elif topic == mqttTopics.HardwareTopics.valve_dose:
         span = valve_pattern.match(msg.payload.decode("utf-8")).span()
         if not (span[0] == 0 and span[1] == len(msg.payload.decode("utf-8"))):
             error("Wrong payload in valve dose")
@@ -258,9 +259,9 @@ def on_message(client, userdata, msg):
             while not client.want_write():
                 pass
         log("Return Send - Dosing Complete")
-    elif topic == "cleanMe":
+    elif topic == mqttTopics.HardwareTopics.cleanMe:
         clean(int(msg.payload.decode("utf-8")))
-    elif topic == "dryMe":
+    elif topic == mqttTopics.HardwareTopics.dryMe:
         dry(int(msg.payload.decode("utf-8")))
     else:
         warning("Unknown topic")
