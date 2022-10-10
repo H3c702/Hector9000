@@ -31,7 +31,7 @@ class HectorRemote(api.HectorAPI, LEDStripAPI):
         self.client.subscribe(self.MainTopic + "valve_dose/return")
 
     def __init__(self):
-        self.client = mqtt.Client()
+        self.client = mqtt.Client(client_id="HectorRemote")
         self.LEDTopic = "Hector9000/LEDStrip/"
         self.client.on_message = self.on_message
         self.client.on_connect = self.on_connect

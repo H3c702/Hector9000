@@ -41,7 +41,7 @@ class HectorController:
         self.MQTTServer = "localhost"
         self.TopicPrefix = "Hector9000/"
         self.initDone = False
-        self.client = mqtt.Client()
+        self.client = mqtt.Client(client_id="HectorController")
         self.hector = remote.HectorRemote()
         self.LED = True
         self.db = db.Database()
