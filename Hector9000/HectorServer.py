@@ -279,7 +279,7 @@ def on_subscribe(client, userdata, mid, granted_qos):
 def main():
     do_reset()
     log("starting")
-    client = mqtt.Client()
+    client = mqtt.Client(client_id="HectorServer")
     client.on_message = on_message
     client.on_connect = on_connect
     client.on_subscribe = on_subscribe
