@@ -29,7 +29,7 @@ setuptools.setup(
     'adafruit-circuitpython-neopixel==6.0.0',
     'attrs==19.1.0',
     'board==0.0.0.post0',
-    'certifi==2018.11.29',
+    'certifi==2022.12.7',
     'chardet==3.0.4',
     'docutils==0.14',
     'idna==2.8',
