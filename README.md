@@ -1,4 +1,4 @@
- Chat:  Join the Chat at https://discord.gg/UaV3MPyQ
+ Chat:  Join the Chat at [Discord](https://discord.gg/MHJh4bBddY)
  
 | Branch  | Status |
 | ------------- | ------------- |
