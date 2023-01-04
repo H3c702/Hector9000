@@ -1,4 +1,4 @@
- Chat:  [![Join the Chat at https://gitter.im/Hector9k/Hector9000](https://img.shields.io/gitter/room/Hector9k/Hector9000?style=plastic)](https://gitter.im/Hector9k/Hector9000?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
+ Chat:  Join the Chat at https://discord.gg/UaV3MPyQ
  
 | Branch  | Status |
 | ------------- | ------------- |
