@@ -3,9 +3,10 @@ Adafruit-PCA9685==1.0.1
 Adafruit-PureIO==1.1.5
 atomicwrites==1.3.0
 adafruit-circuitpython-neopixel==6.0.0
+console-menu==0.7.1
 attrs==19.1.0
 board==0.0.0.post0
-certifi==2018.11.29
+certifi==2022.12.7
 chardet==3.0.4
 docutils==0.14
 idna==2.8
