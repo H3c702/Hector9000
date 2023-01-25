@@ -1,12 +1,10 @@
- Chat: 
-   
-[DISCORD](https://discord.gg/wq4bxn8z) 
-
+ Chat:  Join the Chat at [Discord](https://discord.gg/MHJh4bBddY)
+ 
 | Branch  | Status |
 | ------------- | ------------- |
 | Master | [![Build Status(Master)](https://travis-ci.com/H3c702/Hector9000.svg?branch=master&label=master)](https://travis-ci.com/H3c702/Hector9000/branches) |
 | Development  | [![Build Status](https://travis-ci.com/H3c702/Hector9000.svg?branch=development)](https://travis-ci.com/H3c702/Hector9000/branches)  |
-
+ 
 
 HECTOR 9000
 ======================
