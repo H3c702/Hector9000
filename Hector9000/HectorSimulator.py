@@ -170,7 +170,7 @@ class HectorSimulator(api.HectorAPI):
                 cback("valve_dose", i)
         if cback:
             cback(progress[0] + progress[1])
-        return True
+        return False
 
     def finger(self, pos=0):
         print("finger")

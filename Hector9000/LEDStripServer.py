@@ -100,7 +100,7 @@ def on_subscribe(client, userdata, mid, granted_qos):
 
 print("server started")
 pixels = LEDStrip()
-client = mqtt.Client()
+client = mqtt.Client(client_id="HectorLED")
 client.on_message = on_message
 client.on_connect = on_connect
 client.on_subscribe = on_subscribe

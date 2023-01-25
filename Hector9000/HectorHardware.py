@@ -157,7 +157,11 @@ class HectorHardware(api.HectorAPI):
             log("arm_isInOutPos = False")
         return pos
 
-    def scale_readout(self):
+    def scale_readout(self) -> object:
+        """
+
+        :rtype: object
+        """
         weight = self.hx.get_weight(5)
         return weight
 

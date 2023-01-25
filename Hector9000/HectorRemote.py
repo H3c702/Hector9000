@@ -1,4 +1,5 @@
 from Hector9000.utils import HectorAPI as api
+from Hector9000.conf import mqttTopics
 from Hector9000.utils.LEDStripAPI import LEDStripAPI
 import paho.mqtt.client as mqtt
 
@@ -30,7 +31,7 @@ class HectorRemote(api.HectorAPI, LEDStripAPI):
         self.client.subscribe(self.MainTopic + "valve_dose/return")
 
     def __init__(self):
-        self.client = mqtt.Client()
+        self.client = mqtt.Client(client_id="HectorRemote")
         self.LEDTopic = "Hector9000/LEDStrip/"
         self.client.on_message = self.on_message
         self.client.on_connect = self.on_connect
@@ -50,21 +51,21 @@ class HectorRemote(api.HectorAPI, LEDStripAPI):
         self.client.publish(self.MainTopic + topic, message)
 
     def light_on(self):
-        self.pub_with_subtopic("light_on")
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.light_on)
 
     def light_off(self):
-        self.pub_with_subtopic("light_off")
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.light_off)
 
     def arm_out(self, cback=None):
-        self.pub_with_subtopic("arm_out")
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.arm_out)
 
     def arm_in(self, cback=None):
-        self.pub_with_subtopic("arm_in")
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.arm_in)
 
     def arm_isInOutPos(self):
         self.waiting_pos = True
         self.arm_pos = 0
-        self.pub_with_subtopic("arm_position")
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.arm_position)
         while self.waiting_pos:
             pass
         return self.arm_pos
@@ -72,40 +73,31 @@ class HectorRemote(api.HectorAPI, LEDStripAPI):
     def scale_readout(self):
         self.waiting_scale = True
         self.scale_read = 0
-        self.pub_with_subtopic("scale_readout")
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.scale_readout)
         while self.waiting_scale:
             pass
         return self.scale_read
 
     def scale_tare(self):
-        self.pub_with_subtopic("scale_tare")
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.scale_tare)
 
     def pump_start(self):
-        self.pub_with_subtopic("pump_start")
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.pump_start)
 
     def pump_stop(self):
-        self.pub_with_subtopic("pump_stop")
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.pump_stop)
 
     def valve_open(self, index, open=1):
-        self.pub_with_subtopic("valve_open")
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.valve_open)
 
     def valve_close(self, index):
-        self.pub_with_subtopic("valve_close")
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.valve_close)
 
-    def valve_dose(
-            self,
-            index,
-            amount,
-            timeout=30,
-            cback=None,
-            progress=(
-                0,
-                100),
-            topic=""):
+    def valve_dose(self, index, amount, timeout=30, cback=None, progress=(0, 100), topic=""):
         self.waiting_dose = True
         self.dose_sucessfull = False
         self.pub_with_subtopic(
-            "valve_dose",
+            mqttTopics.HardwareTopics.valve_dose,
             str(index) +
             "," +
             str(amount) +
@@ -124,22 +116,23 @@ class HectorRemote(api.HectorAPI, LEDStripAPI):
         else:
             if cback:
                 cback(progress[0] + progress[1])
+            # return false for UI and cancel / Block dosing / Info to UI
         return self.dose_sucessfull
 
     def finger(self, pos=0):
-        self.pub_with_subtopic("finger")
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.finger)
 
     def ping(self, num, retract=True, cback=None):
-        self.pub_with_subtopic("ping", "3")
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.ping, "3")
 
     def cleanAndExit(self):
-        self.pub_with_subtopic("clean_and_exit")
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.clean_and_exit)
 
     def clean(self, valve):
-        self.pub_with_subtopic("cleanMe", valve)
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.cleanMe, valve)
 
     def dry(self, valve):
-        self.pub_with_subtopic("dryMe", valve)
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.dryMe, valve)
 
     def ledstripmessage(self, topic, color, type):
         message = str(color[0]) + "," + str(color[1]) + \
