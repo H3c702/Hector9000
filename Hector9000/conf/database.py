@@ -1,7 +1,7 @@
 import sqlite3 as lite
 import datetime
 import json
-from time import *
+from time import mktime, strptime, strftime, localtime
 
 
 # ToDo:
