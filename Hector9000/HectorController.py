@@ -69,7 +69,7 @@ class HectorController:
         debug(data)
         return json.dumps(data)
 
-    def _get_ingredients(self):
+    def _get_ingredients(self, msg = None):
         debug("get_AllIngredients_asJson")
         return self.db.get_AllIngredients_asJson()
 
@@ -78,7 +78,7 @@ class HectorController:
         servoid = int(msg.payload)
         return self.db.get_Servo(servoid)
 
-    def _get_all_servos(self):
+    def _get_all_servos(self, msg = None):
         debug("get_all_servos")
         return self.db.get_Servos_asJson()
 
