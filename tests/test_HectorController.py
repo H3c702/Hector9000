@@ -24,7 +24,7 @@ class Test_Controller:
         print(drink)
         assert drink == '{"id": 5, "name": "Virgin Sunrise", "ingredients": [{"name": "Orange Juice", "ammount": 140}, {"name": "Grenadine", "ammount": 15}]}'
 
-    def __exit__(self):
+    def __exit__(self, exc_type, exc_value, exc_traceback):
         self.dbhelper.removeDB()
 
 

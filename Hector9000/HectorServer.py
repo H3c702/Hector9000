@@ -4,7 +4,6 @@
 #   HectorServer.py       Hector server with MQTT interface
 #
 
-# imports
 
 import time
 import re
@@ -25,7 +24,6 @@ else:
     from Hector9000.HectorSimulator import HectorSimulator as Hector
 
 
-# global vars
 MainTopic = "Hector9000/Hardware/"
 MQTTIP = "localhost"
 MQTTPORT = 1883
@@ -138,9 +136,9 @@ def do_all_valve_close():
     hector.light_off()
 
 
-def do_valve_open(index, open):
+def do_valve_open(index):
     log("open valve %d" % index)
-    hector.valve_open(index, open)
+    hector.valve_open(index)
 
 
 def do_valve_close(index):
@@ -157,8 +155,6 @@ def do_ping(num, retract):
     log("ping %d times" % num)
     hector.ping(num, retract)
 
-
-# high-level functions
 
 def dry(pump):
     log("drying pump %d" % pump)

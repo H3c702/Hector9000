@@ -217,12 +217,12 @@ class HectorHardware(api.HectorAPI):
         self.scale_tare()
         self.pump_start()
         self.valve_open(index)
-        sr = self.scale_readout()
+        sr: float = self.scale_readout()
         if sr < -10:
             amount = amount + sr
             balance = False
         last_over = False
-        last = sr
+        last: float = sr
         while True:
             sr = self.scale_readout()
             if balance and sr < -10:

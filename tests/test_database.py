@@ -101,5 +101,5 @@ class Test_database:
 
 	# ---------------------------------------------------------------------
 
-	def __exit__(self):
+	def __exit__(self, exc_type, exc_value, exc_traceback):
 		self.dbhelper.removeDB()

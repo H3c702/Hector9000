@@ -61,24 +61,24 @@ class HectorController:
 
     # todo: give all Infos for stearing or ....
     def _get_drink_as_JSON(self, msg):
-        id = int(msg.payload)
-        drink = drinks.available_drinks[id - 1]
+        drinkid = int(msg.payload)
+        drink = drinks.available_drinks[drinkid - 1]
         inglist = [{"name": drinks.ingredients[step[1]][0], "ammount": step[2]}
                    for step in drink["recipe"] if step[0] == "ingr"]
-        data = {"id": id, "name": drink["name"], "ingredients": inglist}
+        data = {"id": drinkid, "name": drink["name"], "ingredients": inglist}
         debug(data)
         return json.dumps(data)
 
-    def _get_ingredients(self, msg):
+    def _get_ingredients(self):
         debug("get_AllIngredients_asJson")
         return self.db.get_AllIngredients_asJson()
 
     def _get_servo(self, msg):
         debug("_get_servo: " + msg)
-        id = int(msg.payload)
-        return self.db.get_Servo(id)
+        servoid = int(msg.payload)
+        return self.db.get_Servo(servoid)
 
-    def _get_all_servos(self, msg):
+    def _get_all_servos(self):
         debug("get_all_servos")
         return self.db.get_Servos_asJson()
 
@@ -136,8 +136,8 @@ class HectorController:
 
     def _do_dose_drink(self, msg):
         debug("start dosing drink")
-        id = int(msg.payload)
-        drink = drinks.available_drinks[id - 1]
+        drinkid = int(msg.payload)
+        drink = drinks.available_drinks[drinkid - 1]
         # Return ID of drink to identify that drink creation starts
         self.client.publish(self.get_returnTopic(msg.topic), msg.payload)
         progress = 0
