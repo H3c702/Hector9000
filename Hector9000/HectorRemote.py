@@ -134,6 +134,12 @@ class HectorRemote(api.HectorAPI, LEDStripAPI):
     def dry(self, valve):
         self.pub_with_subtopic(mqttTopics.HardwareTopics.dryMe, valve)
 
+    def all_valve_open(self):
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.all_valve_open)
+
+    def all_valve_close(self):
+        self.pub_with_subtopic(mqttTopics.HardwareTopics.all_valve_close)
+
     def ledstripmessage(self, topic, color, type):
         message = str(color[0]) + "," + str(color[1]) + \
             "," + str(color[2]) + "," + str(type)
