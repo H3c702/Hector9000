@@ -46,7 +46,7 @@ setuptools.setup(
     'urllib3==1.26.5',
     'wcwidth==0.1.7',
     'webcolors==1.3',
-    'zipp==3.1.0',
+    'zipp==3.20.0',
     ],
     extras_require={
         'dev': ['pytest', 'flake8', 'autopep8'],
