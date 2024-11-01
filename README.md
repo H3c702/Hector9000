@@ -1,12 +1,5 @@
  Chat:  Join the Chat at [Discord](https://discord.gg/MHJh4bBddY)
- 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=H3c702_Hector9000&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=H3c702_Hector9000)
 
-| Branch  | Status |
-| ------------- | ------------- |
-| Master | [![Build Status(Master)](https://travis-ci.com/H3c702/Hector9000.svg?branch=master&label=master)](https://travis-ci.com/H3c702/Hector9000/branches) |
-| Development  | [![Build Status](https://travis-ci.com/H3c702/Hector9000.svg?branch=development)](https://travis-ci.com/H3c702/Hector9000/branches)  |
- 
 
 HECTOR 9000
 ======================
