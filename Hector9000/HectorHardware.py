@@ -55,8 +55,8 @@ class HectorHardware(api.HectorAPI):
         GPIO.setmode(GPIO.BOARD)
 
         # setup scale (HX711)
-        hx1 = cfg["hx711"]["CLK"]
-        hx2 = cfg["hx711"]["DAT"]
+        hx2 = cfg["hx711"]["CLK"]
+        hx1 = cfg["hx711"]["DAT"]
         hxref = cfg["hx711"]["ref"]
         self.hx = HX711(hx1, hx2)
         self.hx.set_reading_format("LSB", "MSB")
